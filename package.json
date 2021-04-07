@@ -1,0 +1,25 @@
+{
+  "name": "cs-188",
+  "version": "1.0.0",
+  "description": "Apartment Rating",
+  "main": "app.js",
+  "dependencies": {
+    "concurrently": "^6.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "server": "node server/app.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs188-software-design-security-w20/team-project-cs188-spring21-complex.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cs188-software-design-security-w20/team-project-cs188-spring21-complex/issues"
+  },
+  "homepage": "https://github.com/cs188-software-design-security-w20/team-project-cs188-spring21-complex#readme"
+}
