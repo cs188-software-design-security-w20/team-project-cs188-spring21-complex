@@ -4,7 +4,6 @@ const port = process.env.PORT || 3000;
 const path = require("path");
 const flash = require("connect-flash");
 const session = require("express-session");
-// const config = require('./config/database');
 const passport = require("passport");
 // app.use(require('cors')());
 

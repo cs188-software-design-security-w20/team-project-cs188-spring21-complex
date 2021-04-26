@@ -37,7 +37,7 @@ router.get("/logout", (req, res) => {
 
   */
 	req.flash("success", "You've logged out");
-	res.redirect("/");
+	res.redirect("/user/login");
 });
 
 // #################################################################################################
@@ -140,7 +140,7 @@ function checkAuthentication(req, res, next) {
 		return next();
 	} else {
 		req.flash("danger", "Please login");
-		res.redirect("/accounts/login");
+		res.redirect("/user/login");
 	}
 }
 
