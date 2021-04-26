@@ -12,7 +12,7 @@ router.get('/', function (req, res) {
 			return;
     }
     console.log('connection success');
-		db.query(`SELECT * from test`, (err, rows) => {
+		db.query(`SELECT * from test.apts`, (err, rows) => {
 			if (err) {
 				res.send("ERROR");
 			} else {

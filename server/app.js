@@ -11,6 +11,10 @@ const addRoute = (name) => {
 
 addRoute('apartment');
 
+app.get('/', (req, res) => {
+  res.sendFile('./html/apartment.html', {root: __dirname});
+});
+
 // Last route hit, nothing found
 app.use(function(req, res, next) {
   res.status(404);
