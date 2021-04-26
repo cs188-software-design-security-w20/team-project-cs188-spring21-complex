@@ -1,7 +1,10 @@
-var express = require("express");
-var router = express.Router();
-var dbConn = require("../db.js");
+const express = require("express");
+const router = express.Router();
+const dbConn = require("../db.js");
 const path = require("path");
+
+// ! rename the database table to your local one
+const apt_table = "apts";
 
 // url/apartment
 router.get("/", function (req, res) {
@@ -12,7 +15,7 @@ router.get("/", function (req, res) {
 			return;
 		}
 		console.log("connection success");
-		db.query(`SELECT * from test.apts`, (err, rows) => {
+		db.query(`SELECT * from ${apt_table}`, (err, rows) => {
 			if (err) {
 				res.send("ERROR");
 			} else {

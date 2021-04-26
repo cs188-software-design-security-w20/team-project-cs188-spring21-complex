@@ -6,7 +6,7 @@ How to use:
     cd [dir_path]
     npm install
 
-  In /server, create a dotenv file (.env) for connecting to the database. In the .env file, it should say something like:
+  In /server, create a dotenv file (.env) for connecting to the database. In the .env file, assign the following keys based on your machine/info:
     DB_HOST=localhost
     DB_USER=root
     DB_PASS=s1mpl3
@@ -17,8 +17,9 @@ How to use:
     process.env.DB_HOST
       This is to access the .env variables
 
-  **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries
-  
+  **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries for correct table names
+  **** Make the sql user password like varchar 100 to store the entire hashed version
+
   From root dir (pick one):
     npm run server
     npm run client 
@@ -41,3 +42,19 @@ TODO:
   2FA (forced setup at registration?)
   captcha for posting review
   fine-tuning input validation
+
+Built With:
+react
+
+nodejs
+  express
+  express-session
+  express-messages
+  express-validator
+  connect-flash
+  passport
+  passport-local
+  bcryptjs
+  mysql
+
+mysql

@@ -1,12 +1,16 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const path = require("path");
-var dbConn = require("../db.js");
+const dbConn = require("../db.js");
 const validator = require("express-validator");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 
-// GET #############################################################################################
+// ! rename the database table to your local one
+const user_table = "users";
+
+// #################################################################################################
+//* GET
 router.get("/login", (req, res) => {
 	res.sendFile(path.join(__dirname, "../html/login.html"));
 });
@@ -36,8 +40,8 @@ router.get("/logout", (req, res) => {
 	res.redirect("/");
 });
 
-// POST ############################################################################################
-// Receive login info
+// #################################################################################################
+//* POST
 router.post(
 	"/login",
 	[
@@ -106,7 +110,8 @@ router.post(
 				}
 				console.log("connection success");
 
-				db.query(`INSERT INTO test.users SET ?`, info, (err, result) => {
+				// SET ? takes the entire info object created above
+				db.query(`INSERT INTO ${user_table} SET ?`, info, (err, result) => {
 					if (err) {
 						console.log(err);
 						req.flash("danger", err.message);
@@ -146,8 +151,6 @@ function runAsyncWrapper(callback) {
       callback(req, res, next).catch(next);
   }
   */
-
-	// /*
 	return async (req, res, next) => {
 		try {
 			await callback(req, res, next);
@@ -158,6 +161,5 @@ function runAsyncWrapper(callback) {
 			next(err);
 		}
 	};
-	// */
 }
 module.exports = router;

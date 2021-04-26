@@ -9,7 +9,7 @@ const passport = require("passport");
 // app.use(require('cors')());
 
 // #################################################################################################
-// Express Middleware
+//* Express Middleware
 app.use(express.json()); // parse app/json
 app.use(express.urlencoded({ extended: true })); // parse x-ww-form-urlencoded
 
@@ -31,8 +31,23 @@ app.use(function (req, res, next) {
 	res.locals.messages = require("express-messages")(req, res);
 	next();
 });
+
 // #################################################################################################
-// Routing
+//* Passport
+
+require("./config/passport")(passport);
+
+// passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get("*", (req, res, next) => {
+	res.locals.user = req.user || null;
+	next(); // after handling any request, continue looking for the next route handler to do something more specific (add route argument if you want to directly skip somewhere)
+});
+
+// #################################################################################################
+//* Routing
 const addRoute = (name) => {
 	let route = require("./routes/" + name);
 	app.use("/" + name, route);
@@ -42,7 +57,7 @@ addRoute("apartment");
 addRoute("user");
 
 // #################################################################################################
-// Main page
+//* Main page
 app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "index.html"));
 });
