@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var mysql = require("mysql");
 var dbConn = require("../db.js");
 const path = require("path");
 

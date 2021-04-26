@@ -16,6 +16,8 @@ How to use:
     require('dotenv').config()
     process.env.DB_HOST
       This is to access the .env variables
+
+  **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries
   
   From root dir (pick one):
     npm run server

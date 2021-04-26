@@ -1,7 +1,6 @@
 var express = require("express");
 var router = express.Router();
 const path = require("path");
-var mysql = require("mysql");
 var dbConn = require("../db.js");
 const validator = require("express-validator");
 const bcrypt = require("bcryptjs");
@@ -36,7 +35,36 @@ router.get("/logout", (req, res) => {
 	req.flash("success", "You've logged out");
 	res.redirect("/");
 });
+
 // POST ############################################################################################
+// Receive login info
+router.post(
+	"/login",
+	[
+		validator.check("email", "Email must be a valid @ucla.edu").isEmail().isLength({ max: 23 }),
+		validator.check("pass", "Password should be at least 8 characters, up to 15").isLength({
+			min: 8,
+			max: 15,
+		}),
+	],
+	(req, res, next) => {
+		const errors = validator.validationResult(req);
+		if (errors.isEmpty()) {
+			// given user input email/pass, look for matching email
+			// then bcrypt compare the password to the hashed version in db
+			passport.authenticate("local", {
+				successRedirect: "/",
+				failureRedirect: "/user/login",
+				failureFlash: true,
+			})(req, res, next);
+		} else {
+			// incorrect inputs
+			console.log(errors.errors);
+			res.redirect("/user/login");
+		}
+	}
+);
+
 router.post(
 	"/register",
 	[
@@ -60,30 +88,37 @@ router.post(
 	runAsyncWrapper(async (req, res, next) => {
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
-			console.log("%s %s %s %s", req.body.first, req.body.last, req.body.email, req.body.pass);
-
 			hash = await bcrypt.hash(req.body.pass, 14);
 
-			// create new account and store the ENCRYPTED information, only if inputs are valid
-			let acc = new Account();
-			acc.first = req.body.first;
-			acc.last = req.body.last;
-			acc.email = req.body.email;
-			acc.pass = hash;
-			acc.save((err) => {
+			// create new account and store the ENCRYPTED information, only if inputs were valid
+			let info = {
+				legal_name: req.body.first + " " + req.body.last,
+				email: req.body.email,
+				password: hash,
+			};
+			console.log(info);
+
+			dbConn.getConnection((err, db) => {
 				if (err) {
-					console.log(err.message);
-					if (err.code === 11000) {
-						req.flash("danger", "Email was taken");
-						res.redirect("/accounts/register");
-					} else {
-						req.flash("danger", err.message);
-						res.redirect("/accounts/register");
-					}
-				} else {
-					req.flash("success", "Account was successfully created");
-					res.redirect("/accounts/login");
+					console.log("connection failed", err);
+					res.send(err);
+					return;
 				}
+				console.log("connection success");
+
+				db.query(`INSERT INTO test.users SET ?`, info, (err, result) => {
+					if (err) {
+						console.log(err);
+						req.flash("danger", err.message);
+						res.redirect("/user/register");
+					} else {
+						console.log(result);
+						req.flash("success", "Account created");
+						res.redirect("/user/login");
+					}
+				});
+
+				db.release(); // remember to release the connection when you're done
 			});
 		} else {
 			// invalid inputs
