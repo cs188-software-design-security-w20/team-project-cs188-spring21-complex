@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const path = require('path');
 
 // app.use(require('cors')());
 
@@ -10,10 +11,12 @@ const addRoute = (name) => {
 };
 
 addRoute('apartment');
+addRoute('user');
 
 app.get('/', (req, res) => {
-  res.sendFile('./html/apartment.html', {root: __dirname});
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
+
 
 // Last route hit, nothing found
 app.use(function(req, res, next) {

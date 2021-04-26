@@ -1,0 +1,32 @@
+<!DOCTYPE html >
+<html> 
+  <head> 
+    <title>Login </title>
+  </head>
+  <body>
+    <ul class="list-group"> 
+      <li class="list-group-item"> <a href="/">Home</a></li>
+    </ul>
+    <div class="container">
+      <!-- != messages('message', locals)-->
+    </div>
+
+    <h1>Login</h1>
+    <form method="POST" action="/user/login">
+      <div id="form-group">
+        <label>Email:</label>
+        <input class="form-control" name="email" type="text"/>
+      </div>
+      <div id="form-group">
+        <label>Password:</label>
+        <input class="form-control" name="pass" type="text"/>
+      </div>
+      <input class="btn btn-primary" type="submit" value="submit"/><br/>
+      
+      <hr/>
+      <footer> 
+        <p>Copyright &copy; 2021</p>
+      </footer>
+    </form>
+  </body>
+</html>

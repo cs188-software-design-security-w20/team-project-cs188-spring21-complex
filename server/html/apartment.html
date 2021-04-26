@@ -9,15 +9,17 @@
     </ul>
     <div class="container">
       <!-- != messages('message', locals)-->
+
       <h1>Post Review</h1>
-      <form method="POST" action="/apartments/undefined">
+      <!-- if user show this submit review form -->
+      <form method="POST" action="/apartment/apartment1">
         <div id="form-group">
-          <!-- if user show this label Review for #{apartment}: -->
           <label>Review for :</label><br/>
           <textarea class="form-control" name="review"></textarea>
         </div>
         <input class="btn btn-primary" type="submit" value="submit"/>
       </form><br/>
+
       <hr/>
       <footer> 
         <p>Copyright &copy; 2021</p>

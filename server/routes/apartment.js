@@ -2,9 +2,12 @@ var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 var dbConn = require('../db.js');
+const path = require('path');
 
 // url/apartment
 router.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '../html/apartment.html'));
+
 	dbConn.getConnection((err, db) => {
     if (err) {
       console.log('connection failed', err);
@@ -26,7 +29,7 @@ router.get('/', function (req, res) {
 
 // url/apartment/{id}
 router.get('/:id', function (req, res) {
-  res.send('success');
+  res.sendFile(path.join(__dirname, '../html/apartment.html'));
 })
 
 module.exports = router;
