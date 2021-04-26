@@ -22,21 +22,14 @@ How to use:
     npm run client 
     npm run dev
 
-
-Current Feature List:
+Current Security Features:
   hashed passowrd stored in db 
+
+WIP:
   easily restrict access to pages or page content if not logged in
   user can only do the following if LOGGED in:
     post reviews
     check their OWN profile (individual user profile wip)
-
-WIP:
-  login
-  register
-  view apartment pages (not yet linked to db)
-  view profile page (not yet linked to db)
-  logout
-  return home
 
 TODO:
   sessions, cookies? (if i exit window, or if i'm inactive for some time)
