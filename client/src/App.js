@@ -1,14 +1,17 @@
-import logo from './assets/logo.svg';
 import './App.css';
-
-import AppRouter from  './AppRouter';
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Registration from './pages/Registration'
+import UserProfile from './pages/UserProfile'
+import { Route } from 'react-router-dom'
 
 function App() {
   return (
     <div className="App">
-      {/* <header className="App-header">
-      </header> */}
-      <AppRouter />
+      <Route exact path="/" component={Home} />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/registration" component={Registration} />
+      <Route exact path="/user-profile" component={UserProfile} />
     </div>
   );
 }

@@ -1,12 +1,27 @@
 import React from "react";
-import './Home.css';
+import Navbar from '../components/Navbar'
+import "../App.css";
+import "../css/Home.css";
+import AptListing from "../components/AptListing";
 
-const Home = () => {
-  return (
-    <div>
-      <h1 className="title">Hello</h1>
-    </div>
-  );
+function Home() {
+    return (
+        <div>
+            <Navbar />
+
+            <div className="apt-row"> 
+                <AptListing />
+                <AptListing />
+                <AptListing />
+            </div>
+
+            <div className="apt-row"> 
+                <AptListing />
+                <AptListing />
+                <AptListing />
+            </div>
+        </div>
+    );
 }
 
 export default Home;
