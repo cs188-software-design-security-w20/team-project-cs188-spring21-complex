@@ -12,8 +12,30 @@ Before running the server:
     DB_PASS=s1mpl3
     DB_DATABASE=test
 
-  **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries for correct table names
-  **** Make the sql user password size varchar(100) to store the entire hashed version
+  **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries for correct table names. Note that when accesing the object, the column/attribute name may differ as well. Current implementation depends on the following sql schema:
+  apartments
+    apartment_id smallint auto increment primary key
+    apt_name varchar(40)
+    address varchar(40)
+    lower_price smallint
+    upper_price smallint
+    phone char(12)
+    email varchar(40)
+  reviews
+    apartment_id smallint foreign key
+    user_id int foreign key 
+    bedbath enum ...
+    upvotes int default 0
+    downvotes int default 0
+    review_text mediumtext 
+    review_num int primary key auto increment
+  users
+    user_id int autoincrement primary key
+    legal_name varchar(40)
+    ucla_id char(9)
+    email varchar(40)
+    password varchar(100)
+      **** size MUST BE varchar(100) to store the entire hashed version (like 70 ? chars)
 
 Before running the client:
 
