@@ -6,9 +6,7 @@ const path = require('path');
 
 // url/apartment
 router.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, '../html/apartment.html'));
-
-	dbConn.getConnection((err, db) => {
+  	dbConn.getConnection((err, db) => {
     if (err) {
       console.log('connection failed', err);
 			res.send(err);
@@ -18,7 +16,8 @@ router.get('/', function (req, res) {
 		db.query(`SELECT * from test.apts`, (err, rows) => {
 			if (err) {
 				res.send("ERROR");
-			} else {
+      } else {
+        res.sendFile(path.join(__dirname, '../html/apartment.html'));
 				res.send(rows);
 			}
 		});

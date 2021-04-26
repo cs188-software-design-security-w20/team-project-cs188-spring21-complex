@@ -11,10 +11,17 @@ How to use:
     DB_USER=root
     DB_PASS=s1mpl3
     DB_DATABASE=test
+
   In any javascript file where you make database connections, you need to require like so:
     require('dotenv').config()
-  Now, access the .env variables like so:
-    'process.env.DB_HOST'
+    process.env.DB_HOST
+      This is to access the .env variables
+  
+  From root dir (pick one):
+    npm run server
+    npm run client 
+    npm run dev
+
 
 Current Feature List:
   hashed passowrd stored in db 
