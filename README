@@ -1,11 +1,11 @@
 Summary:
 Project Complex provides UCLA students with a platform to find, rate, and review Westwood apartments. It allows them to make better-informed decisions before signing their leases. It will be functionally similar to bruinwalk.com, but for places to live instead of courses to take. Project Complex was motivated by the lack of resources and transparency that second-year students encounter when hunting for places to live off-campus.
 
-How to use:
-  If you haven't already (say you just cloned it): for each of the directories (team complex etc., client, server), install the node module dependencies.
-    cd [dir_path]
-    npm install
+If you haven't already (say you just cloned it): for each of the directories (team complex..., client, server), install the node module dependencies.
+  cd [dir_path]
+  npm install
 
+How to run the server:
   In /server, create a dotenv file (.env) for connecting to the database. In the .env file, assign the following keys based on your machine/info:
     DB_HOST=localhost
     DB_USER=root
@@ -20,10 +20,13 @@ How to use:
   **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries for correct table names
   **** Make the sql user password like varchar 100 to store the entire hashed version
 
-  From root dir (pick one):
+  In the root directory:
     npm run server
-    npm run client 
-    npm run dev
+
+How to run the client:
+
+npm run client 
+npm run dev
 
 Current Security Features:
   hashed passowrd stored in db 
