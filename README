@@ -5,37 +5,32 @@ If you haven't already (say you just cloned it): for each of the directories (te
   cd [dir_path]
   npm install
 
-How to run the server:
+Before running the server:
   In /server, create a dotenv file (.env) for connecting to the database. In the .env file, assign the following keys based on your machine/info:
     DB_HOST=localhost
     DB_USER=root
     DB_PASS=s1mpl3
     DB_DATABASE=test
 
-  In any javascript file where you make database connections, you need to require like so:
-    require('dotenv').config()
-    process.env.DB_HOST
-      This is to access the .env variables
-
   **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries for correct table names
-  **** Make the sql user password like varchar 100 to store the entire hashed version
+  **** Make the sql user password size varchar(100) to store the entire hashed version
 
-  In the root directory:
-    npm run server
+Before running the client:
 
-How to run the client:
-
-npm run client 
-npm run dev
+In the terminal (in the root directory), type one of the following (see package.json for more details):
+  npm run server
+  npm run client 
+  npm run dev
 
 Current Security Features:
-  hashed passowrd stored in db 
+  hashed password stored in db 
+  easily restrict access to pages or page content if not logged in
+  if user logged in, they can view the profile page
 
 WIP:
-  easily restrict access to pages or page content if not logged in
   user can only do the following if LOGGED in:
     post reviews
-    check their OWN profile (individual user profile wip)
+    check their individual profile
 
 TODO:
   sessions, cookies? (if i exit window, or if i'm inactive for some time)
