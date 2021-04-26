@@ -1,0 +1,41 @@
+Summary:
+Project Complex provides UCLA students with a platform to find, rate, and review Westwood apartments. It allows them to make better-informed decisions before signing their leases. It will be functionally similar to bruinwalk.com, but for places to live instead of courses to take. Project Complex was motivated by the lack of resources and transparency that second-year students encounter when hunting for places to live off-campus.
+
+How to use:
+  If you haven't already (say you just cloned it): for each of the directories (team complex etc., client, server), install the node module dependencies.
+    cd [dir_path]
+    npm install
+
+  In /server, create a dotenv file (.env) for connecting to the database. In the .env file, it should say something like:
+    DB_HOST=localhost
+    DB_USER=root
+    DB_PASS=s1mpl3
+    DB_DATABASE=test
+  In any javascript file where you make database connections, you need to require like so:
+    require('dotenv').config()
+  Now, access the .env variables like so:
+    'process.env.DB_HOST'
+
+Current Feature List:
+  hashed passowrd stored in db 
+  easily restrict access to pages or page content if not logged in
+  user can only do the following if LOGGED in:
+    post reviews
+    check their OWN profile (individual user profile wip)
+
+WIP:
+  login
+  register
+  view apartment pages (not yet linked to db)
+  view profile page (not yet linked to db)
+  logout
+  return home
+
+TODO:
+  sessions, cookies? (if i exit window, or if i'm inactive for some time)
+  csrf?
+  bruin id check 
+  send email verification upon registration
+  2FA (forced setup at registration?)
+  captcha for posting review
+  fine-tuning input validation

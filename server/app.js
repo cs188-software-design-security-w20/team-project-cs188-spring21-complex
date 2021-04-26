@@ -1,13 +1,13 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
+const app = express();
+const port = 3000;
 
 // app.use(require('cors')());
 
 const addRoute = (name) => {
-	let route = require('./routes/' + name);
-	app.use('/' + name, route);
-}
+    let route = require('./routes/' + name);
+    app.use('/' + name, route);
+};
 
 addRoute('apartment');
 
@@ -28,5 +28,5 @@ app.use(function(req, res, next) {
 });
 
 app.listen(port, () => {
-  console.log(`Complex app listening at http://localhost:${port}`)
-})
+    console.log(`\nComplex app listening at http://localhost:${port}\n`);
+});

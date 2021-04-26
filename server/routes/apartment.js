@@ -6,10 +6,12 @@ var dbConn = require('../db.js');
 // url/apartment
 router.get('/', function (req, res) {
 	dbConn.getConnection((err, db) => {
-		if (err) {
+    if (err) {
+      console.log('connection failed', err);
 			res.send(err);
 			return;
-		}
+    }
+    console.log('connection success');
 		db.query(`SELECT * from test`, (err, rows) => {
 			if (err) {
 				res.send("ERROR");
