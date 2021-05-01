@@ -19,12 +19,13 @@ mysql
   **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries for correct table names. Note that when accesing the object, the column/attribute name may differ as well. Current implementation depends on the following sql schema:
     apartments
       apartment_id smallint auto increment primary key
-      apt_name varchar(40)
-      address varchar(40)
+      apt_name varchar(60)
+      address varchar(80) not null
       lower_price smallint
       upper_price smallint
-      phone char(12)
-      email varchar(40)
+      phone char(12) default null -> none listed
+      email varchar(40) default null -> none listed
+      avg_rating float check constraint 0-5 default null -> no reviews
     reviews
       apartment_id smallint foreign key
       user_id int foreign key 
@@ -33,25 +34,23 @@ mysql
       downvotes int default 0
       review_text mediumtext 
       review_num int primary key auto increment
+      date timestamp
     users
       user_id int autoincrement primary key
       legal_name varchar(40)
-      ucla_id char(9)
+      username varchar(40)
       email varchar(40)
       password varchar(100)
         **** size MUST BE varchar(100) to store the entire hashed version (like 70 ? chars)
 
 things to consider:
   apartments >
-    average ratings (5 categories?)
     amenities/features, possibly community
     date updated
     sqft
   reviews >
-    date posted
     ratings (5 categories?)
-  users >
-    username varchar(20)
+
 
 Instructions:
 If you haven't already (say you just cloned it): for each of the directories (team complex..., client, server), install the node module dependencies.
@@ -79,25 +78,34 @@ Current Security Features:
     Ex: viewing their individual profile page, posting a review, editing their review?, upvoting/downvoting 
   All user input can be checked with express-validator 
 
-Work in progress:
-  Google Maps Integration
-
 TODO:
-  Sessions & cookies (if i exit window, or if i'm inactive for some time, log me out)
-  CSRF Prevention
-  Verify Bruin ID 
+
+Khang
+  Front-end design things
+  Retrieving individual apartment data from db to dynamically generate page contents when requested
+
+Chris
+  Google Maps Integration
+  Search bar
+  Scrape for westwood apartment data csv, format, load into csv > populate our db table
+    apartments.com ?
+  Captcha for posting reviews
+
+Jesse
+  CSRF, XSS Prevention
+  Image upload & SFW validation
+  How to prevent brute force logins
+
+Ryan
   Upon registration, send an email to verify user
   Enforce 2FA setup at registration
-  Captcha for posting reviews
+  Hosting db online
+
+Ethan
+  Sessions & cookies (if i exit window, or if i'm inactive for some time, log me out)  
   Finer detail on user input checking
   Finalize the db schema
     Generate the queries/scripts that'll create each table with the correct apartment data, for everyone
   Hiding features from users who aren't logged in
     Link to their profile, logout, post review, upvote/downvote, upload images
-  Search bar
   Connect get/post requests to the correct route for react pages
-  Retrieving individual apartment data to dynamically generate page contents based on the link/id
-  Image upload & checking
-  Scrape for westwood apartment data csv, format, load into csv > populate our db table
-    apartments.com ?
-  Find a way to host the db so that it can run while other team tests it
