@@ -75,10 +75,10 @@ mysql -u username -e "create database complex; use complex; CREATE TABLE `apartm
 
 
 Before running the server:
-  In /server, create a dotenv file (.env) for connecting to the database. In the .env file, assign the following keys based on your machine/info:
+  In /server, create a dotenv file (.env) for connecting to the database. In the .env file, assign the following keys based on your machine/info (database name SHOULD BE 'complex'):
     DB_HOST=localhost
-    DB_USER=root
-    DB_PASS=enteryourpassword
+    DB_USER=your_username
+    DB_PASS=your_password
     DB_DATABASE=complex
 
 Before running the client:
