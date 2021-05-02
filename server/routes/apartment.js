@@ -4,7 +4,7 @@ const dbConn = require("../db.js");
 const path = require("path");
 
 // ! rename the database table to your local one
-const apt_table = "apts";
+const apt_table = "apartments";
 
 // url/apartment
 router.get("/", function (req, res) {

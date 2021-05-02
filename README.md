@@ -16,32 +16,45 @@ nodejs
   mysql
 
 mysql
-  **** Until everyone has their local sql database setup the same way, MAKE SURE to modify queries for correct table names. Note that when accesing the object, the column/attribute name may differ as well. Current implementation depends on the following sql schema:
-    apartments
-      apartment_id smallint auto increment primary key
-      apt_name varchar(60)
-      address varchar(80) not null
-      lower_price smallint
-      upper_price smallint
-      phone char(12) default null -> none listed
-      email varchar(40) default null -> none listed
-      avg_rating float check constraint 0-5 default null -> no reviews
-    reviews
-      apartment_id smallint foreign key
-      user_id int foreign key 
-      bedbath enum ...
-      upvotes int default 0
-      downvotes int default 0
-      review_text mediumtext 
-      review_num int primary key auto increment
-      date timestamp
-    users
-      user_id int autoincrement primary key
-      legal_name varchar(40)
-      username varchar(40)
-      email varchar(40)
-      password varchar(100)
-        **** size MUST BE varchar(100) to store the entire hashed version (like 70 ? chars)
+  CREATE TABLE `apartments` (
+   `apt_id` smallint(6) NOT NULL AUTO_INCREMENT,
+   `apt_name` varchar(60) NOT NULL,
+   `address` varchar(80) NOT NULL,
+   `lower_price` smallint(6) NOT NULL,
+   `upper_price` smallint(6) NOT NULL,
+   `phone` char(12) DEFAULT NULL,
+   `email` varchar(40) DEFAULT NULL,
+   `avg_rating` float DEFAULT NULL,
+   PRIMARY KEY (`apt_id`),
+   CONSTRAINT `rating_interval` CHECK (`avg_rating` between 0 and 5)
+  ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+  CREATE TABLE `users` (
+   `user_id` int(11) NOT NULL AUTO_INCREMENT,
+   `legal_name` varchar(40) NOT NULL,
+   `username` varchar(40) NOT NULL,
+   `email` varchar(40) NOT NULL,
+   `password` varchar(100) NOT NULL,
+   PRIMARY KEY (`user_id`),
+   UNIQUE KEY `email` (`email`),
+   UNIQUE KEY `ucla_id` (`username`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;	
+
+  CREATE TABLE `reviews` (
+   `apt_id` smallint(6) NOT NULL,
+   `user_id` int(11) NOT NULL,
+   `bedbath` enum('1B1B','1B2B','2B1B','2B2B','2B3B','3B1B','3B2B','3B3B','3B4B','4B1B','4B2B','4B3B','4B4B') NOT NULL,
+   `upvotes` int(11) NOT NULL DEFAULT 0,
+   `downvotes` int(11) NOT NULL DEFAULT 0,
+   `review_text` mediumtext NOT NULL,
+   `review_num` int(11) NOT NULL AUTO_INCREMENT,
+   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+   PRIMARY KEY (`review_num`) USING BTREE,
+   UNIQUE KEY `apartment_id` (`apt_id`) USING BTREE,
+   UNIQUE KEY `user_id` (`user_id`) USING BTREE,
+   CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+   CONSTRAINT `reviews_ibfk_3` FOREIGN KEY (`apt_id`) REFERENCES `apartments` (`apt_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 things to consider:
   apartments >
@@ -57,12 +70,16 @@ If you haven't already (say you just cloned it): for each of the directories (te
   cd [dir_path]
   npm install
 
+Set up your local mysql database by copy-pasting this into your command line interface, and modifying the username:
+mysql -u username -e "create database complex; use complex; CREATE TABLE `apartments` (`apt_id` smallint(6) NOT NULL AUTO_INCREMENT, `apt_name` varchar(60) NOT NULL, `address` varchar(80) NOT NULL, `lower_price` smallint(6) NOT NULL, `upper_price` smallint(6) NOT NULL, `phone` char(12) DEFAULT NULL, `email` varchar(40) DEFAULT NULL, `avg_rating` float DEFAULT NULL, PRIMARY KEY (`apt_id`), CONSTRAINT `rating_interval` CHECK (`avg_rating` between 0 and 5)) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1; CREATE TABLE `users` (`user_id` int(11) NOT NULL AUTO_INCREMENT, `legal_name` varchar(40) NOT NULL, `username` varchar(40) NOT NULL, `email` varchar(40) NOT NULL, `password` varchar(100) NOT NULL, PRIMARY KEY (`user_id`), UNIQUE KEY `email` (`email`), UNIQUE KEY `ucla_id` (`username`) ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1; CREATE TABLE `reviews` (`apt_id` smallint(6) NOT NULL, `user_id` int(11) NOT NULL, `bedbath` enum('1B1B','1B2B','2B1B','2B2B','2B3B','3B1B','3B2B','3B3B','3B4B','4B1B','4B2B','4B3B','4B4B') NOT NULL, `upvotes` int(11) NOT NULL DEFAULT 0, `downvotes` int(11) NOT NULL DEFAULT 0, `review_text` mediumtext NOT NULL, `review_num` int(11) NOT NULL AUTO_INCREMENT, `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(), PRIMARY KEY (`review_num`) USING BTREE, UNIQUE KEY `apartment_id` (`apt_id`) USING BTREE, UNIQUE KEY `user_id` (`user_id`) USING BTREE, CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`), CONSTRAINT `reviews_ibfk_3` FOREIGN KEY (`apt_id`) REFERENCES `apartments` (`apt_id`)) ENGINE=InnoDB DEFAULT CHARSET=latin1; show databases; show tables from complex; show columns from apartments from complex; show columns from reviews from complex; show columns from users from complex;"
+
+
 Before running the server:
   In /server, create a dotenv file (.env) for connecting to the database. In the .env file, assign the following keys based on your machine/info:
     DB_HOST=localhost
     DB_USER=root
-    DB_PASS=s1mpl3
-    DB_DATABASE=test
+    DB_PASS=enteryourpassword
+    DB_DATABASE=complex
 
 Before running the client:
   -- Insert steps here --
