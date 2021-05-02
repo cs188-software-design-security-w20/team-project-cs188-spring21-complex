@@ -1,11 +1,10 @@
 # Summary:
 > Project Complex provides UCLA students with a platform to find, rate, and review Westwood apartments. It allows them to make better-informed decisions before signing their leases. It will be functionally similar to bruinwalk.com, but for places to live instead of courses to take. Project Complex was motivated by the lack of resources and transparency that second-year students encounter when hunting for places to live off-campus.
 
-## Built With:
-react
+## Technologies:
+*React
 
-nodejs
-  express
+Nodejs, express
   express-session
   express-messages
   express-validator
