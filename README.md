@@ -24,7 +24,7 @@ reviews >
 ```
 
 ## Instructions
-Clone this repository, and install the node module dependencies in each of the three paths:
+Clone this repository, and install the node module dependencies in **_each of the three paths_**:
 * `/`
 * `/server`
 * `/client`
@@ -40,12 +40,13 @@ mysql -u username -e "create database complex; use complex; CREATE TABLE `apartm
 ### Before running the server
 In `/server`, create a dotenv file `.env` for connecting to the database.
 
-In the `.env` file, assign the following keys based on your machine/info (database name SHOULD BE `complex`):
+In the `.env` file, assign the following keys:
 ```
-DB_HOST=localhost
-DB_USER=your_username
-DB_PASS=your_password
-DB_DATABASE=complex
+DB_HOST='team-complex.c7rp55uyi5yc.us-east-2.rds.amazonaws.com'
+DB_USER='www'
+DB_PASS='AWSDBTeamComplex21215cejkr'
+DB_DATABASE='complex'
+DB_PORT='3306'
 ```
 
 ### Before running the client
@@ -72,7 +73,7 @@ npm run dev
 * Retrieving individual apartment data from db to dynamically generate page contents when requested
 
 `Chris`
-* Google Maps Integration
+* ~~Google Maps Integration~~
 * Search bar
 * Scrape for westwood apartment data csv, format, load into csv > populate our db table (apartments.com ?)
 * Captcha for posting reviews
@@ -85,7 +86,7 @@ npm run dev
 `Ryan`
 * Upon registration, send an email to verify user
 * Enforce 2FA setup at registration
-* Hosting db online
+* ~~Hosting db online~~
 
 `Ethan`
 * Sessions & cookies (if i exit window, or if i'm inactive for some time, log me out)  
