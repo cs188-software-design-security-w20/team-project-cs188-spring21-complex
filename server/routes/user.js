@@ -97,6 +97,7 @@ router.post(
 			// create new account and store the ENCRYPTED information, only if inputs were valid
 			let info = {
 				legal_name: req.body.first + " " + req.body.last,
+				username: req.body.username,
 				email: req.body.email,
 				password: hash,
 			};
