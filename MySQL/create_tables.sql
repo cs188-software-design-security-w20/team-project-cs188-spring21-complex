@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `apartments` (
 PRIMARY KEY (`apt_id`), 
 CONSTRAINT `rating_interval` CHECK (`avg_rating` between 0 and 5)) 
 ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1; 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
  `user_id` int(11) NOT NULL AUTO_INCREMENT,
  `legal_name` varchar(40) NOT NULL,
  `username` varchar(40) NOT NULL,
