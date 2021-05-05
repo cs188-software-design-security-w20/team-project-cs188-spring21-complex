@@ -18,15 +18,18 @@ module.exports = (passport) => {
 				db.query(`SELECT * FROM ${user_table} WHERE email = '${email}'`, (err, user) => {
 					if (err) {
 						console.log(err);
-						return done(null, false, { message: "No user found" });
+						return done(null, false, { message: "Error occured, please contact the admin." });
 					} else {
-						// query returns a list of users, but of size 1 because email should be unique
-						// console.log(user[0]);
-						bcrypt.compare(pass, user[0].password, (err, match) => {
-							if (err) throw err;
-							else if (match) return done(null, user[0]);
-							else return done(null, false, { message: "Wrong password" });
-						});
+                        // query returns a list of users, but of size 1 because email should be unique
+                        if (user.length !== 1) {
+                            return done(null, false, { message: "User not found or password is incorrect!" });
+                        } else {
+                            bcrypt.compare(pass, user[0].password, (err, match) => {
+                                if (err) throw err;
+                                else if (match) return done(null, user[0]);
+                                else return done(null, false, { message: "User not found or password is incorrect" });
+                            });
+                        }
 					}
 				});
 
