@@ -1,0 +1,48 @@
+<!DOCTYPE html >
+<html> 
+  <head> 
+    <title>Register </title>
+  </head>
+  <body>
+    <ul class="list-group"> 
+      <li class="list-group-item"> <a href="/">Home</a></li>
+    </ul>
+    <div class="container">
+      <!-- != messages('message', locals)-->
+
+      <h1>Registration</h1>
+      <form method="POST" action="/user/register">
+        <div id="form-group">
+          <label>First Name:</label>
+          <input class="form-control" name="first" type="text"/>
+        </div>
+        <div id="form-group">
+          <label>Last Name:</label>
+          <input class="form-control" name="last" type="text"/>
+        </div>
+        <div id="form-group">
+          <label>Email:</label>
+          <input class="form-control" name="email" type="text"/>
+        </div>
+        <div id="form-group">
+          <label>Username:</label>
+          <input class="form-control" name="username" type="text"/>
+        </div>
+        <div id="form-group">
+          <label>Password:</label>
+          <input class="form-control" name="pass" type="text"/>
+        </div>
+        <div id="form-group">
+          <label>Confirm Password:</label>
+          <input class="form-control" name="confirm" type="text"/>
+        </div>
+        <input class="btn btn-primary" type="submit" value="submit"/>
+      </form><br/>
+
+      <hr/>
+      <footer> 
+        <p>Copyright &copy; 2021</p>
+      </footer>
+    </div>
+  </body>
+</html>

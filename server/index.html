@@ -1,0 +1,35 @@
+<!-- this represents the base page comments -->
+
+<!DOCTYPE html >
+<html> 
+  <head> 
+    <title>Landing Page </title>
+  </head>
+  <body>
+    <ul class="list-group"> 
+      <li class="list-group-item"> <a href="/">Home</a></li>
+      <li class="list-group-item"> <a href="/user/logout">Logout</a></li>
+    </ul>
+    <!-- check for user logged in, and if so, display logout -->
+    <div class="container">
+      <!-- != messages('message', locals) frrom express-msgs -->
+      <!-- check for errors object, and print them all div(class="alert alert-danger")= err.msg -->
+
+      <h1>Welcome!</h1>
+      <ul class="list-group"> 
+        <li class="list-group-item"><a href="/user/login">Login </a></li>
+        <li class="list-group-item"><a href="/user/register">Register</a></li>
+        <li class="list-group-item"><a href="/user/profile">Profile</a></li>
+        <li class="list-group-item"><a href="/apartment/apartment1">Apartment 1 </a></li>
+        <li class="list-group-item"><a href="/apartment/apartment2">Apartment 2</a></li>
+        
+        <!-- if users, show the profile link -->
+      </ul><br/>
+
+      <hr/>
+      <footer> 
+        <p>Copyright &copy; 2021</p>
+      </footer>
+    </div>
+  </body>
+</html>
