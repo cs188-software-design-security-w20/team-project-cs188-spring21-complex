@@ -4,7 +4,13 @@
   "description": "Apartment Rating",
   "main": "app.js",
   "dependencies": {
-    "concurrently": "^6.0.1"
+    "concurrently": "^6.0.1",
+    "cors": "^2.8.5",
+    "passport": "^0.4.1",
+    "passport-2fa-totp": "0.0.1",
+    "passport-totp": "0.0.2",
+    "qrcode": "^1.4.4",
+    "speakeasy": "^2.0.0"
   },
   "devDependencies": {},
   "scripts": {
