@@ -19,13 +19,13 @@ app.use(
 		secret: "keyboard cat", // The secret key should be changed in the future (maybe read from .env?)
 		resave: true,
 		saveUninitialized: true,
-        cookie: {
-            maxAge: 7 * 86400 * 1000, // Expire after 7 days
-            httpOnly: true,
-            sameSite: 'strict',
-            // domain: '.our-domain.com' // Set to our domain later
-            // secure: true, // This should be uncommented after we switch to HTTP
-        }
+		cookie: {
+			maxAge: 7 * 86400 * 1000, // Expire after 7 days
+			httpOnly: true, // prevents js running on browser to read cookies
+			sameSite: "strict",
+			// domain: '.our-domain.com' // Set to our domain later
+			// secure: true, // This should be uncommented after we switch to HTTPS
+		},
 	})
 );
 
