@@ -34,4 +34,33 @@ router.get("/:id", function (req, res) {
 	res.sendFile(path.join(__dirname, "../html/apartment.html"));
 });
 
+const review_table = 'reviews';
+const review_columns = '(apt_id, user_id, bedbath, review_text, date)';
+router.post("/review/:id", function (req, res) {
+
+	// Validate review
+	({ user_id, bedbath, review_text } = req.body);
+
+	const row = [req.params.id, user_id, bedbath, review_text, new Date()];
+
+	console.log(`INSERT INTO ${review_table} ${review_columns} VALUES (${row})`);
+
+	dbConn.getConnection((err, db) => {
+		if (err) {
+			console.err("connection failed", err);
+			res.send(err);
+			return;
+		}
+
+		db.query(`INSERT INTO ${review_table} ${review_columns} VALUES (?)`, [row], (err, result) => {
+			if (err) {
+				res.send(err);
+			} else {
+				res.json(result);
+			}
+		})
+		db.release();
+	});
+});
+
 module.exports = router;
