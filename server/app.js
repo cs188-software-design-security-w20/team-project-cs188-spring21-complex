@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
+
 const path = require("path");
 const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
+const fileupload = require("express-fileupload");
 // const csurf = require("csurf");
 // app.use(require('cors')());
 
@@ -26,6 +28,17 @@ app.use(
 			// domain: '.our-domain.com' // Set to our domain later
 			// secure: true, // This should be uncommented after we switch to HTTPS
 		},
+	})
+);
+
+app.use(
+	fileupload({
+		limits: {
+			filesize: 50 * 1024 * 1024, // 50MB for now
+		},
+		useTempFiles: true,
+		tempFileDir: "/tmp",
+		abortOnLimit: true,
 	})
 );
 
@@ -62,6 +75,7 @@ const addRoute = (name) => {
 
 addRoute("apartment");
 addRoute("user");
+addRoute("upload");
 
 // #################################################################################################
 //* Main page
@@ -74,8 +88,8 @@ app.use(function (req, res, next) {
 	res.status(404);
 
 	/*if (req.accepts('html')) {
-    res.render('404', { url: req.url });
-    return;
+	res.render('404', { url: req.url });
+	return;
   }*/
 
 	// respond with json

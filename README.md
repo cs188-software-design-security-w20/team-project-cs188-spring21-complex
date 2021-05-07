@@ -47,6 +47,7 @@ DB_USER='www'
 DB_PASS='AWSDBTeamComplex21215cejkr'
 DB_DATABASE='complex'
 DB_PORT='3306'
+UPLOAD_DIR='./upload'
 ```
 
 ### Before running the client
