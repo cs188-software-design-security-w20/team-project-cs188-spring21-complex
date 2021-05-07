@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
+
 const path = require("path");
 const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
+const fileupload = require("express-fileupload");
 // const csurf = require("csurf");
 // app.use(require('cors')());
 
@@ -36,9 +38,8 @@ app.use(
 		},
 	})
 );
+// --------- after this line, everything is invoked for every user request
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
 app.use(
 	fileupload({
 		limits: {
@@ -49,12 +50,7 @@ app.use(
 		abortOnLimit: true,
 	})
 );
-=======
-// --------- after this line, everything is invoked for every user request
->>>>>>> Stashed changes
 
-=======
->>>>>>> parent of b286996 (Finish a basic file uploading)
 // app.use(csurf());
 // express flash
 app.use(flash());
@@ -98,6 +94,7 @@ const addRoute = (name) => {
 
 addRoute("apartment");
 addRoute("user");
+addRoute("upload");
 
 // #################################################################################################
 //* Main page
@@ -110,8 +107,8 @@ app.use(function (req, res, next) {
 	res.status(404);
 
 	/*if (req.accepts('html')) {
-    res.render('404', { url: req.url });
-    return;
+	res.render('404', { url: req.url });
+	return;
   }*/
 
 	// respond with json
