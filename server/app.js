@@ -10,10 +10,18 @@ const passport = require("passport");
 
 // #################################################################################################
 //* Express Middleware
+// cookierparser > session > passport initialize/session > app.router
+
 app.use(express.json()); // parse app/json
 app.use(express.urlencoded({ extended: true })); // parse x-ww-form-urlencoded
 
-// express session
+/* express session (static files must come before this)
+express creates the session whenver it doesn't detect a session cookie in a request
+  the cookie (stores session id, or SID) is stored in the user's browser
+  it is sent for every request between server/client, in the request header
+if cookie detected, express extracts the SID, searches for the corresoonding session, and loads it into 'req.session', which will be used by passport
+! connect-redis to store user sessions? or fileStore 
+*/
 app.use(
 	session({
 		secret: "keyboard cat", // The secret key should be changed in the future (maybe read from .env?)
@@ -29,6 +37,24 @@ app.use(
 	})
 );
 
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+app.use(
+	fileupload({
+		limits: {
+			filesize: 50 * 1024 * 1024, // 50MB for now
+		},
+		useTempFiles: true,
+		tempFileDir: "/tmp",
+		abortOnLimit: true,
+	})
+);
+=======
+// --------- after this line, everything is invoked for every user request
+>>>>>>> Stashed changes
+
+=======
+>>>>>>> parent of b286996 (Finish a basic file uploading)
 // app.use(csurf());
 // express flash
 app.use(flash());
@@ -44,9 +70,19 @@ app.use(function (req, res, next) {
 
 require("./config/passport")(passport);
 
+/* if i want to set conditions for authentication of specified routes
+
+app.use(function(req, res, next){
+  if(req.url.match('/xxxx/secure'))
+    passport.session()(req, res, next)
+  else
+    next(); // do not invoke passport
+});
+*/
+
 // passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize()); // calls serializeUser
+app.use(passport.session()); // calls deserializeUser
 
 app.get("*", (req, res, next) => {
 	res.locals.user = req.user || null;

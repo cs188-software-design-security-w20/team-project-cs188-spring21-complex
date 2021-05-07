@@ -66,7 +66,7 @@ validate_login = [
 router.post("/login", validate_login, (req, res, next) => {
 	const errors = validator.validationResult(req);
 	if (errors.isEmpty()) {
-		// given user input email/pass, look for matching email
+		// given user input email/pass (local = email/pass login strategy for passport), look for matching email
 		// then bcrypt compare the password to the hashed version in db
 		passport.authenticate("local", {
 			successRedirect: "/",
