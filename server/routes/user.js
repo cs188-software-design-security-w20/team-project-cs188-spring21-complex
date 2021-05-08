@@ -20,24 +20,19 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/profile", checkAuthentication, (req, res) => {
+	console.log(req.session.cookie);
 	res.sendFile(path.join(__dirname, "../html/profile.html"));
 });
 
 // logout
 router.get("/logout", (req, res) => {
-	req.logout();
-	/* destroy cookies upon logout? figure out how to do it when i exit the tab too
-  res.status(200).clearCookie('connect.sid', {
-      path: '/'
-  });
-  req.session.destroy(function (err) {
-      res.redirect('/');
-  });
-  req.session = null; // delete cookie
-
-  */
+	req.logout(); // clears req.user
 	req.flash("success", "You've logged out");
-	res.redirect("/user/login");
+	req.session.destroy(() => {
+		// res.clearCookie(req.session.cookie.id);
+		req.session = null;
+		res.redirect("/");
+	});
 });
 
 // #################################################################################################
@@ -66,12 +61,12 @@ validate_login = [
 router.post("/login", validate_login, (req, res, next) => {
 	const errors = validator.validationResult(req);
 	if (errors.isEmpty()) {
-		// given user input email/pass (local = email/pass login strategy for passport), look for matching email
-		// then bcrypt compare the password to the hashed version in db
+		// if authenticated, redirect to main page, and req.user will have the user_id
 		passport.authenticate("local", {
 			successRedirect: "/",
 			failureRedirect: "/user/login",
-			failureFlash: true,
+			failureFlash: true, // flash "error" message according to what the strategy returned
+			successFlash: "Welcome!",
 		})(req, res, next);
 	} else {
 		// incorrect inputs
@@ -172,9 +167,8 @@ router.post(
 	})
 );
 
-// access control, check that user is logged in before they try to access some URL
+// check that req.user is valid before user accesses some URL
 function checkAuthentication(req, res, next) {
-	// passport feature
 	if (req.isAuthenticated()) {
 		return next();
 	} else {

@@ -30,8 +30,8 @@ app.use(
 		resave: true,
 		saveUninitialized: true,
 		cookie: {
-			maxAge: 7 * 86400 * 1000, // Expire after 7 days
-			httpOnly: true, // prevents js running on browser to read cookies
+			maxAge: 15 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
+			httpOnly: true, // prevents browser js from reading cookie session data
 			sameSite: "strict",
 			// domain: '.our-domain.com' // Set to our domain later
 			// secure: true, // This should be uncommented after we switch to HTTPS
@@ -51,6 +51,15 @@ app.use(
 	})
 );
 
+/* refresh the session upon each request
+app.use(function(req,res,next){
+  console.log("%i seconds until session expires!", (10000 - req.session.cookie.maxAge) / 1000);
+  req.session._garbage = Date();
+  req.session.touch();
+  next();
+})
+*/
+
 // app.use(csurf());
 // express flash
 app.use(flash());
@@ -66,19 +75,9 @@ app.use(function (req, res, next) {
 
 require("./config/passport")(passport);
 
-/* if i want to set conditions for authentication of specified routes
-
-app.use(function(req, res, next){
-  if(req.url.match('/xxxx/secure'))
-    passport.session()(req, res, next)
-  else
-    next(); // do not invoke passport
-});
-*/
-
 // passport middleware
-app.use(passport.initialize()); // calls serializeUser
-app.use(passport.session()); // calls deserializeUser
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("*", (req, res, next) => {
 	res.locals.user = req.user || null;
