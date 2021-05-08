@@ -24,7 +24,6 @@ router.get("/", function (req, res) {
 			}
 		});
 		db.release(); // remember to release the connection when you're done
-
 	});
 	// res.send('success');
 });

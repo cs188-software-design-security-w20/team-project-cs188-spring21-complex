@@ -1,34 +1,64 @@
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
+
 const path = require("path");
 const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
+const fileupload = require("express-fileupload");
 // const csurf = require("csurf");
 // app.use(require('cors')());
 
-
 // #################################################################################################
 //* Express Middleware
+// cookierparser > session > passport initialize/session > app.router
+
 app.use(express.json()); // parse app/json
 app.use(express.urlencoded({ extended: true })); // parse x-ww-form-urlencoded
 
-// express session
+/* express session (static files must come before this)
+express creates the session whenver it doesn't detect a session cookie in a request
+  the cookie (stores session id, or SID) is stored in the user's browser
+  it is sent for every request between server/client, in the request header
+if cookie detected, express extracts the SID, searches for the corresoonding session, and loads it into 'req.session', which will be used by passport
+! connect-redis to store user sessions? or fileStore 
+*/
 app.use(
 	session({
 		secret: "keyboard cat", // The secret key should be changed in the future (maybe read from .env?)
 		resave: true,
 		saveUninitialized: true,
-        cookie: {
-            maxAge: 7 * 86400 * 1000, // Expire after 7 days
-            httpOnly: true,
-            sameSite: 'strict',
-            // domain: '.our-domain.com' // Set to our domain later
-            // secure: true, // This should be uncommented after we switch to HTTP
-        }
+		cookie: {
+			maxAge: 15 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
+			httpOnly: true, // prevents browser js from reading cookie session data
+			sameSite: "strict",
+			// domain: '.our-domain.com' // Set to our domain later
+			// secure: true, // This should be uncommented after we switch to HTTPS
+		},
 	})
 );
+// --------- after this line, everything is invoked for every user request
+
+app.use(
+	fileupload({
+		limits: {
+			filesize: 50 * 1024 * 1024, // 50MB for now
+		},
+		useTempFiles: true,
+		tempFileDir: "/tmp",
+		abortOnLimit: true,
+	})
+);
+
+/* refresh the session upon each request
+app.use(function(req,res,next){
+  console.log("%i seconds until session expires!", (10000 - req.session.cookie.maxAge) / 1000);
+  req.session._garbage = Date();
+  req.session.touch();
+  next();
+})
+*/
 
 // app.use(csurf());
 // express flash
@@ -38,26 +68,6 @@ app.use(flash());
 app.use(function (req, res, next) {
 	res.locals.messages = require("express-messages")(req, res);
 	next();
-});
-
-// cors middleware for TESTING ONLY
-app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
 });
 
 // #################################################################################################
@@ -83,6 +93,7 @@ const addRoute = (name) => {
 
 addRoute("apartment");
 addRoute("user");
+addRoute("upload");
 
 // #################################################################################################
 //* Main page
@@ -95,9 +106,14 @@ app.use(function (req, res, next) {
 	res.status(404);
 
 	/*if (req.accepts('html')) {
+<<<<<<< HEAD
 >>>>>>> origin/ethan
     res.render('404', { url: req.url });
     return;
+=======
+	res.render('404', { url: req.url });
+	return;
+>>>>>>> back-end/setup
   }*/
 
 	// respond with json

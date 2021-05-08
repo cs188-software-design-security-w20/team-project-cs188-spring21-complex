@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar'
 import "../App.css";
 
 function ApartmentListing() {
+
     return (
         <div>
             <Navbar />
