@@ -62,16 +62,27 @@ router.post("/login", validate_login, (req, res, next) => {
 	const errors = validator.validationResult(req);
 	if (errors.isEmpty()) {
 		// if authenticated, redirect to main page, and req.user will have the user_id
-		passport.authenticate("local", {
-			successRedirect: "/",
-			failureRedirect: "/user/login",
-			failureFlash: true, // flash "error" message according to what the strategy returned
-			successFlash: "Welcome!",
+		/*
+    passport.authenticate("local", {
+      successRedirect: "/",
+      failureRedirect: "/user/login",
+      failureFlash: true, // flash "error" message according to what the strategy returned
+      successFlash: "Welcome!",
+    })(req, res, next);
+    */
+		passport.authenticate("local", (err, user, info) => {
+			if (err) next(err);
+			if (!user) res.json({ success: false, message: info });
+
+			req.login(user, (err) => {
+				if (err) next(err);
+				res.json({ success: true });
+			});
 		})(req, res, next);
 	} else {
 		// incorrect inputs
 		console.log(errors.errors);
-		res.redirect("/user/login");
+		res.json({ success: false, message: errors.errors });
 	}
 });
 
@@ -126,13 +137,15 @@ router.post(
 	runAsyncWrapper(async (req, res, next) => {
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
-			hash = await bcrypt.hash(req.body.pass, 14);
+			({ email, first, last, username, pass } = req.body);
+
+			hash = await bcrypt.hash(pass, 14);
 
 			// create new account and store the ENCRYPTED information, only if inputs were valid
 			let info = {
-				legal_name: req.body.first + " " + req.body.last,
-				username: req.body.username,
-				email: req.body.email,
+				legal_name: first + " " + last,
+				username: username,
+				email: email,
 				password: hash,
 			};
 			console.log(info);
@@ -140,19 +153,19 @@ router.post(
 			dbConn.getConnection((err, db) => {
 				if (err) {
 					console.log("connection failed", err);
-					res.send(err);
-					return;
+					res.json({ success: false, message: "An error occurred." });
 				}
 				// SET ? takes the entire info object created above
 				db.query(`INSERT INTO ${user_table} SET ?`, info, (err, result) => {
 					if (err) {
 						console.log(err.message);
-						req.flash("danger", err.message);
-						res.redirect("/user/register");
+						// req.flash("danger", err.message);
+						res.json({ success: false, message: err.message });
+						// res.redirect("/user/register");
 					} else {
 						console.log(result);
-						req.flash("success", "Account created");
-						res.redirect("/user/login");
+						res.json({ success: true, message: "Account created." });
+						// req.flash("success", "Account created");
 					}
 				});
 
@@ -161,8 +174,7 @@ router.post(
 		} else {
 			// invalid inputs
 			console.log(errors.errors);
-			// return res.status(422).jsonp(errors.array());
-			res.redirect("/user/register");
+			res.json({ success: false, message: errors.errors });
 		}
 	})
 );

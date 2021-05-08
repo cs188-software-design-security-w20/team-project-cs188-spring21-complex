@@ -8,7 +8,7 @@ const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
 // const csurf = require("csurf");
-// app.use(require('cors')());
+app.use(require("cors")());
 
 // #################################################################################################
 //* Express Middleware
