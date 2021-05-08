@@ -23,10 +23,12 @@ function Login() {
 
 				if (response.success) {
 					history.push("/");
-					alert("You're logged in!");
+					alert("Successfully logged in!");
 				} else {
-					history.push("/login");
-					alert(response.message);
+					// message can be an array (if input errors) or string (if database errors)
+					if (Array.isArray(response.message))
+						alert(response.message.reduce((acc, m) => acc + "\n" + m.msg, ""));
+					else alert(response.message);
 				}
 			})
 			.catch((err) => alert(err));
@@ -38,7 +40,7 @@ function Login() {
 
 			<div className="wrapper">
 				<form className="form-signin" onSubmit={submitLogin}>
-					<h2 className="form-signin-heading">Please login</h2>
+					<h2 className="form-signin-heading">Enter your account information.</h2>
 					<input
 						type="text"
 						className="form-control"
@@ -60,7 +62,7 @@ function Login() {
 						<button className="loginButton" type="submit">
 							Login
 						</button>
-						<a href="/registration">Or, create an account.</a>
+						<a href="/registration">Not Registered? Click Here</a>
 					</div>
 				</form>
 			</div>

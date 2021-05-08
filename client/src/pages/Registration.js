@@ -15,7 +15,7 @@ function Registration() {
 
 	const submitRegistration = (e) => {
 		e.preventDefault();
-		fetch("http://localhost:3000/user/register", {
+		fetch("http://localhost:3000/user/registration", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -36,7 +36,10 @@ function Registration() {
 					history.push("/login");
 					alert("You've successfully registered!");
 				} else {
-					alert(response.message.reduce((acc, m) => acc + "\n" + m.msg, ""));
+					// message can be an array (if input errors) or string (if database errors)
+					if (Array.isArray(response.message))
+						alert(response.message.reduce((acc, m) => acc + "\n" + m.msg, ""));
+					else alert(response.message);
 				}
 			})
 			.catch((err) => alert(err));

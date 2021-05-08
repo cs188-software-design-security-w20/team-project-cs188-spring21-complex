@@ -17,32 +17,30 @@ module.exports = (passport) => {
 		new LocalStrategy({ usernameField: "email", passwordField: "pass" }, (email, pass, done) => {
 			dbConn.getConnection((err, db) => {
 				if (err) {
-					console.log("connection failed", err);
-					return done(err);
-					// throw err;
+					console.log("connection failed", err.message);
+					done(err);
 				}
 				db.query(`SELECT * FROM ${user_table} WHERE email = '${email}'`, (err, user) => {
 					if (err) {
-						console.log(err);
-						return done(err);
+						console.log(err.message);
+						done(err);
 						// return done(null, false, { message: "Error occured, please contact the admin." });
 					} else {
 						// query returns a list of users, but of size 1 because email should be unique
 						if (user.length !== 1) {
-							return done(null, false, { message: "User not found or password is incorrect!" });
+							done(null, false, { message: "This email is not registered with any account." });
 						} else {
 							bcrypt.compare(pass, user[0].password, (err, match) => {
-								if (err) return done(err);
+								if (err) done(err);
 								// throw err;
-								else if (match) return done(null, user[0]);
-								else
-									return done(null, false, { message: "User not found or password is incorrect" });
+								else if (match) done(null, user[0]);
+								else done(null, false, { message: "The password is incorrect." });
 							});
 						}
 					}
 				});
 
-				db.release(); // remember to release the connection when you're done
+				db.release();
 			});
 		})
 	);
@@ -55,10 +53,13 @@ module.exports = (passport) => {
   NOTE: express had already created the session + cookie, and assigned the session to req.session
   */
 	passport.serializeUser(function (user, done) {
-		// if we want to store a bit more than user_id, create object and return it instead of uid
-		// var sessionUser = { _id: user._id, name: user.name, email: user.email, roles: user.roles }
-
-		return done(null, user.user_id);
+		let sessionUser = {
+			user_id: user.user_id,
+			username: user.username,
+			legal_name: user.legal_name,
+			email: user.email,
+		};
+		done(null, sessionUser);
 	});
 
 	/* (1) Authenticated request --> [1] Cookie --> [2] Database --> (3) deserializeUser --> [4] Session
@@ -68,8 +69,8 @@ module.exports = (passport) => {
       then, passport would store that object in req.user, ensuring that req.user is always updated
     instead, we only need user_id to check whether someone's logged in. so now, just the user_id is stored in req.user
   */
-	passport.deserializeUser(function (id, done) {
-		return done(null, id);
+	passport.deserializeUser(function (sessionUser, done) {
+		done(null, sessionUser);
 		/*
 		dbConn.getConnection((err, db) => {
 			if (err) {
