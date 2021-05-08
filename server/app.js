@@ -8,8 +8,20 @@ const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
 // const csurf = require("csurf");
-// app.use(require('cors')());
-
+app.use(require("cors")());
+/*
+app.all("*", function (req, res) {
+	/*
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header(
+		"Access-Control-Allow-Headers",
+		"Content-Type, Content-Length, Authorization, Accept, X-Requested-With"
+	);
+	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); *
+	res.header("Access-Control-Allow-Credentials", true);
+	res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+});
+*/
 // #################################################################################################
 //* Express Middleware
 // cookierparser > session > passport initialize/session > app.router
@@ -106,8 +118,8 @@ app.use(function (req, res, next) {
 	res.status(404);
 
 	/*if (req.accepts('html')) {
-	res.render('404', { url: req.url });
-	return;
+    res.render('404', { url: req.url });
+    return;
   }*/
 
 	// respond with json

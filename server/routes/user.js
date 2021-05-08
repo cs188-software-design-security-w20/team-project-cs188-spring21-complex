@@ -15,13 +15,13 @@ router.get("/login", (req, res) => {
 	res.sendFile(path.join(__dirname, "../html/login.html"));
 });
 
-router.get("/register", (req, res) => {
+router.get("/registration", (req, res) => {
 	res.sendFile(path.join(__dirname, "../html/register.html"));
 });
 
 router.get("/profile", checkAuthentication, (req, res) => {
-	console.log(req.session.cookie);
-	res.sendFile(path.join(__dirname, "../html/profile.html"));
+	console.log(req.session);
+	res.json({ success: true, user: req.user });
 });
 
 // logout
@@ -40,12 +40,13 @@ router.get("/logout", (req, res) => {
 
 validate_login = [
 	validator
-		.check("email", "This email is not registered with UCLA.")
+		.check("email")
 		.isEmail()
 		.trim()
 		.escape()
 		.normalizeEmail()
-		.matches("(@(g.)?ucla.edu){1}$"),
+		.matches("(@(g.)?ucla.edu){1}$")
+		.withMessage("This email is not registered with UCLA."),
 	validator
 		.check("pass")
 		.isLength({ min: 8, max: 15 })
@@ -62,16 +63,22 @@ router.post("/login", validate_login, (req, res, next) => {
 	const errors = validator.validationResult(req);
 	if (errors.isEmpty()) {
 		// if authenticated, redirect to main page, and req.user will have the user_id
-		passport.authenticate("local", {
-			successRedirect: "/",
-			failureRedirect: "/user/login",
-			failureFlash: true, // flash "error" message according to what the strategy returned
-			successFlash: "Welcome!",
+		passport.authenticate("local", (err, user, info) => {
+			if (err) res.json({ success: false, message: err.message });
+			else if (!user) res.json({ success: false, message: info.message });
+			else {
+				req.login(user, (err) => {
+					if (err) res.json({ success: false, message: err.message });
+					req.session.save(() => {
+						res.json({ success: true });
+					});
+				});
+			}
 		})(req, res, next);
 	} else {
 		// incorrect inputs
 		console.log(errors.errors);
-		res.redirect("/user/login");
+		res.json({ success: false, message: errors.errors });
 	}
 });
 
@@ -121,38 +128,40 @@ validate_registration = [
 ];
 
 router.post(
-	"/register",
+	"/registration",
 	validate_registration,
 	runAsyncWrapper(async (req, res, next) => {
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
-			hash = await bcrypt.hash(req.body.pass, 14);
+			({ email, first, last, username, pass } = req.body);
+
+			hash = await bcrypt.hash(pass, 14);
 
 			// create new account and store the ENCRYPTED information, only if inputs were valid
 			let info = {
-				legal_name: req.body.first + " " + req.body.last,
-				username: req.body.username,
-				email: req.body.email,
+				legal_name: first + " " + last,
+				username: username,
+				email: email,
 				password: hash,
 			};
 			console.log(info);
 
 			dbConn.getConnection((err, db) => {
 				if (err) {
-					console.log("connection failed", err);
-					res.send(err);
-					return;
+					console.log("connection failed", err.message);
+					res.json({ success: false, message: err.message });
 				}
 				// SET ? takes the entire info object created above
 				db.query(`INSERT INTO ${user_table} SET ?`, info, (err, result) => {
 					if (err) {
 						console.log(err.message);
-						req.flash("danger", err.message);
-						res.redirect("/user/register");
+						// req.flash("danger", err.message);
+						res.json({ success: false, message: err.message });
+						// res.redirect("/user/register");
 					} else {
 						console.log(result);
-						req.flash("success", "Account created");
-						res.redirect("/user/login");
+						res.json({ success: true, message: "Account created." });
+						// req.flash("success", "Account created");
 					}
 				});
 
@@ -161,19 +170,18 @@ router.post(
 		} else {
 			// invalid inputs
 			console.log(errors.errors);
-			// return res.status(422).jsonp(errors.array());
-			res.redirect("/user/register");
+			res.json({ success: false, message: errors.errors });
 		}
 	})
 );
 
 // check that req.user is valid before user accesses some URL
 function checkAuthentication(req, res, next) {
+	console.log(req.session);
 	if (req.isAuthenticated()) {
 		return next();
 	} else {
-		req.flash("danger", "Please login");
-		res.redirect("/user/login");
+		res.json({ success: false, message: "You are not logged in." });
 	}
 }
 
