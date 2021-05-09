@@ -8,20 +8,14 @@ const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
 // const csurf = require("csurf");
-app.use(require("cors")({ credentials: true, origin: "http://localhost:4200" }));
-/*
-app.all("*", function (req, res) {
-	// res.header("Access-Control-Allow-Origin", "*");
-	res.header(
-		"Access-Control-Allow-Headers",
-		"Content-Type, Content-Length, Authorization, Accept, X-Requested-With"
-	);
-	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+app.use(
+	require("cors")({
+		credentials: true,
+		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+		origin: "http://localhost:4200",
+	})
+);
 
-	res.header("Access-Control-Allow-Credentials", true);
-	res.header("Access-Control-Allow-Origin", "http://localhost:4200");
-});
-*/
 // #################################################################################################
 //* Express Middleware
 // cookierparser > session > passport initialize/session > app.router
@@ -39,6 +33,7 @@ if cookie detected, express extracts the SID, searches for the corresoonding ses
 app.use(
 	session({
 		secret: "keyboard cat", // The secret key should be changed in the future (maybe read from .env?)
+		// dbops.randomString(16),   // generate a 16 random char string, store in .env file
 		resave: true,
 		saveUninitialized: false, // only store sessions when they've been modified
 		cookie: {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserNavbar from "../components/UserNavbar";
 import "../App.css";
 import "../css/Login.css";
@@ -36,53 +36,55 @@ function UserProfile() {
 	};
   */
 	// before rendering profile, make server request to see if authenticated, and grab user info
-	fetch("http://localhost:3000/user/profile", {
-		method: "GET",
-		headers: { "Content-Type": "application/json" },
-		credentials: "include",
-	})
-		.then((response) => response.json())
-		.then((response) => {
-			console.log(response);
-
-			// user is authenticated, so display their information
-			if (response.success) {
-				return (
-					<div>
-						<UserNavbar />
-						<div className="wrapper">
-							<h2 className="profile-heading">Hello, {response.user.legal_name}</h2>
-							<input
-								type="text"
-								className="form-control"
-								name="username"
-								placeholder={response.user.username}
-								required=""
-								autofocus=""
-							/>
-							<input
-								type="text"
-								className="form-control"
-								name="email"
-								placeholder={response.user.email}
-								required=""
-								autofocus=""
-							/>
-						</div>
-					</div>
-				);
-			} else {
-				// user is not authenticated, so redirect to the login page
-				history.push("/login");
-				alert(response.message);
-			}
+	const [user, setUser] = useState({});
+	const [auth, setAuth] = useState(false);
+	useEffect(() => {
+		fetch("http://localhost:3000/user/profile", {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
 		})
-		.catch((err) => alert(err));
+			.then((response) => response.json())
+			.then((response) => {
+				console.log(response);
 
-	// without this I get "error, nothing returned from render" probably because it takes a while for the fetch statement to fully execute and redirect
+				// user is authenticated, so display their information
+				if (response.success) {
+					setUser(response.user);
+					setAuth(true);
+				} else {
+					// user is not authenticated, so redirect to the login page
+					history.push("/login");
+					alert(response.message);
+				}
+			})
+			.catch((err) => alert(err));
+	}, []);
+
 	return (
 		<div>
 			<UserNavbar />
+			{auth && (
+				<div className="wrapper">
+					<h2 className="profile-heading">Hello, {user.legal_name}</h2>
+					<input
+						type="text"
+						className="form-control"
+						name="username"
+						placeholder={user.username}
+						required=""
+						autofocus=""
+					/>
+					<input
+						type="text"
+						className="form-control"
+						name="email"
+						placeholder={user.email}
+						required=""
+						autofocus=""
+					/>
+				</div>
+			)}
 		</div>
 	);
 }

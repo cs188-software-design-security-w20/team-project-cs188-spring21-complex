@@ -180,7 +180,7 @@ router.post(
 
 // check that req.user is valid before user accesses some URL
 function checkAuthentication(req, res, next) {
-	console.log("Checking if user is authenticated", req.sessionID, req.user);
+	// console.log("Checking if user is authenticated", req.sessionID, req.user);
 	if (req.isAuthenticated()) {
 		return next();
 	} else {
