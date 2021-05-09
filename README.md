@@ -3,14 +3,20 @@
 
 ## Technologies
 * React
+  * material-ui/core, material-ui/icons
+  * react, react-dom, react-router, react-router-dom, react-scripts
+  * web-vitals
 * Node.js
   * express
-    * express-session, express-messages, express-validator
+    * express-session, express-messages, express-validator, express-fileupload
   * connect-flash
   * passport
-    * passport-local
+    * passport-local, passport-2fa-totp, passport-totp
   * bcryptjs
   * mysql
+  * cors
+  * qrcode
+  * speakeasy
 * MySQL
 
 ## Potential Considerations
@@ -38,26 +44,30 @@ mysql -u username -e "create database complex; use complex; CREATE TABLE `apartm
 ```
 
 ### Before running the server
-In `/server`, create a dotenv file `.env` for connecting to the database.
-
-In the `.env` file, assign the following keys:
+In `/server`, create a dotenv file `.env` for connecting to the database and session keys. In the `.env` file, assign the following keys:
 ```
 DB_HOST='team-complex.c7rp55uyi5yc.us-east-2.rds.amazonaws.com'
 DB_USER='www'
 DB_PASS='AWSDBTeamComplex21215cejkr'
 DB_DATABASE='complex'
 DB_PORT='3306'
-<<<<<<< HEAD
-=======
 UPLOAD_DIR='./upload'
->>>>>>> back-end/setup
 ```
 
 ### Before running the client
--- Insert steps here --
+In `/client`, create a dotenv file `.env` for assigning the frontend port. In the `.env` file, assign the following keys:
+```
+PORT=4200
+```
+If there are compilation issues from running `npm install`, and you see `Module not found... @material-ui/icons/Reorder`, then type in the terminal:
+```
+npm install @material-ui/core --save
+npm install @material-ui/icons --save
+```
+
 
 ### Testing Project Complex
-In the terminal (in the root directory), type one of the following (see package.json for more details):
+In the terminal for the root directory, type one of the following (see package.json for more details):
 ```
 npm run server
 npm run client 
@@ -66,9 +76,19 @@ npm run dev
 
 ## Current Security Features
 * During registration, server stores the hashed password in db 
-* Based on whether a user is logged in, we can restrict access to pages or page content 
-  * Ex: viewing their individual profile page, posting a review, editing their review?, upvoting/downvoting 
-* All user input can be checked with express-validator 
+* Access/view control, where users must be logged in to perform certain actions such as: 
+  * Navigating to their individual profile page, posting a review, editing their review, upvoting/downvoting other reviews, and/or seeing the buttons to do such actions
+* All user input is checked, trimmed, and escaped with express-validator
+  * login/registration fields
+    * First, last, and username must be between 3-15 characters
+    * Email must be registered with UCLA (must end in @g.ucla.edu or @ucla.edu)
+    * Password must be 8-15 characters long, contain an uppercase letter, and a number
+* User must enroll in Google Authenticator (2FA) upon registration
+* Upon login, a 15-minute session is created (if inactive for 15 minutes, user is logged out)
+  * The cookie only stores the session ID, and no other user information 
+  * Server only parses requests that originate from the complex website
+  * Unique session ID is randomized upon each server restart ???
+  * Cookie can only be read on http
 
 ## TODO
 
@@ -77,26 +97,30 @@ npm run dev
 * Retrieving individual apartment data from db to dynamically generate page contents when requested
 
 `Chris`
-* ~~Google Maps Integration~~
+* Google Maps Integration
 * Search bar
 * Scrape for westwood apartment data csv, format, load into csv > populate our db table (apartments.com ?)
 * Captcha for posting reviews
 
 `Jesse`
 * CSRF, XSS Prevention
-* Image upload & SFW validation
+* Image upload
+* Image validation
 * How to prevent brute force logins
 
 `Ryan`
 * Upon registration, send an email to verify user
 * Enforce 2FA setup at registration
-* ~~Hosting db online~~
+* Hosting db online at AWS
+* Hosting the web app on AWS
 
 `Ethan`
-* Sessions & cookies (if i exit window, or if i'm inactive for some time, log me out)  
+* Sessions & cookies (if i exit window, or if i'm inactive for some time, log me out)
 * Finer detail on user input checking
 * Finalize the db schema
   * Generate the queries/scripts that'll create each table with the correct apartment data, for everyone
 * Hiding features from users who aren't logged in
   * Link to their profile, logout, post review, upvote/downvote, upload images
 * Connect get/post requests to the correct route for react pages
+* Editing user profile information
+* Deleting user account
