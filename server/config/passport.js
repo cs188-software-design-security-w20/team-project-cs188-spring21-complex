@@ -18,29 +18,32 @@ module.exports = (passport) => {
 			dbConn.getConnection((err, db) => {
 				if (err) {
 					console.log("connection failed", err.message);
-					done(err);
+					db.release();
+					return done(err);
 				}
 				db.query(`SELECT * FROM ${user_table} WHERE email = '${email}'`, (err, user) => {
+					db.release();
 					if (err) {
 						console.log(err.message);
-						done(err);
+						return done(err);
 						// return done(null, false, { message: "Error occured, please contact the admin." });
 					} else {
 						// query returns a list of users, but of size 1 because email should be unique
 						if (user.length !== 1) {
-							done(null, false, { message: "This email is not registered with any account." });
+							return done(null, false, {
+								message: "This email is not registered with any account.",
+							});
 						} else {
 							bcrypt.compare(pass, user[0].password, (err, match) => {
-								if (err) done(err);
+								if (err) return done(err);
 								// throw err;
-								else if (match) done(null, user[0]);
-								else done(null, false, { message: "The password is incorrect." });
+								else if (match) {
+									return done(null, user[0]);
+								} else return done(null, false, { message: "The password is incorrect." });
 							});
 						}
 					}
 				});
-
-				db.release();
 			});
 		})
 	);
@@ -59,7 +62,7 @@ module.exports = (passport) => {
 			legal_name: user.legal_name,
 			email: user.email,
 		};
-		done(null, sessionUser);
+		return done(null, sessionUser);
 	});
 
 	/* (1) Authenticated request --> [1] Cookie --> [2] Database --> (3) deserializeUser --> [4] Session
@@ -70,7 +73,7 @@ module.exports = (passport) => {
     instead, we only need user_id to check whether someone's logged in. so now, just the user_id is stored in req.user
   */
 	passport.deserializeUser(function (sessionUser, done) {
-		done(null, sessionUser);
+		return done(null, sessionUser);
 		/*
 		dbConn.getConnection((err, db) => {
 			if (err) {

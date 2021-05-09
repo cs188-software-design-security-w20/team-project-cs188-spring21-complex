@@ -8,16 +8,16 @@ const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
 // const csurf = require("csurf");
-app.use(require("cors")());
+app.use(require("cors")({ credentials: true, origin: "http://localhost:4200" }));
 /*
 app.all("*", function (req, res) {
-	/*
-	res.header("Access-Control-Allow-Origin", "*");
+	// res.header("Access-Control-Allow-Origin", "*");
 	res.header(
 		"Access-Control-Allow-Headers",
 		"Content-Type, Content-Length, Authorization, Accept, X-Requested-With"
 	);
-	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); *
+	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+
 	res.header("Access-Control-Allow-Credentials", true);
 	res.header("Access-Control-Allow-Origin", "http://localhost:4200");
 });
@@ -40,11 +40,11 @@ app.use(
 	session({
 		secret: "keyboard cat", // The secret key should be changed in the future (maybe read from .env?)
 		resave: true,
-		saveUninitialized: true,
+		saveUninitialized: false, // only store sessions when they've been modified
 		cookie: {
 			maxAge: 15 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
-			httpOnly: true, // prevents browser js from reading cookie session data
-			sameSite: "strict",
+			// httpOnly: true, // prevents browser js from reading cookie session data
+			// sameSite: "strict",
 			// domain: '.our-domain.com' // Set to our domain later
 			// secure: true, // This should be uncommented after we switch to HTTPS
 		},

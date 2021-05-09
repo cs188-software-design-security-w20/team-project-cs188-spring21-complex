@@ -39,7 +39,7 @@ function UserProfile() {
 	fetch("http://localhost:3000/user/profile", {
 		method: "GET",
 		headers: { "Content-Type": "application/json" },
-		// credentials: "include",
+		credentials: "include",
 	})
 		.then((response) => response.json())
 		.then((response) => {

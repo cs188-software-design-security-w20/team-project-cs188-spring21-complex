@@ -21,6 +21,15 @@ function Login() {
 				// server says correctly authenticated. so redirect to the main page
 				console.log(response);
 
+				/*
+        let cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+        function getCookie(key) {
+          var b = document.cookie.match("(^|;)\\s*" + key + "\\s*=\\s*([^;]+)");
+          return b ? b.pop() : "";
+        }
+        */
+
 				if (response.success) {
 					history.push("/");
 					alert("Successfully logged in!");

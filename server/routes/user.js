@@ -5,6 +5,7 @@ const dbConn = require("../db.js");
 const validator = require("express-validator");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const { session } = require("passport");
 
 // ! rename the database table to your local one
 const user_table = "users";
@@ -20,7 +21,7 @@ router.get("/registration", (req, res) => {
 });
 
 router.get("/profile", checkAuthentication, (req, res) => {
-	console.log(req.session);
+	console.log("Authorization granted for profile.");
 	res.json({ success: true, user: req.user });
 });
 
@@ -68,8 +69,10 @@ router.post("/login", validate_login, (req, res, next) => {
 			else if (!user) res.json({ success: false, message: info.message });
 			else {
 				req.login(user, (err) => {
+					// at this point, req.user and req.session.passport exists
 					if (err) res.json({ success: false, message: err.message });
 					req.session.save(() => {
+						console.log("Logged in and saving session.", req.sessionID, req.session);
 						res.json({ success: true });
 					});
 				});
@@ -177,7 +180,7 @@ router.post(
 
 // check that req.user is valid before user accesses some URL
 function checkAuthentication(req, res, next) {
-	console.log(req.session);
+	console.log("Checking if user is authenticated", req.sessionID, req.user);
 	if (req.isAuthenticated()) {
 		return next();
 	} else {
