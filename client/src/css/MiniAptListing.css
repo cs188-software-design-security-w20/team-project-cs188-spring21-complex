@@ -1,0 +1,46 @@
+/*-------------------------------------------------------------------------------------*/
+/*------------------------------ Mini Apt Listing Page Styles ------------------------------*/
+/*-------------------------------------------------------------------------------------*/
+
+.listing {
+    display: block;
+    width: 300px;
+    height: auto;
+    margin: 20px 20px 20px 20px;
+    padding: 0 0 20px 0;
+    background-color: white;
+}
+
+.listing .apt-img {
+    width: 100%;
+    height: 200px;
+}
+
+.listing img {
+    width: 86%;
+    height: 100%;
+    padding: 20px 20px 20px 20px;
+    object-fit: cover;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.apt-info .apt-info-name {
+    padding: 40px 20px 10px 20px;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.apt-info .apt-info-address1 {
+    padding: 0 20px 0 20px;
+}
+
+.apt-info .apt-info-address2 {
+    padding: 0 20px 0 20px;
+}
+
+.apt-info .apt-info-unit {
+    padding: 10px 20px 0 20px;
+}

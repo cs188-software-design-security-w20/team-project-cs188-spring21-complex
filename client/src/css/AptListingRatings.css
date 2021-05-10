@@ -1,0 +1,44 @@
+/*---------------------------------------------------------------------------------------------*/
+/*------------------------------ Apt Listing Ratings Page Styles ------------------------------*/
+/*---------------------------------------------------------------------------------------------*/
+
+.apt-listing-ratings {
+    position: relative;
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.bar {
+    background-color: #353b48;
+    display: block;
+    width: 340px;
+    height: 10px;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar span {
+    height: 10px;
+    float: left;
+    background: #E8E253;
+}
+
+.rating-info {
+    display: flex;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+
+.rating-bar {
+    padding-bottom: 20px;
+    font-size: 14px;
+}
+
