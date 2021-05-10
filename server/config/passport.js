@@ -10,6 +10,7 @@ const user_table = "users";
 // make sure that the local strategy key/pair for usernameField, passwordField matches the names on the form/post request
 module.exports = (passport) => {
 	/* given the user input email/password, query the db for a matching email (unique)
+  we store emails up until the @____, because an @g.ucla.edu = @ucla.edu 
   if there's a matching email, compare the hashed password with user-inputted password
   return the user object if all goes well
   */
@@ -21,29 +22,32 @@ module.exports = (passport) => {
 					db.release();
 					return done(err);
 				}
-				db.query(`SELECT * FROM ${user_table} WHERE email = '${email}'`, (err, user) => {
-					db.release();
-					if (err) {
-						console.log(err.message);
-						return done(err);
-						// return done(null, false, { message: "Error occured, please contact the admin." });
-					} else {
-						// query returns a list of users, but of size 1 because email should be unique
-						if (user.length !== 1) {
-							return done(null, false, {
-								message: "This email is not registered with any account.",
-							});
+				db.query(
+					`SELECT * FROM ${user_table} WHERE email = '${email.split("@", 1)[0]}'`,
+					(err, user) => {
+						db.release();
+						if (err) {
+							console.log(err.message);
+							return done(err.message);
+							// return done(null, false, { message: "Error occured, please contact the admin." });
 						} else {
-							bcrypt.compare(pass, user[0].password, (err, match) => {
-								if (err) return done(err);
-								// throw err;
-								else if (match) {
-									return done(null, user[0]);
-								} else return done(null, false, { message: "The password is incorrect." });
-							});
+							// query returns a list of users, but of size 1 because email should be unique
+							if (user.length !== 1) {
+								return done(null, false, {
+									message: "This email is not registered with any account.",
+								});
+							} else {
+								bcrypt.compare(pass, user[0].password, (err, match) => {
+									if (err) return done(err);
+									// throw err;
+									else if (match) {
+										return done(null, user[0]);
+									} else return done(null, false, { message: "The password is incorrect." });
+								});
+							}
 						}
 					}
-				});
+				);
 			});
 		})
 	);
