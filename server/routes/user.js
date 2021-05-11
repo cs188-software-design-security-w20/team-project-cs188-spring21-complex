@@ -18,7 +18,7 @@ router.get("/logout", (req, res) => {
 	req.session.destroy(() => {
 		// res.clearCookie(req.session.cookie.id);
 		req.session = null;
-		res.json({ success: true, message: "Successfully logged out!" });
+		res.json({ success: true });
 	});
 });
 

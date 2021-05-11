@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Registration.css";
 import { useHistory } from "react-router-dom";
+import { getUser } from "../context/auth";
 
 function Registration() {
 	const [first, setFirst] = useState("");
@@ -44,6 +45,17 @@ function Registration() {
 			})
 			.catch((err) => alert(err));
 	};
+
+	// if already logged in, kick them out
+	useEffect(() => {
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) {
+				history.push("/");
+				alert("You are already logged in.");
+			}
+		});
+	}, []);
 
 	return (
 		<div>

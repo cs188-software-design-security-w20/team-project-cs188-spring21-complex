@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import UserNavbar from "../components/UserNavbar";
+import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
 import { getUser, useUser } from "../context/auth";
 
-var context_count = 0;
+// var context_count = 0;
 
 function UserProfile() {
 	// const user = useUser();
@@ -75,7 +75,7 @@ function UserProfile() {
 
 	return (
 		<div>
-			<UserNavbar />
+			<Navbar />
 			{auth && (
 				<div className="wrapper">
 					<h2 className="profile-heading">Hello, {user.legal_name}</h2>

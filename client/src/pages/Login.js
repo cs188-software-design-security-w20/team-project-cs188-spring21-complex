@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
+import { getUser } from "../context/auth";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -34,6 +35,17 @@ function Login() {
 			})
 			.catch((err) => alert(err));
 	};
+
+	// if already logged in, kick them out
+	useEffect(() => {
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) {
+				history.push("/");
+				alert("You are already logged in.");
+			}
+		});
+	}, []);
 
 	return (
 		<div>
