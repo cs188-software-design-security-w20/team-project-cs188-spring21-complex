@@ -16,7 +16,7 @@ async function generateSecretAndQR() {
     
     return {
         //"secret": secret.base32,
-        "secret": secret,
+        "secret": secret.base32,
         "QRcode": data_url
     }
 }

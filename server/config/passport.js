@@ -1,7 +1,7 @@
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const dbConn = require("../db.js");
-
+const totpAuthenticate = require('../totp-authenticator');
 // ! rename the database table to your local one
 const user_table = "users";
 
@@ -15,7 +15,7 @@ module.exports = (passport) => {
   return the user object if all goes well
   */
 	passport.use(
-		new LocalStrategy({ usernameField: "email", passwordField: "pass" }, (email, pass, done) => {
+		new LocalStrategy({ usernameField: "email", passwordField: "pass", passReqToCallback: true }, (req, email, pass, done) => {
 			dbConn.getConnection((err, db) => {
 				if (err) {
 					console.log("connection failed", err.message);
@@ -41,7 +41,10 @@ module.exports = (passport) => {
 									if (err) return done(err);
 									// throw err;
 									else if (match) {
-										return done(null, user[0]);
+										if(totpAuthenticate.verifyTOTP(user[0].secretKey, req.body.totp)) {
+											return done(null, user[0]);
+										}
+										else return done(null, false, { message: "The time-based code is incorrect." });
 									} else return done(null, false, { message: "The password is incorrect." });
 								});
 							}

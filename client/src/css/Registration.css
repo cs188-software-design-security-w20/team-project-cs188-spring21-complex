@@ -44,6 +44,10 @@ body {
     cursor: pointer;
 }
 
+.center {
+    text-align: center;
+}
+
 input[type="text"] {
     margin-bottom: 10px;
     border-bottom-left-radius: 0;
