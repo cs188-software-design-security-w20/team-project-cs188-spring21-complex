@@ -9,6 +9,7 @@ import { UserContext } from "./context/auth";
 import { useState, useEffect } from "react";
 
 function App() {
+	/*
 	const [user, setUser] = useState({});
 
 	// fetch req.user from server if available, and store in context
@@ -32,17 +33,17 @@ function App() {
 			})
 			.catch((err) => alert(err));
 	}, []);
-
+  */
 	return (
-		<UserContext.Provider value={user}>
-			<div className="App">
-				<Route exact path="/" component={Home} />
-				<Route exact path="/login" component={Login} />
-				<Route exact path="/registration" component={Registration} />
-				<Route exact path="/user-profile" component={UserProfile} />
-				<Route exact path="/newreview" component={ApartmentReview} />
-			</div>
-		</UserContext.Provider>
+		// <UserContext.Provider value={user}>
+		<div className="App">
+			<Route exact path="/" component={Home} />
+			<Route exact path="/login" component={Login} />
+			<Route exact path="/registration" component={Registration} />
+			<Route exact path="/user-profile" component={UserProfile} />
+			<Route exact path="/newreview" component={ApartmentReview} />
+		</div>
+		// </UserContext.Provider>
 	);
 }
 

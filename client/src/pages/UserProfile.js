@@ -3,12 +3,12 @@ import UserNavbar from "../components/UserNavbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
-import { useUser } from "../context/auth";
+import { getUser, useUser } from "../context/auth";
 
 var context_count = 0;
 
 function UserProfile() {
-	const user = useUser();
+	// const user = useUser();
 	let history = useHistory();
 	/*
   const [email, setEmail] = useState("");
@@ -42,6 +42,9 @@ function UserProfile() {
 	// before rendering profile, check user context to see if they're logged in
 	// since app.js takes time to fetch, the context is updated twice, so we need to set a timeout to stay on the page until the context is updated
 	const [auth, setAuth] = useState(false);
+	const [user, setUser] = useState({});
+
+	/*
 	useEffect(() => {
 		setTimeout(() => {
 			context_count++;
@@ -54,7 +57,21 @@ function UserProfile() {
 				}
 			}
 		}, 50);
-	}, [user]);
+  }, [user]);
+  */
+
+	useEffect(() => {
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) {
+				setAuth(true);
+				setUser(obj.user);
+			} else {
+				history.push("/login");
+				alert("You are not logged in.");
+			}
+		});
+	}, []);
 
 	return (
 		<div>
