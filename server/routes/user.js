@@ -12,27 +12,13 @@ const user_table = "users";
 
 // #################################################################################################
 //* GET
-router.get("/login", (req, res) => {
-	res.sendFile(path.join(__dirname, "../html/login.html"));
-});
-
-router.get("/registration", (req, res) => {
-	res.sendFile(path.join(__dirname, "../html/register.html"));
-});
-
-router.get("/profile", checkAuthentication, (req, res) => {
-	console.log("Authorization granted for profile.");
-	res.json({ success: true, user: req.user });
-});
-
-// logout
 router.get("/logout", (req, res) => {
 	req.logout(); // clears req.user
-	req.flash("success", "You've logged out");
+	// req.flash("success", "You've logged out");
 	req.session.destroy(() => {
 		// res.clearCookie(req.session.cookie.id);
 		req.session = null;
-		res.redirect("/");
+		res.json({ success: true, message: "Successfully logged out!" });
 	});
 });
 
@@ -157,17 +143,14 @@ router.post(
 				// SET ? takes the entire info object created above
 				db.query(`INSERT INTO ${user_table} SET ?`, info, (err, result) => {
 					if (err) {
+						// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
 						let issue = err.message;
-						let reg_errors = [];
-						if (issue.search("username") > -1)
-							reg_errors.push({ msg: "The username is already taken." });
-						if (issue.search("'email'") > -1)
-							reg_errors.push({ msg: "This email has already been registered." });
-						if (reg_errors.length == 0) reg_errors = issue;
+						if (issue.search("username") > -1) issue = "The username is already taken.";
+						if (issue.search("'email'") > -1) issue = "This email has already been registered.";
 
-						console.log(issue + "\n", reg_errors);
+						console.log(issue);
 						// req.flash("danger", err.message);
-						res.json({ success: false, message: reg_errors });
+						res.json({ success: false, message: issue });
 						// res.redirect("/user/register");
 					} else {
 						console.log("Successfully registered account:", info);
@@ -185,16 +168,6 @@ router.post(
 		}
 	})
 );
-
-// check that req.user is valid before user accesses some URL
-function checkAuthentication(req, res, next) {
-	// console.log("Checking if user is authenticated", req.sessionID, req.user);
-	if (req.isAuthenticated()) {
-		return next();
-	} else {
-		res.json({ success: false, message: "You are not logged in." });
-	}
-}
 
 // avoids tons of 'try catch' statements for async functions
 function runAsyncWrapper(callback) {

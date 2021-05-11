@@ -108,6 +108,15 @@ app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "index.html"));
 });
 
+app.get("/checkAuthorization", (req, res) => {
+	// console.log("Checking if user is authenticated", req.sessionID, req.user);
+	if (req.isAuthenticated()) {
+		res.json({ user: req.user });
+	} else {
+		res.json({ user: {} });
+	}
+});
+
 // Last route hit, nothing found
 app.use(function (req, res, next) {
 	res.status(404);
