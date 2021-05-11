@@ -141,13 +141,13 @@ router.post(
 			hash = await bcrypt.hash(pass, 14);
 
 			// create new account and store the ENCRYPTED information, only if inputs were valid
+			// we store emails up until the @____, because an @g.ucla.edu = @ucla.edu
 			let info = {
 				legal_name: first + " " + last,
 				username: username,
-				email: email,
+				email: email.split("@", 1)[0], // only store everything up to @
 				password: hash,
 			};
-			console.log(info);
 
 			dbConn.getConnection((err, db) => {
 				if (err) {
@@ -157,12 +157,20 @@ router.post(
 				// SET ? takes the entire info object created above
 				db.query(`INSERT INTO ${user_table} SET ?`, info, (err, result) => {
 					if (err) {
-						console.log(err.message);
+						let issue = err.message;
+						let reg_errors = [];
+						if (issue.search("username") > -1)
+							reg_errors.push({ msg: "The username is already taken." });
+						if (issue.search("'email'") > -1)
+							reg_errors.push({ msg: "This email has already been registered." });
+						if (reg_errors.length == 0) reg_errors = issue;
+
+						console.log(issue + "\n", reg_errors);
 						// req.flash("danger", err.message);
-						res.json({ success: false, message: err.message });
+						res.json({ success: false, message: reg_errors });
 						// res.redirect("/user/register");
 					} else {
-						console.log(result);
+						console.log("Successfully registered account:", info);
 						res.json({ success: true, message: "Account created." });
 						// req.flash("success", "Account created");
 					}
