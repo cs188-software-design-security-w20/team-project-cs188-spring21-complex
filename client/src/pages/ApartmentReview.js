@@ -53,6 +53,8 @@ function ApartmentReview() {
         } else {
             alert(response.message)
         }
+    }
+    
     const isDisabled = () => {
         return !recaptcha;
     }

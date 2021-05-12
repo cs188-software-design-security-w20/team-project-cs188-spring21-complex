@@ -15,13 +15,9 @@
     "express-validator": "^6.10.1",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",
-<<<<<<< HEAD
     "passport-local": "^1.0.0",
     "qrcode": "^1.4.4",
     "speakeasy": "^2.0.0"
-=======
-    "passport-local": "^1.0.0"
->>>>>>> ac94658... Merge front-end and back-end changes
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
