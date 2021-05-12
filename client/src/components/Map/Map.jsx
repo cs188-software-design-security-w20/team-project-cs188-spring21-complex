@@ -5,7 +5,11 @@ import HomeIcon from '@material-ui/icons/Home';
 
 import './Map.css';
 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
+const AptButton = props => <Link to={"/apartment/" + props.id}
+                                lat={props.loc[0]}
+                                lng={props.loc[1]}>
+                                    <HomeIcon />
+                                </Link>;
 const MAP_OPTIONS = {
     restriction: {
         latLngBounds: {north: 34.0876, south: 34.0225, east: -118.3787, west: -118.5109},
@@ -23,11 +27,7 @@ const Map = (props) => {
           defaultZoom={props.zoom}
           options={MAP_OPTIONS}
         >
-            <Link to="/apartment"
-            lat={34.0617}
-            lng={-118.4441}>
-                <HomeIcon />
-            </Link>
+            <AptButton id={1} loc={[34.0617, -118.4441]} />
         </GoogleMapReact>
       </div>
     )

@@ -60,7 +60,7 @@ function Navbar() {
 
 			<div className="right-side">
 				<div className="links" id={showLinks ? "hidden" : ""}>
-					<a href="/post-review">Post Review</a>
+					<a href="/newreview">Post Review</a>
 					{!auth && <a href="/login">Login | Sign Up</a>}
 					{auth && (
 						<React.Fragment>

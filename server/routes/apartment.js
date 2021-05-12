@@ -36,6 +36,25 @@ router.get("/", function (req, res) {
 	// res.send('success');
 });
 
+// url/apartment/list
+router.get("/list", function (req, res) {
+	dbConn.getConnection((err, db) => {
+		if (err) {
+			console.log("connection failed", err);
+			res.send(err);
+			return;
+		}
+		db.query(`SELECT apt_id, apt_name, address, lower_price from ${apt_table}`, (err, rows) => {
+			if (err) {
+				res.send("ERROR");
+			} else {
+				res.send(rows);
+			}
+		});
+		db.release(); // remember to release the connection when you're done
+	});
+});
+
 // url/apartment/{id}
 router.get("/:id", function (req, res) {
 	res.sendFile(path.join(__dirname, "../html/apartment.html"));
