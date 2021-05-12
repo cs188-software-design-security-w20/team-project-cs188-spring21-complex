@@ -5,6 +5,7 @@ import ReorderIcon from "@material-ui/icons/Reorder";
 import SearchIcon from "@material-ui/icons/Search";
 import { getUser } from "../context/auth";
 import { useHistory } from "react-router-dom";
+import { domain } from "../routes";
 
 function Navbar() {
 	const [showLinks, setShowLinks] = useState(false);
@@ -15,7 +16,7 @@ function Navbar() {
 		// only send logout request if they're logged in / authenticated
 		if (auth) {
 			e.preventDefault();
-			fetch("http://localhost:3000/user/logout", {
+			fetch(`${domain}/user/logout`, {
 				method: "GET",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",

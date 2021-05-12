@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import { domain } from "../routes"
 
 export const UserContext = createContext({});
 
@@ -19,7 +20,7 @@ export async function getUser() {
 
 	// fetch req.user from server if available, and store in context
 	try {
-		const response = await fetch("http://localhost:3000/checkAuthorization", {
+		const response = await fetch(`${domain}/checkAuthorization`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
