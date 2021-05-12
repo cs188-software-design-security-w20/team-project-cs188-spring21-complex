@@ -4,10 +4,12 @@ import "../css/Navbar.css";
 import ReorderIcon from "@material-ui/icons/Reorder";
 import SearchIcon from "@material-ui/icons/Search";
 import { getUser } from "../context/auth";
+import { useHistory } from "react-router-dom";
 
 function Navbar() {
 	const [showLinks, setShowLinks] = useState(false);
 	const [auth, setAuth] = useState(false);
+	let history = useHistory();
 
 	const logout = (e) => {
 		// only send logout request if they're logged in / authenticated
@@ -24,6 +26,7 @@ function Navbar() {
 					console.log(response);
 
 					if (response.success) {
+						history.push("/");
 						setAuth(false);
 						alert("Successfully logged out!");
 					}
@@ -56,7 +59,7 @@ function Navbar() {
 			<div className="right-side">
 				<div className="links" id={showLinks ? "hidden" : ""}>
 					<a href="/post-review">Post Review</a>
-					<a href="/login">Login | Sign Up</a>
+					{!auth && <a href="/login">Login | Sign Up</a>}
 					{auth && (
 						<React.Fragment>
 							<a href="/user-profile">Profile</a>

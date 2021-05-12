@@ -11,7 +11,7 @@ const fileupload = require("express-fileupload");
 app.use(
 	require("cors")({
 		credentials: true,
-		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+		methods: ["POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD"],
 		origin: "http://localhost:4200",
 	})
 );

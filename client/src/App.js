@@ -5,35 +5,10 @@ import Registration from "./pages/Registration";
 import UserProfile from "./pages/UserProfile";
 import ApartmentReview from "./pages/ApartmentReview";
 import { Route } from "react-router-dom";
-import { UserContext } from "./context/auth";
-import { useState, useEffect } from "react";
+// import { UserContext } from "./context/auth";
+// import { useState, useEffect } from "react";
 
 function App() {
-	/*
-	const [user, setUser] = useState({});
-
-	// fetch req.user from server if available, and store in context
-	useEffect(() => {
-		fetch("http://localhost:3000/checkAuthorization", {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-		})
-			.then((response) => response.json())
-			.then((response) => {
-				var d = new Date();
-				console.log(
-					"App.js fetch user at ",
-					d.getSeconds(),
-					d.getMilliseconds(),
-					response.user,
-					Object.keys(response.user).length
-				);
-				setUser(response.user);
-			})
-			.catch((err) => alert(err));
-	}, []);
-  */
 	return (
 		// <UserContext.Provider value={user}>
 		<div className="App">

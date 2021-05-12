@@ -3,62 +3,33 @@ import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
-import { getUser, useUser } from "../context/auth";
-
-// var context_count = 0;
+import { getUser } from "../context/auth";
 
 function UserProfile() {
-	// const user = useUser();
 	let history = useHistory();
-	/*
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
 
-  const submitLogin = (e) => {
-    e.preventDefault();
-    fetch("http://localhost:3000/user/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email, pass: pass }),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        // server says correctly authenticated. so redirect to the main page
-        console.log(response);
-
-        if (response.success) {
-          history.push("/");
-          alert("Successfully logged in!");
-        } else {
-          // message can be an array (if input errors) or string (if database errors)
-          if (Array.isArray(response.message))
-            alert(response.message.reduce((acc, m) => acc + "\n" + m.msg, ""));
-          else alert(response.message);
-        }
-      })
-      .catch((err) => alert(err));
-  };
-  */
 	// before rendering profile, check user context to see if they're logged in
-	// since app.js takes time to fetch, the context is updated twice, so we need to set a timeout to stay on the page until the context is updated
 	const [auth, setAuth] = useState(false);
 	const [user, setUser] = useState({});
 
-	/*
-	useEffect(() => {
-		setTimeout(() => {
-			context_count++;
-			if (Object.keys(user).length > 0) {
-				setAuth(true);
-			} else {
-				if (context_count === 2) {
-					history.push("/login");
-					alert("You are not logged in.");
-				}
-			}
-		}, 50);
-  }, [user]);
-  */
+	const delete_account = (e) => {
+		// only make delete request if they're logged in / authenticated
+		if (auth) {
+			e.preventDefault();
+			fetch("http://localhost:3000/user/delete/" + user.user_id, {
+				method: "DELETE",
+				credentials: "include",
+			})
+				.then((response) => response.json())
+				.then((response) => {
+					// server says correctly authenticated. so redirect to the main page
+					console.log(response);
+					history.push("/");
+					alert("Your account has been erased from existence.");
+				})
+				.catch((err) => alert(err));
+		} else alert("You're not logged in.");
+	};
 
 	useEffect(() => {
 		getUser().then((obj) => {
@@ -95,6 +66,7 @@ function UserProfile() {
 						required=""
 						autofocus=""
 					/>
+					<button onClick={delete_account}>Delete Account</button>
 				</div>
 			)}
 		</div>

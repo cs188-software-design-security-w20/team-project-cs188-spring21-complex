@@ -122,5 +122,5 @@ npm run dev
 * Hiding features from users who aren't logged in
   * Link to their profile, logout, post review, upvote/downvote, upload images
 * Connect get/post requests to the correct route for react pages
-* Editing user profile information
+* Preventing consecutive login > login, login > registration
 * Deleting user account

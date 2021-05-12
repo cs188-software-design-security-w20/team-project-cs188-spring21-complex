@@ -13,12 +13,36 @@ const user_table = "users";
 // #################################################################################################
 //* GET
 router.get("/logout", (req, res) => {
-	req.logout(); // clears req.user
-	// req.flash("success", "You've logged out");
-	req.session.destroy(() => {
-		// res.clearCookie(req.session.cookie.id);
-		req.session = null;
+	killSession(req, res, (res) => {
 		res.json({ success: true });
+	});
+});
+// #################################################################################################
+//* DELETE
+
+router.delete("/delete/:id", (req, res) => {
+	dbConn.getConnection((err, db) => {
+		if (err) {
+			console.log("connection failed", err.message);
+			res.json({ success: false, message: err.message });
+		}
+		db.query(`DELETE FROM ${user_table} WHERE user_id = ${req.params.id}`, (err, result) => {
+			if (err) {
+				// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
+				let issue = err.message;
+				console.log(issue);
+				// req.flash("danger", err.message);
+				res.json({ success: false, message: issue });
+				// res.redirect("/user/register");
+			} else {
+				console.log("Successfully deleted user id:", req.params.id);
+				killSession(req, res, (res) => {
+					res.json({ success: true });
+				});
+				// req.flash("success", "Account created");
+			}
+		});
+		db.release(); // remember to release the connection when you're done
 	});
 });
 
@@ -186,5 +210,14 @@ function runAsyncWrapper(callback) {
 			next(err);
 		}
 	};
+}
+
+function killSession(req, res, callback) {
+	req.logout(); // clears req.user
+	req.session.destroy(() => {
+		// res.clearCookie(req.session.cookie.id);
+		req.session = null;
+		callback(res);
+	});
 }
 module.exports = router;
