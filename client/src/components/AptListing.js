@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/AptListing.css'
 
 import aptImage from '../assets/westwood_executive_apt.jpg';

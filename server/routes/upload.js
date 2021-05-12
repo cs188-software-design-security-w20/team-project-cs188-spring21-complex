@@ -65,4 +65,4 @@ router.post("/", validate_image, async function(req, res, next) {
 	}
 });
 
-module.exports = router;
+exports.route = router;
