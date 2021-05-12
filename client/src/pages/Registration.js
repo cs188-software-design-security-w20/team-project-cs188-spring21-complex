@@ -62,7 +62,7 @@ function Registration() {
 				console.log(response);
 
 				if (response.success) {
-					history.push("/login");
+					history.push("/verifyEmail");
 					alert("You've successfully registered!");
 				} else {
 					// message can be an array (if input errors) or string (if database errors)

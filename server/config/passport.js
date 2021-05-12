@@ -42,7 +42,10 @@ module.exports = (passport) => {
 									// throw err;
 									else if (match) {
 										if(totpAuthenticate.verifyTOTP(user[0].secretKey, req.body.totp)) {
-											return done(null, user[0]);
+											if (user[0].verified) {
+												return done(null, user[0]);
+											}
+											else return done(null, false, { message: "User email is not verified, can't login." });
 										}
 										else return done(null, false, { message: "The time-based code is incorrect." });
 									} else return done(null, false, { message: "The password is incorrect." });

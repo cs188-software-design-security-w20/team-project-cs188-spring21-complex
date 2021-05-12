@@ -8,8 +8,12 @@ const passport = require("passport");
 const { session } = require("passport");
 const authenticator = require("../totp-authenticator");
 const getCsrfToken = require('../csrf.js').getCsrfToken
+const mailer = require('../mailer.js');
+const jwt = require('jwt-simple');
+require("dotenv").config({ path: __dirname + "/.env" });
 // ! rename the database table to your local one
 const user_table = "users";
+const {serverDomain,domain} = require('../routes.js')
 
 // #################################################################################################
 //* POST
@@ -25,6 +29,65 @@ router.post("/logout", (req, res) => {
 
 router.get("/QRCode", async (req, res) => {
 	res.json(await authenticator.generateSecretAndQR());
+});
+
+router.get("/test", (req,res) => {
+	console.log(domain);
+	// res.redirect(`${domain}/login`);
+	res.status(404).send("404: Not Found");
+});
+
+router.get('/verifyEmail/:token', (req, res) => {
+	var token = req.params['token'];
+	var info = jwt.decode(token, process.env.JWT_SECRET);
+	console.log(info);
+	dbConn.getConnection((err, db) => {
+	if (err) {
+		console.log("connection failed", err.message);
+		res.json({ success: false, message: err.message });
+	}
+	else {
+		db.query(
+			`SELECT * FROM ${user_table} WHERE username = '${info['user']}'`,
+			(err, user) => {
+				if (err) {
+					db.release();
+					console.log(err.message);
+					res.send(err);
+					// return done(null, false, { message: "Error occured, please contact the admin." });
+				} else {
+					// query returns a list of users, but of size 1 because username should be unique
+					if (user.length !== 1) {
+						db.release();
+						res.json({success: false, message: "Invalid URL"});
+						
+					} else {
+						if (user[0].verified == false) {
+							db.query (
+								`UPDATE ${user_table} SET verified = true WHERE username = '${info['user']}'`,
+								(error,user) => {
+									db.release();
+									if (error) {
+										console.log(error);
+										res.json({success: true, message: error});
+									}
+									else {
+										console.log("Account verified!");
+										res.redirect(`${domain}/login`);
+									}
+								}
+							);
+						}
+						else {
+							console.log("Already verified");
+							res.send("Account already verified");
+						}
+					}
+				}
+			}
+		);
+	}
+});
 });
 
 // #################################################################################################
@@ -167,9 +230,9 @@ router.post(
 	"/registration",
 	validate_registration,
 	runAsyncWrapper(async (req, res, next) => {
-        if (req.body.csrfToken !== getCsrfToken(req)) {
-            return res.json({ success: false, message: "Invalid CSRF Token"})
-        }
+        // if (req.body.csrfToken !== getCsrfToken(req)) {
+        //     return res.json({ success: false, message: "Invalid CSRF Token"})
+        // }
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
 			({ email, first, last, username, pass, secretKey, totp } = req.body);
@@ -209,6 +272,10 @@ router.post(
 						res.json({ success: false, message: issue });
 						// res.redirect("/user/register");
 					} else {
+						let emailHash = mailer.createVerificationHash(username);
+						let URL = `${serverDomain}/user/verifyEmail/${emailHash}`;
+						mailer.sendEmail(email,URL);
+
 						console.log("Successfully registered account:", info);
 						res.json({ success: true, message: "Account created." });
 						// req.flash("success", "Account created");

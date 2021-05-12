@@ -7,6 +7,7 @@ import ApartmentReview from "./pages/ApartmentReview";
 import { Route } from "react-router-dom";
 import ApartmentListing from "./pages/ApartmentListing";
 import Navbar from './components/Navbar';
+import VerifyEmail from "./pages/verifyEmail";
 
 function App() {
 	return (
@@ -18,6 +19,7 @@ function App() {
 			<Route exact path="/user-profile" component={UserProfile} />
 			<Route path="/apartment/:id" component={ApartmentListing} />
 			<Route exact path="/newreview" component={ApartmentReview} />
+			<Route exact path="/verifyEmail" component={VerifyEmail} />
 		</div>
 	);
 }
