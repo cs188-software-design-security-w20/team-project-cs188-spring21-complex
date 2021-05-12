@@ -26,7 +26,7 @@ function ApartmentListing(props) {
         .then(response => {
             // [apartment reviews]
             console.log(response);
-            if (response.length == 0) {
+            if (response.length === 0) {
                 setNoReviews(true);
                 return;
             }
@@ -86,9 +86,12 @@ function ApartmentListing(props) {
 
                     <div className='ratings'>
                         <AptListingRatings ratings={Ratings} />  
-                    </div>     
-
-                    {reviewJSX}                               
+                    </div>                                                    
+                </div>
+                <div className='info-columns'>
+                    <div className='reviews'>
+                        {reviewJSX}  
+                    </div>
                 </div>
             </div>
         </div>

@@ -75,9 +75,7 @@ function Registration() {
 	};
 
 	return (
-		<div>
-			<Navbar />
-
+		<div>			
 			<div className="wrapper">
 				<div className="form-register">
 					<h2>Two Factor Authentication</h2>
