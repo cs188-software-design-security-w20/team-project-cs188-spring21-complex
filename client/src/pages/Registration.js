@@ -15,10 +15,6 @@ function Registration() {
 	const [secretKey, setSecretKey] = useState("");
 	const [totp, setTotp] = useState("");
 	let history = useHistory();
-	// const tfa = fetch("http://localhost:3000/user/QRCode", { headers : {
-	// 	'Content-Type': 'application/json',
-	// 	'Accept': 'application/json'
-	// 	}});
 
 	useEffect(() => {
 		fetch("http://localhost:3000/user/QRCode", {
@@ -31,6 +27,15 @@ function Registration() {
 				//Store the secret key and URL image
 				setSecretKey(response);
 			});
+
+		// if already logged in, kick them out
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) {
+				history.push("/");
+				alert("You are already logged in.");
+			}
+		});
 	}, []);
 
 	const submitRegistration = (e) => {
@@ -67,30 +72,17 @@ function Registration() {
 			.catch((err) => alert(err));
 	};
 
-	// if already logged in, kick them out
-	useEffect(() => {
-		getUser().then((obj) => {
-			console.log(obj);
-			if (Object.keys(obj.user).length > 0) {
-				history.push("/");
-				alert("You are already logged in.");
-			}
-		});
-	}, []);
-
 	return (
 		<div>
 			<Navbar />
 
 			<div className="wrapper">
 				<div className="form-register">
-					<h2>Two factor Authentication</h2>
+					<h2>Two Factor Authentication</h2>
 					<p>
-						When creating your account, you must use 2-factor authentication using the Google
-						Authenticator App. Please download the app and use the QR code below, or enter the
-						secret key manually, to register your account on Google Authenticator. Once
-						authenticated, please add the time-based code in the form below to verify you registered
-						with Google Authenticator.
+						To create your account, you must first download the Google Authenticator App. Then, scan
+						the QR code or enter the secret key manually. Once authenticated, please type in the
+						time-based code below to verify that you've registered with Google Authenticator.
 					</p>
 					<div className="center">
 						{secretKey && <img src={secretKey["QRcode"]}></img>}
@@ -156,7 +148,7 @@ function Registration() {
 						type="text"
 						className="form-control"
 						name="totp"
-						placeholder="Enter Google Authenticator Code"
+						placeholder="Google Authenticator Code"
 						required=""
 						onChange={(e) => setTotp(e.target.value)}
 					/>

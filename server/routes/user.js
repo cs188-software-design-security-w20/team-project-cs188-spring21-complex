@@ -113,12 +113,13 @@ validate_registration = [
 		.trim()
 		.escape(),
 	validator
-		.check("email", "This email is not registered with UCLA.")
+		.check("email")
 		.isEmail()
 		.trim()
 		.escape()
 		.normalizeEmail()
-		.matches("(@(g.)?ucla.edu){1}$"),
+		.matches("(@(g.)?ucla.edu){1}$")
+		.withMessage("This email is not registered with UCLA."),
 	validator
 		.check("username", "Username must be 3-15 characters.")
 		.isLength({ min: 3, max: 15 })
@@ -145,9 +146,11 @@ validate_registration = [
 			}
 		}),
 	validator
-		.check("totp", "Invalid Google Authenticator Code")
+		.check("totp")
 		.isLength({ min: 6, max: 6 })
+		.withMessage("The code should be 6 characters long.")
 		.isNumeric()
+		.withMessage("The code should be 6 digits.")
 		.trim()
 		.escape(),
 ];
