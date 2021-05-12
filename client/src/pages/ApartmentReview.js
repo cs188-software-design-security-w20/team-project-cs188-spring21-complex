@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { domain } from "../routes";
 
 function ApartmentReview() {
 
@@ -7,7 +8,22 @@ function ApartmentReview() {
     const postReview = (e) => {
         e.preventDefault();
         console.log(review);
-        fetch('http://localhost:3000/apartment/review/1', {
+        fetch(`${domain}/apartment/review/1`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(review)
+        })
+        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+        })
+        .catch(err => alert(err));
+    }
+
+    const uploadImage = (e) => {
+        e.preventDefault();
+        console.log(review);
+        fetch(`${domain}/apartment/review/1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(review)

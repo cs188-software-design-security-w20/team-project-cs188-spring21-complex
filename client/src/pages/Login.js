@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
+import { domain } from "../routes";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -11,7 +12,7 @@ function Login() {
 
 	const submitLogin = (e) => {
 		e.preventDefault();
-		fetch("http://localhost:3000/user/login", {
+		fetch(`${domain}/user/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ email: email, pass: pass }),

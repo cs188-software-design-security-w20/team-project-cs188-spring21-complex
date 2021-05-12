@@ -7,12 +7,12 @@ const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
-// const csurf = require("csurf");
+
 app.use(
 	require("cors")({
 		credentials: true,
 		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-		origin: "http://localhost:4200",
+		origin: "http://10.0.10.2:4200",
 	})
 );
 
@@ -67,7 +67,6 @@ app.use(function(req,res,next){
 })
 */
 
-// app.use(csurf());
 // express flash
 app.use(flash());
 

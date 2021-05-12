@@ -3,6 +3,7 @@ import UserNavbar from "../components/UserNavbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
+import { domain } from "../routes";
 
 function UserProfile() {
 	let history = useHistory();
@@ -12,7 +13,7 @@ function UserProfile() {
 
 	const submitLogin = (e) => {
 		e.preventDefault();
-		fetch("http://localhost:3000/user/login", {
+		fetch(`${domain}/user/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ email: email, pass: pass }),
@@ -39,7 +40,7 @@ function UserProfile() {
 	const [user, setUser] = useState({});
 	const [auth, setAuth] = useState(false);
 	useEffect(() => {
-		fetch("http://localhost:3000/user/profile", {
+		fetch(`${domain}/user/profile`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",

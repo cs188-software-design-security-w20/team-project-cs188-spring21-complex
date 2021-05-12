@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Registration.css";
 import { useHistory } from "react-router-dom";
+import { domain } from "../routes";
 
 function Registration() {
 	const [first, setFirst] = useState("");
@@ -15,7 +16,7 @@ function Registration() {
 
 	const submitRegistration = (e) => {
 		e.preventDefault();
-		fetch("http://localhost:3000/user/registration", {
+		fetch(`${domain}/user/registration`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
