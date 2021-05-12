@@ -230,9 +230,7 @@ router.post(
 	"/registration",
 	validate_registration,
 	runAsyncWrapper(async (req, res, next) => {
-        // if (req.body.csrfToken !== getCsrfToken(req)) {
-        //     return res.json({ success: false, message: "Invalid CSRF Token"})
-        // }
+        
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
 			({ email, first, last, username, pass, secretKey, totp } = req.body);
