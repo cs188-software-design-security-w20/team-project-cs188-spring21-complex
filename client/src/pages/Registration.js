@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Registration.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
+import { getUser } from "../context/auth";
 
 function Registration() {
 	const [first, setFirst] = useState("");
@@ -12,7 +13,31 @@ function Registration() {
 	const [username, setUsername] = useState("");
 	const [pass, setPass] = useState("");
 	const [confirm, setConfirm] = useState("");
+	const [secretKey, setSecretKey] = useState("");
+	const [totp, setTotp] = useState("");
 	let history = useHistory();
+
+	useEffect(() => {
+		fetch(`${domain}/user/QRCode`, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+		})
+			.then((response) => response.json())
+			.then((response) => {
+				//Store the secret key and URL image
+				setSecretKey(response);
+			});
+
+		// if already logged in, kick them out
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) {
+				history.push("/");
+				alert("You are already logged in.");
+			}
+		});
+	}, []);
 
 	const submitRegistration = (e) => {
 		e.preventDefault();
@@ -26,6 +51,8 @@ function Registration() {
 				email: email,
 				pass: pass,
 				confirm: confirm,
+				secretKey: secretKey["secret"],
+				totp: totp,
 			}),
 		})
 			.then((response) => response.json())
@@ -51,6 +78,19 @@ function Registration() {
 			<Navbar />
 
 			<div className="wrapper">
+				<div className="form-register">
+					<h2>Two Factor Authentication</h2>
+					<p>
+						To create your account, you must first download the Google Authenticator App. Then, scan
+						the QR code or enter the secret key manually. Once authenticated, please type in the
+						time-based code below to verify that you've registered with Google Authenticator.
+					</p>
+					<div className="center">
+						{secretKey && <img src={secretKey["QRcode"]}></img>}
+						<p>Secret Key: {secretKey["secret"]}</p>
+					</div>
+				</div>
+
 				<form className="form-register" onSubmit={submitRegistration}>
 					<h2 className="form-register-heading">Create Account</h2>
 					<input
@@ -105,6 +145,15 @@ function Registration() {
 						required=""
 						onChange={(e) => setConfirm(e.target.value)}
 					/>
+					<input
+						type="text"
+						className="form-control"
+						name="totp"
+						placeholder="Google Authenticator Code"
+						required=""
+						onChange={(e) => setTotp(e.target.value)}
+					/>
+
 					<button className="registerButton" type="submit">
 						Register
 					</button>

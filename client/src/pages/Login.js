@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
+import { getUser } from "../context/auth";
 
 function Login() {
 	const [email, setEmail] = useState("");
 	const [pass, setPass] = useState("");
+	const [totp, setTotp] = useState("");
 	let history = useHistory();
 
 	const submitLogin = (e) => {
@@ -15,22 +17,12 @@ function Login() {
 		fetch(`${domain}/user/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ email: email, pass: pass }),
+			body: JSON.stringify({ email: email, pass: pass, totp: totp }),
 			credentials: "include",
 		})
 			.then((response) => response.json())
 			.then((response) => {
 				// server says correctly authenticated. so redirect to the main page
-				console.log(response);
-
-				/*
-        let cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)username\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-        function getCookie(key) {
-          var b = document.cookie.match("(^|;)\\s*" + key + "\\s*=\\s*([^;]+)");
-          return b ? b.pop() : "";
-        }
-        */
 
 				if (response.success) {
 					history.push("/");
@@ -44,6 +36,17 @@ function Login() {
 			})
 			.catch((err) => alert(err));
 	};
+
+	// if already logged in, kick them out
+	useEffect(() => {
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) {
+				history.push("/");
+				alert("You are already logged in.");
+			}
+		});
+	}, []);
 
 	return (
 		<div>
@@ -68,6 +71,14 @@ function Login() {
 						placeholder="Password"
 						required=""
 						onChange={(e) => setPass(e.target.value)}
+					/>
+					<input
+						type="text"
+						className="form-control"
+						name="totp"
+						placeholder="Google Authenticator Code"
+						required=""
+						onChange={(e) => setTotp(e.target.value)}
 					/>
 					<div className="bottom-wrapper">
 						<button className="loginButton" type="submit">

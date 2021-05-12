@@ -1,70 +1,53 @@
 import React, { useState, useEffect } from "react";
-import UserNavbar from "../components/UserNavbar";
+import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
+import { getUser } from "../context/auth";
 
 function UserProfile() {
 	let history = useHistory();
-	/*
-	const [email, setEmail] = useState("");
-	const [pass, setPass] = useState("");
 
-	const submitLogin = (e) => {
-		e.preventDefault();
-		fetch(`${domain}/user/login`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ email: email, pass: pass }),
-		})
-			.then((response) => response.json())
-			.then((response) => {
-				// server says correctly authenticated. so redirect to the main page
-				console.log(response);
-
-				if (response.success) {
-					history.push("/");
-					alert("Successfully logged in!");
-				} else {
-					// message can be an array (if input errors) or string (if database errors)
-					if (Array.isArray(response.message))
-						alert(response.message.reduce((acc, m) => acc + "\n" + m.msg, ""));
-					else alert(response.message);
-				}
-			})
-			.catch((err) => alert(err));
-	};
-  */
-	// before rendering profile, make server request to see if authenticated, and grab user info
-	const [user, setUser] = useState({});
+	// before rendering profile, check user context to see if they're logged in
 	const [auth, setAuth] = useState(false);
-	useEffect(() => {
-		fetch(`${domain}/user/profile`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-		})
-			.then((response) => response.json())
-			.then((response) => {
-				console.log(response);
+	const [user, setUser] = useState({});
 
-				// user is authenticated, so display their information
-				if (response.success) {
-					setUser(response.user);
-					setAuth(true);
-				} else {
-					// user is not authenticated, so redirect to the login page
-					history.push("/login");
-					alert(response.message);
-				}
+	const delete_account = (e) => {
+		// only make delete request if they're logged in / authenticated
+		if (auth) {
+			e.preventDefault();
+			fetch(`${domain}/user/delete/` + user.user_id, {
+				method: "DELETE",
+				credentials: "include",
 			})
-			.catch((err) => alert(err));
+				.then((response) => response.json())
+				.then((response) => {
+					// server says correctly authenticated. so redirect to the main page
+					console.log(response);
+					history.push("/");
+					alert("Your account has been erased from existence.");
+				})
+				.catch((err) => alert(err));
+		} else alert("You're not logged in.");
+	};
+
+	useEffect(() => {
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) {
+				setAuth(true);
+				setUser(obj.user);
+			} else {
+				history.push("/login");
+				alert("You are not logged in.");
+			}
+		});
 	}, []);
 
 	return (
 		<div>
-			<UserNavbar />
+			<Navbar />
 			{auth && (
 				<div className="wrapper">
 					<h2 className="profile-heading">Hello, {user.legal_name}</h2>
@@ -80,10 +63,11 @@ function UserProfile() {
 						type="text"
 						className="form-control"
 						name="email"
-						placeholder={user.email}
+						placeholder={user.email + "@g.ucla.edu"}
 						required=""
 						autofocus=""
 					/>
+					<button onClick={delete_account}>Delete Account</button>
 				</div>
 			)}
 		</div>

@@ -6,33 +6,48 @@ const validator = require("express-validator");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const { session } = require("passport");
-
+const authenticator = require("../totp-authenticator");
 // ! rename the database table to your local one
 const user_table = "users";
 
 // #################################################################################################
 //* GET
-router.get("/login", (req, res) => {
-	res.sendFile(path.join(__dirname, "../html/login.html"));
-});
-
-router.get("/registration", (req, res) => {
-	res.sendFile(path.join(__dirname, "../html/register.html"));
-});
-
-router.get("/profile", checkAuthentication, (req, res) => {
-	console.log("Authorization granted for profile.");
-	res.json({ success: true, user: req.user });
-});
-
-// logout
 router.get("/logout", (req, res) => {
-	req.logout(); // clears req.user
-	req.flash("success", "You've logged out");
-	req.session.destroy(() => {
-		// res.clearCookie(req.session.cookie.id);
-		req.session = null;
-		res.redirect("/");
+	killSession(req, res, (res) => {
+		res.json({ success: true });
+	});
+});
+
+router.get("/QRCode", async (req, res) => {
+	res.json(await authenticator.generateSecretAndQR());
+});
+
+// #################################################################################################
+//* DELETE
+
+router.delete("/delete/:id", (req, res) => {
+	dbConn.getConnection((err, db) => {
+		if (err) {
+			console.log("connection failed", err.message);
+			res.json({ success: false, message: err.message });
+		}
+		db.query(`DELETE FROM ${user_table} WHERE user_id = ${req.params.id}`, (err, result) => {
+			if (err) {
+				// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
+				let issue = err.message;
+				console.log(issue);
+				// req.flash("danger", err.message);
+				res.json({ success: false, message: issue });
+				// res.redirect("/user/register");
+			} else {
+				console.log("Successfully deleted user id:", req.params.id);
+				killSession(req, res, (res) => {
+					res.json({ success: true });
+				});
+				// req.flash("success", "Account created");
+			}
+		});
+		db.release(); // remember to release the connection when you're done
 	});
 });
 
@@ -58,6 +73,7 @@ validate_login = [
 		.withMessage("Password must contain an uppercase letter.")
 		.trim()
 		.escape(),
+	validator.check("totp", "Invalid Google Authenticator Code").isNumeric().trim().escape(),
 ];
 
 router.post("/login", validate_login, (req, res, next) => {
@@ -97,12 +113,13 @@ validate_registration = [
 		.trim()
 		.escape(),
 	validator
-		.check("email", "This email is not registered with UCLA.")
+		.check("email")
 		.isEmail()
 		.trim()
 		.escape()
 		.normalizeEmail()
-		.matches("(@(g.)?ucla.edu){1}$"),
+		.matches("(@(g.)?ucla.edu){1}$")
+		.withMessage("This email is not registered with UCLA."),
 	validator
 		.check("username", "Username must be 3-15 characters.")
 		.isLength({ min: 3, max: 15 })
@@ -128,6 +145,14 @@ validate_registration = [
 				return value;
 			}
 		}),
+	validator
+		.check("totp")
+		.isLength({ min: 6, max: 6 })
+		.withMessage("The code should be 6 characters long.")
+		.isNumeric()
+		.withMessage("The code should be 6 digits.")
+		.trim()
+		.escape(),
 ];
 
 router.post(
@@ -136,19 +161,26 @@ router.post(
 	runAsyncWrapper(async (req, res, next) => {
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
-			({ email, first, last, username, pass } = req.body);
+			({ email, first, last, username, pass, secretKey, totp } = req.body);
 
 			hash = await bcrypt.hash(pass, 14);
 
 			// create new account and store the ENCRYPTED information, only if inputs were valid
+			// we store emails up until the @____, because an @g.ucla.edu = @ucla.edu
 			let info = {
 				legal_name: first + " " + last,
 				username: username,
-				email: email,
+				email: email.split("@", 1)[0], // only store everything up to @
 				password: hash,
+				secretKey: secretKey,
 			};
-			console.log(info);
 
+			if (!authenticator.verifyTOTP(secretKey, totp)) {
+				res.send({ success: false, message: "Invalid Authentication Code." });
+				return;
+			}
+
+			console.log(secretKey);
 			dbConn.getConnection((err, db) => {
 				if (err) {
 					console.log("connection failed", err.message);
@@ -157,12 +189,17 @@ router.post(
 				// SET ? takes the entire info object created above
 				db.query(`INSERT INTO ${user_table} SET ?`, info, (err, result) => {
 					if (err) {
-						console.log(err.message);
+						// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
+						let issue = err.message;
+						if (issue.search("username") > -1) issue = "The username is already taken.";
+						if (issue.search("'email'") > -1) issue = "This email has already been registered.";
+
+						console.log(issue);
 						// req.flash("danger", err.message);
-						res.json({ success: false, message: err.message });
+						res.json({ success: false, message: issue });
 						// res.redirect("/user/register");
 					} else {
-						console.log(result);
+						console.log("Successfully registered account:", info);
 						res.json({ success: true, message: "Account created." });
 						// req.flash("success", "Account created");
 					}
@@ -177,16 +214,6 @@ router.post(
 		}
 	})
 );
-
-// check that req.user is valid before user accesses some URL
-function checkAuthentication(req, res, next) {
-	// console.log("Checking if user is authenticated", req.sessionID, req.user);
-	if (req.isAuthenticated()) {
-		return next();
-	} else {
-		res.json({ success: false, message: "You are not logged in." });
-	}
-}
 
 // avoids tons of 'try catch' statements for async functions
 function runAsyncWrapper(callback) {
@@ -205,5 +232,14 @@ function runAsyncWrapper(callback) {
 			next(err);
 		}
 	};
+}
+
+function killSession(req, res, callback) {
+	req.logout(); // clears req.user
+	req.session.destroy(() => {
+		// res.clearCookie(req.session.cookie.id);
+		req.session = null;
+		callback(res);
+	});
 }
 module.exports = router;

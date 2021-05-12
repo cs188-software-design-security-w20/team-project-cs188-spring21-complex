@@ -11,8 +11,8 @@ const fileupload = require("express-fileupload");
 app.use(
 	require("cors")({
 		credentials: true,
-		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-		origin: "http://10.0.10.2:4200",
+		methods: ["POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD"],
+		origin: "http://localhost:4200",
 	})
 );
 
@@ -37,9 +37,9 @@ app.use(
 		resave: true,
 		saveUninitialized: false, // only store sessions when they've been modified
 		cookie: {
-			maxAge: 15 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
-			// httpOnly: true, // prevents browser js from reading cookie session data
-			// sameSite: "strict",
+			maxAge: 3 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
+			httpOnly: true, // prevents browser js from reading cookie session data
+			sameSite: "strict",
 			// domain: '.our-domain.com' // Set to our domain later
 			// secure: true, // This should be uncommented after we switch to HTTPS
 		},
@@ -58,14 +58,14 @@ app.use(
 	})
 );
 
-/* refresh the session upon each request
-app.use(function(req,res,next){
-  console.log("%i seconds until session expires!", (10000 - req.session.cookie.maxAge) / 1000);
-  req.session._garbage = Date();
-  req.session.touch();
-  next();
-})
-*/
+// /* refresh the session upon each request
+app.use(function (req, res, next) {
+	// console.log("%i seconds until session expires!", (10000 - req.session.cookie.maxAge) / 1000);
+	req.session._garbage = Date();
+	req.session.touch();
+	next();
+});
+// */
 
 // express flash
 app.use(flash());
@@ -105,6 +105,15 @@ addRoute("upload");
 //* Main page
 app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/checkAuthorization", (req, res) => {
+	// console.log("Checking if user is authenticated", req.sessionID, req.user);
+	if (req.isAuthenticated()) {
+		res.json({ user: req.user });
+	} else {
+		res.json({ user: {} });
+	}
 });
 
 // Last route hit, nothing found
