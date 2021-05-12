@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from '../components/Navbar'
 import Gallery from '../components/Gallery'
 import AptListingDescription from '../components/AptListingDescription'
 import AptListingRatings from '../components/AptListingRatings'
@@ -9,7 +8,6 @@ import "../css/ApartmentListing.css";
 function ApartmentListing() {
     return (
         <div>
-            <Navbar />
             <div className='main'>
                 <Gallery slides={GalleryData} className='gallery' />
                 <div className='info-columns'>

@@ -12,7 +12,6 @@ function Login() {
 	const [totp, setTotp] = useState("");
 	let history = useHistory();
 
-
 	const submitLogin = (e) => {
 		e.preventDefault();
 		fetch(`${domain}/user/login`, {
@@ -24,7 +23,6 @@ function Login() {
 			.then((response) => response.json())
 			.then((response) => {
 				// server says correctly authenticated. so redirect to the main page
-
 				if (response.success) {
 					history.push("/");
 					alert("Successfully logged in!");

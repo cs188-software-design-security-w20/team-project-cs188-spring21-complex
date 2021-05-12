@@ -7,11 +7,19 @@ const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
+<<<<<<< HEAD
 
 app.use(
 	require("cors")({
 		credentials: true,
 		methods: ["POST", "PUT", "DELETE", "GET", "OPTIONS", "HEAD"],
+=======
+// const csurf = require("csurf");
+app.use(
+	require("cors")({
+		credentials: true,
+		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+>>>>>>> ac94658... Merge front-end and back-end changes
 		origin: "http://localhost:4200",
 	})
 );
@@ -37,9 +45,15 @@ app.use(
 		resave: true,
 		saveUninitialized: false, // only store sessions when they've been modified
 		cookie: {
+<<<<<<< HEAD
 			maxAge: 3 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
 			httpOnly: true, // prevents browser js from reading cookie session data
 			sameSite: "strict",
+=======
+			maxAge: 15 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
+			// httpOnly: true, // prevents browser js from reading cookie session data
+			// sameSite: "strict",
+>>>>>>> ac94658... Merge front-end and back-end changes
 			// domain: '.our-domain.com' // Set to our domain later
 			// secure: true, // This should be uncommented after we switch to HTTPS
 		},
@@ -58,6 +72,7 @@ app.use(
 	})
 );
 
+<<<<<<< HEAD
 // /* refresh the session upon each request
 app.use(function (req, res, next) {
 	// console.log("%i seconds until session expires!", (10000 - req.session.cookie.maxAge) / 1000);
@@ -67,6 +82,18 @@ app.use(function (req, res, next) {
 });
 // */
 
+=======
+/* refresh the session upon each request
+app.use(function(req,res,next){
+  console.log("%i seconds until session expires!", (10000 - req.session.cookie.maxAge) / 1000);
+  req.session._garbage = Date();
+  req.session.touch();
+  next();
+})
+*/
+
+// app.use(csurf());
+>>>>>>> ac94658... Merge front-end and back-end changes
 // express flash
 app.use(flash());
 
@@ -107,6 +134,7 @@ app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "index.html"));
 });
 
+<<<<<<< HEAD
 app.get("/checkAuthorization", (req, res) => {
 	// console.log("Checking if user is authenticated", req.sessionID, req.user);
 	if (req.isAuthenticated()) {
@@ -116,6 +144,8 @@ app.get("/checkAuthorization", (req, res) => {
 	}
 });
 
+=======
+>>>>>>> ac94658... Merge front-end and back-end changes
 // Last route hit, nothing found
 app.use(function (req, res, next) {
 	res.status(404);

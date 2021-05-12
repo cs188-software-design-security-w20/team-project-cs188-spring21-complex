@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const dbConn = require("../db.js");
 const path = require("path");
+<<<<<<< HEAD
 const getCsrfToken = require("../csrf").getCsrfToken;
+=======
+
+>>>>>>> ac94658... Merge front-end and back-end changes
 // ! rename the database table to your local one
 const apt_table = "apartments";
 
@@ -11,7 +15,12 @@ router.get("/", function (req, res) {
 	dbConn.getConnection((err, db) => {
 		if (err) {
 			console.log("connection failed", err);
+<<<<<<< HEAD
 			return res.send(err);
+=======
+			res.send(err);
+			return;
+>>>>>>> ac94658... Merge front-end and back-end changes
 		}
 		console.log("connection success");
 		db.query(`SELECT * from ${apt_table}`, (err, rows) => {
@@ -36,10 +45,14 @@ const review_table = "reviews";
 const review_columns = "(apt_id, user_id, bedbath, review_text, date)";
 router.post("/review/:id", function (req, res) {
 	// Validate review
+<<<<<<< HEAD
 	({ user_id, bedbath, review_text, csrfToken } = req.body);
     if (csrfToken !== getCsrfToken(req)) {
         return res.json({ success: false, message: 'Invalid CSRF Token' })
     }
+=======
+	({ user_id, bedbath, review_text } = req.body);
+>>>>>>> ac94658... Merge front-end and back-end changes
 
 	const row = [req.params.id, user_id, bedbath, review_text, new Date()];
 

@@ -91,7 +91,6 @@ function Registration() {
 						<p>Secret Key: {secretKey["secret"]}</p>
 					</div>
 				</div>
-
 				<form className="form-register" onSubmit={submitRegistration}>
 					<h2 className="form-register-heading">Create Account</h2>
 					<input

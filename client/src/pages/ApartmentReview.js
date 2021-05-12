@@ -40,7 +40,6 @@ function ApartmentReview() {
         .catch(err => alert(err));
     }
 
-
     const handler = async (e) => {
         e.preventDefault();
         let file = document.getElementById('image-upload').files[0];
