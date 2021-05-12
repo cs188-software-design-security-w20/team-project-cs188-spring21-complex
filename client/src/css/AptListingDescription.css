@@ -1,0 +1,31 @@
+/*-------------------------------------------------------------------------------------------------*/
+/*------------------------------ Apt Listing Description Page Styles ------------------------------*/
+/*-------------------------------------------------------------------------------------------------*/
+
+.apt-listing-description {
+    position: relative;
+}
+
+.name {
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.address {
+    padding-left: 30px;
+    padding-right: 30px;
+    font-style: italic;
+}
+
+.unit {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.about {
+    padding-left: 30px;
+    padding-right: 30px;
+}

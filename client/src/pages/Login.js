@@ -8,6 +8,7 @@ import { getUser } from "../context/auth";
 function Login() {
 	const [email, setEmail] = useState("");
 	const [pass, setPass] = useState("");
+	const [totp, setTotp] = useState("");
 	let history = useHistory();
 
 	const submitLogin = (e) => {
@@ -15,13 +16,12 @@ function Login() {
 		fetch("http://localhost:3000/user/login", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ email: email, pass: pass }),
+			body: JSON.stringify({ email: email, pass: pass, totp: totp }),
 			credentials: "include",
 		})
 			.then((response) => response.json())
 			.then((response) => {
 				// server says correctly authenticated. so redirect to the main page
-				console.log(response);
 
 				if (response.success) {
 					history.push("/");
@@ -70,6 +70,14 @@ function Login() {
 						placeholder="Password"
 						required=""
 						onChange={(e) => setPass(e.target.value)}
+					/>
+					<input
+						type="text"
+						className="form-control"
+						name="totp"
+						placeholder="Google Authenticator Code"
+						required=""
+						onChange={(e) => setTotp(e.target.value)}
 					/>
 					<div className="bottom-wrapper">
 						<button className="loginButton" type="submit">

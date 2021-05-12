@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Registration.css";
@@ -12,7 +12,26 @@ function Registration() {
 	const [username, setUsername] = useState("");
 	const [pass, setPass] = useState("");
 	const [confirm, setConfirm] = useState("");
+	const [secretKey, setSecretKey] = useState("");
+	const [totp, setTotp] = useState("");
 	let history = useHistory();
+	// const tfa = fetch("http://localhost:3000/user/QRCode", { headers : {
+	// 	'Content-Type': 'application/json',
+	// 	'Accept': 'application/json'
+	// 	}});
+
+	useEffect(() => {
+		fetch("http://localhost:3000/user/QRCode", {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+		})
+			.then((response) => response.json())
+			.then((response) => {
+				//Store the secret key and URL image
+				setSecretKey(response);
+			});
+	}, []);
 
 	const submitRegistration = (e) => {
 		e.preventDefault();
@@ -26,6 +45,8 @@ function Registration() {
 				email: email,
 				pass: pass,
 				confirm: confirm,
+				secretKey: secretKey["secret"],
+				totp: totp,
 			}),
 		})
 			.then((response) => response.json())
@@ -62,6 +83,21 @@ function Registration() {
 			<Navbar />
 
 			<div className="wrapper">
+				<div className="form-register">
+					<h2>Two factor Authentication</h2>
+					<p>
+						When creating your account, you must use 2-factor authentication using the Google
+						Authenticator App. Please download the app and use the QR code below, or enter the
+						secret key manually, to register your account on Google Authenticator. Once
+						authenticated, please add the time-based code in the form below to verify you registered
+						with Google Authenticator.
+					</p>
+					<div className="center">
+						{secretKey && <img src={secretKey["QRcode"]}></img>}
+						<p>Secret Key: {secretKey["secret"]}</p>
+					</div>
+				</div>
+
 				<form className="form-register" onSubmit={submitRegistration}>
 					<h2 className="form-register-heading">Create Account</h2>
 					<input
@@ -116,6 +152,15 @@ function Registration() {
 						required=""
 						onChange={(e) => setConfirm(e.target.value)}
 					/>
+					<input
+						type="text"
+						className="form-control"
+						name="totp"
+						placeholder="Enter Google Authenticator Code"
+						required=""
+						onChange={(e) => setTotp(e.target.value)}
+					/>
+
 					<button className="registerButton" type="submit">
 						Register
 					</button>

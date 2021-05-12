@@ -6,7 +6,7 @@ const validator = require("express-validator");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const { session } = require("passport");
-
+const authenticator = require("../totp-authenticator");
 // ! rename the database table to your local one
 const user_table = "users";
 
@@ -17,6 +17,11 @@ router.get("/logout", (req, res) => {
 		res.json({ success: true });
 	});
 });
+
+router.get("/QRCode", async (req, res) => {
+	res.json(await authenticator.generateSecretAndQR());
+});
+
 // #################################################################################################
 //* DELETE
 
@@ -68,6 +73,7 @@ validate_login = [
 		.withMessage("Password must contain an uppercase letter.")
 		.trim()
 		.escape(),
+	validator.check("totp", "Invalid Google Authenticator Code").isNumeric().trim().escape(),
 ];
 
 router.post("/login", validate_login, (req, res, next) => {
@@ -138,6 +144,12 @@ validate_registration = [
 				return value;
 			}
 		}),
+	validator
+		.check("totp", "Invalid Google Authenticator Code")
+		.isLength({ min: 6, max: 6 })
+		.isNumeric()
+		.trim()
+		.escape(),
 ];
 
 router.post(
@@ -146,7 +158,7 @@ router.post(
 	runAsyncWrapper(async (req, res, next) => {
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
-			({ email, first, last, username, pass } = req.body);
+			({ email, first, last, username, pass, secretKey, totp } = req.body);
 
 			hash = await bcrypt.hash(pass, 14);
 
@@ -157,8 +169,15 @@ router.post(
 				username: username,
 				email: email.split("@", 1)[0], // only store everything up to @
 				password: hash,
+				secretKey: secretKey,
 			};
 
+			if (!authenticator.verifyTOTP(secretKey, totp)) {
+				res.send({ success: false, message: "Invalid Authentication Code." });
+				return;
+			}
+
+			console.log(secretKey);
 			dbConn.getConnection((err, db) => {
 				if (err) {
 					console.log("connection failed", err.message);
