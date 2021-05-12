@@ -48,7 +48,6 @@ function UserProfile() {
 
 	return (
 		<div>
-			<Navbar />
 			{auth && (
 				<div className="wrapper">
 					<h2 className="profile-heading">Hello, {user.legal_name}</h2>

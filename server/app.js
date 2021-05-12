@@ -93,7 +93,7 @@ app.get("*", (req, res, next) => {
 // #################################################################################################
 //* Routing
 const addRoute = (name) => {
-	let route = require("./routes/" + name);
+	let { route } = require("./routes/" + name);
 	app.use("/" + name, route);
 };
 

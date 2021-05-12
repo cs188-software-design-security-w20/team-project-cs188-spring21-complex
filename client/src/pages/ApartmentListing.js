@@ -1,15 +1,82 @@
-import React from "react";
-import Navbar from '../components/Navbar'
+import React, { useState, useEffect } from "react";
 import Gallery from '../components/Gallery'
 import AptListingDescription from '../components/AptListingDescription'
 import AptListingRatings from '../components/AptListingRatings'
 import "../App.css";
 import "../css/ApartmentListing.css";
+import { useParams } from 'react-router-dom';
 
-function ApartmentListing() {
+function ApartmentListing(props) {
+
+    const [reviews, setReviews] = useState([]);
+    const [badPage, setBadPage] = useState(false); // if navigated without apt id
+    const [noReviews, setNoReviews] = useState(false);
+
+    const { id } = useParams();
+
+    useEffect(() => {
+        if (!id) {
+            setBadPage(true);
+        }
+        fetch("http://localhost:3000/apartment/" + id + '/reviews', {
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        })
+        .then(response => response.json())
+        .then(response => {
+            // [apartment reviews]
+            console.log(response);
+            if (response.length == 0) {
+                setNoReviews(true);
+                return;
+            }
+            setReviews(response);
+        })
+        .catch(err => {
+            setBadPage(true);
+            console.error(err);
+        });
+    }, []);
+
+    const toggleUpvote = (e) => {
+        // TODO: check if user is logged in
+    }
+
+    if (badPage) {
+        return (
+            <div className='main'>
+                <h1>Error: 404 Apartment Not Found</h1>
+            </div>
+        )
+    }
+
+    let reviewJSX = <p>Loading...</p>;    // default thing shown where reviews will be
+    if (noReviews) {
+        reviewJSX = (
+            <div className="review-list">
+                <p>No reviews yet, be the first!</p>
+            </div>
+        )
+    } else if (reviews) {
+        reviewJSX = (
+            <div className="review-list">
+                {reviews.map(review => (
+                    <div className="review" key={review.review_num}>
+                        <p>user: {review.user_id}</p>
+                        <p>bedbath: {review.bedbath}</p>
+                        <p>review: {review.review_text}</p>
+                        <p>upvotes: {review.upvotes}</p>
+                        <p>downvotes: {review.downvotes}</p>
+                        <p>scores (clean, location, amenities, landlord): {review.cleanliness} {review.location} {review.amenities} {review.landlord}</p>
+                        <button onClick={toggleUpvote}>UP!</button>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     return (
         <div>
-            <Navbar />
             <div className='main'>
                 <Gallery slides={GalleryData} className='gallery' />
                 <div className='info-columns'>
@@ -19,7 +86,9 @@ function ApartmentListing() {
 
                     <div className='ratings'>
                         <AptListingRatings ratings={Ratings} />  
-                    </div>                                    
+                    </div>     
+
+                    {reviewJSX}                               
                 </div>
             </div>
         </div>

@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 // Match 1-to-1 with each /pages component
-import { Home } from './pages';
+import { Home, ApartmentListing, Login, Registration, UserProfile, ApartmentMap } from './pages';
 
 export default function AppRouter() {
   return (
@@ -15,11 +15,20 @@ export default function AppRouter() {
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
-          <Route path="/about">
-            {/* <About /> */}
+          <Route path="/login">
+            <Login />
           </Route>
-          <Route path="/users">
-            {/* <Users /> */}
+          <Route path="/registration">
+            <Registration />
+          </Route>
+          <Route path="/users-profile">
+            <UserProfile />
+          </Route>
+          <Route path="/map">
+            <ApartmentMap />
+          </Route>
+          <Route path="/apartment">
+            <ApartmentListing />
           </Route>
           <Route path="/">
             <Home />

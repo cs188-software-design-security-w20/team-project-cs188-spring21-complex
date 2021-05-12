@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { domain } from "../routes";
 import { genCsrfToken } from "../context/auth";
+import ReCAPTCHA from "react-google-recaptcha";
+import '../css/ApartmentReview.css'
 
 async function upload_file(file) {
     let formData = new FormData();
@@ -22,6 +24,7 @@ async function upload_file(file) {
 function ApartmentReview() {
 
     const [review, setReview] = useState({});
+    const [recaptcha, setRecaptcha] = useState("");
 
     const postReview = (e) => {
         e.preventDefault();
@@ -40,7 +43,6 @@ function ApartmentReview() {
         .catch(err => alert(err));
     }
 
-
     const handler = async (e) => {
         e.preventDefault();
         let file = document.getElementById('image-upload').files[0];
@@ -51,6 +53,10 @@ function ApartmentReview() {
         } else {
             alert(response.message)
         }
+    }
+    
+    const isDisabled = () => {
+        return !recaptcha;
     }
 
     return (
@@ -67,6 +73,12 @@ function ApartmentReview() {
                     Add Image: <input id="image-upload" type="file" onChange={handler} />
                     <br/>
                     <button type="submit">Post</button>              
+                    <ReCAPTCHA
+                        sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                        onChange={e => setRecaptcha(e)}
+                      />
+                    <p>Recaptcha value: {recaptcha}</p>
+                    <button id="submit" type="submit" disabled={!recaptcha}>Post</button>    
                 </form>
             </div>
         </div>
