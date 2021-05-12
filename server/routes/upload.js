@@ -9,8 +9,7 @@ router.post("/", async function(req, res, next) {
 	// TODO: Check session, ensure user is logged in
 
 	let file = req.files.image;
-	if (file !== undefined && errors.isEmpty()
-        && (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg')) {
+	if (file !== undefined && (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg')) {
         // extension are stripped, mimetype checking should be sufficient
 		// generate a random UUID filename and move it to the destination
 		let uuid = crypto.randomUUID()
