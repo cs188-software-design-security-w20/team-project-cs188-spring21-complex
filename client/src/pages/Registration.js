@@ -4,7 +4,7 @@ import "../App.css";
 import "../css/Registration.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
-import { getUser } from "../context/auth";
+import { getUser, genCsrfToken } from "../context/auth";
 
 function Registration() {
 	const [first, setFirst] = useState("");
@@ -53,6 +53,7 @@ function Registration() {
 				confirm: confirm,
 				secretKey: secretKey["secret"],
 				totp: totp,
+                csrfToken: genCsrfToken()
 			}),
 		})
 			.then((response) => response.json())

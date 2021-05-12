@@ -4,7 +4,7 @@ import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
-import { getUser } from "../context/auth";
+import { getUser, genCsrfToken } from "../context/auth";
 
 function UserProfile() {
 	let history = useHistory();
@@ -19,6 +19,7 @@ function UserProfile() {
 			e.preventDefault();
 			fetch(`${domain}/user/delete/` + user.user_id, {
 				method: "DELETE",
+                body: JSON.stringify({ csrfToken: genCsrfToken() }),
 				credentials: "include",
 			})
 				.then((response) => response.json())

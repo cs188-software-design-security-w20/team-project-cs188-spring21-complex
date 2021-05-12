@@ -3,7 +3,7 @@ import "../App.css";
 import "../css/Navbar.css";
 import ReorderIcon from "@material-ui/icons/Reorder";
 import SearchIcon from "@material-ui/icons/Search";
-import { getUser } from "../context/auth";
+import { getUser, genCsrfToken } from "../context/auth";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
 
@@ -17,8 +17,9 @@ function Navbar() {
 		if (auth) {
 			e.preventDefault();
 			fetch(`${domain}/user/logout`, {
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
+				method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ csrfToken: genCsrfToken() }),
 				credentials: "include",
 			})
 				.then((response) => response.json())

@@ -7,15 +7,20 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const { session } = require("passport");
 const authenticator = require("../totp-authenticator");
+const getCsrfToken = require('../csrf.js').getCsrfToken
 // ! rename the database table to your local one
 const user_table = "users";
 
 // #################################################################################################
-//* GET
-router.get("/logout", (req, res) => {
-	killSession(req, res, (res) => {
-		res.json({ success: true });
-	});
+//* POST
+router.post("/logout", (req, res) => {
+    console.log(req.body);
+    if (req.body.csrfToken !== getCsrfToken(req)) {
+        return res.json({ success: false, message: "Invalid CSRF Token"})
+    }
+    killSession(req, res, (res) => {
+        res.json({ success: true });
+    });
 });
 
 router.get("/QRCode", async (req, res) => {
@@ -77,6 +82,9 @@ validate_login = [
 ];
 
 router.post("/login", validate_login, (req, res, next) => {
+    if (req.body.csrfToken !== getCsrfToken(req)) {
+        return res.json({ success: false, message: "Invalid CSRF Token"})
+    }
 	const errors = validator.validationResult(req);
 	if (errors.isEmpty()) {
 		// if authenticated, redirect to main page, and req.user will have the user_id
@@ -97,7 +105,7 @@ router.post("/login", validate_login, (req, res, next) => {
 	} else {
 		// incorrect inputs
 		console.log(errors.errors);
-		res.json({ success: false, message: errors.errors });
+		return res.json({ success: false, message: errors.errors });
 	}
 });
 
@@ -159,6 +167,9 @@ router.post(
 	"/registration",
 	validate_registration,
 	runAsyncWrapper(async (req, res, next) => {
+        if (req.body.csrfToken !== getCsrfToken(req)) {
+            return res.json({ success: false, message: "Invalid CSRF Token"})
+        }
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
 			({ email, first, last, username, pass, secretKey, totp } = req.body);
@@ -176,8 +187,7 @@ router.post(
 			};
 
 			if (!authenticator.verifyTOTP(secretKey, totp)) {
-				res.send({ success: false, message: "Invalid Authentication Code." });
-				return;
+				return res.send({ success: false, message: "Invalid Authentication Code." });
 			}
 
 			console.log(secretKey);

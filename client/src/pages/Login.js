@@ -4,7 +4,7 @@ import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
-import { getUser } from "../context/auth";
+import { getUser, genCsrfToken } from "../context/auth";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -12,12 +12,13 @@ function Login() {
 	const [totp, setTotp] = useState("");
 	let history = useHistory();
 
+
 	const submitLogin = (e) => {
 		e.preventDefault();
 		fetch(`${domain}/user/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ email: email, pass: pass, totp: totp }),
+			body: JSON.stringify({ email: email, pass: pass, totp: totp, csrfToken: genCsrfToken() }),
 			credentials: "include",
 		})
 			.then((response) => response.json())

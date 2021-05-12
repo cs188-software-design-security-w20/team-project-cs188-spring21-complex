@@ -4,8 +4,12 @@ const dbConn = require("../db.js");
 const validator = require("express-validator");
 const crypto = require("crypto");
 const path = require("path");
+const getCsrfToken = require("../csrf").getCsrfToken;
 
 router.post("/", async function(req, res, next) {
+    if (req.body.csrfToken !== getCsrfToken(req)) {
+        return res.json({ success: false, message: "Invalid CSRF Token"})
+    }
 	// TODO: Check session, ensure user is logged in
 
 	let file = req.files.image;
@@ -23,11 +27,11 @@ router.post("/", async function(req, res, next) {
 		console.log(`Saved ${file.name} to ${new_path}`);
 
 		res.send({
-			success: 1, uuid: uuid
+			success: true, uuid: uuid
 		});
 	} else {
 		res.send({
-            success: 0, msg: "Invalid File"
+            success: false, message: "Invalid File"
 		});
 	}
 });

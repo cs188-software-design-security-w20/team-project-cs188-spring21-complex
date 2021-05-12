@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const dbConn = require("../db.js");
 const path = require("path");
-
+const getCsrfToken = require("../csrf").getCsrfToken;
 // ! rename the database table to your local one
 const apt_table = "apartments";
 
@@ -11,8 +11,7 @@ router.get("/", function (req, res) {
 	dbConn.getConnection((err, db) => {
 		if (err) {
 			console.log("connection failed", err);
-			res.send(err);
-			return;
+			return res.send(err);
 		}
 		console.log("connection success");
 		db.query(`SELECT * from ${apt_table}`, (err, rows) => {
@@ -37,7 +36,10 @@ const review_table = "reviews";
 const review_columns = "(apt_id, user_id, bedbath, review_text, date)";
 router.post("/review/:id", function (req, res) {
 	// Validate review
-	({ user_id, bedbath, review_text } = req.body);
+	({ user_id, bedbath, review_text, csrfToken } = req.body);
+    if (csrfToken !== getCsrfToken(req)) {
+        return res.json({ success: false, message: 'Invalid CSRF Token' })
+    }
 
 	const row = [req.params.id, user_id, bedbath, review_text, new Date()];
 

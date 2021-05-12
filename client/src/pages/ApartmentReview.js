@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { domain } from "../routes";
+import { genCsrfToken } from "../context/auth";
 
 async function upload_file(file) {
     let formData = new FormData();
     formData.append('image', file)
+    formData.append('csrfToken', genCsrfToken())
     return fetch(`${domain}/upload`, {
         method: 'POST',
         body: formData,
-        mode: 'cors'
+        mode: 'cors',
+        credentials: 'include'
     }).then((res)=> {
         if (!res.ok) {
             throw res.statusText;
@@ -22,11 +25,13 @@ function ApartmentReview() {
 
     const postReview = (e) => {
         e.preventDefault();
+        review['csrfToken'] = genCsrfToken();
         console.log(review);
         fetch(`${domain}/apartment/review/1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(review)
+            body: JSON.stringify(review),
+            credentials: 'include'
         })
         .then(response => response.json())
         .then(response => {
@@ -42,9 +47,9 @@ function ApartmentReview() {
         let response = await upload_file(file);
         if (response['success']) {
             // TODO: Should be saved into database
-            console.log(response['uuid'])
+            console.log(response.uuid)
         } else {
-            alert(response['msg'])
+            alert(response.message)
         }
     }
 
