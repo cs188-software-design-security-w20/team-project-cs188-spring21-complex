@@ -82,14 +82,14 @@ function Navbar() {
 							{...params}
 							variant="outlined"
 							className="search"
-							label="Search for apartments near UCLA"
+							placeholder="Search for apartments near UCLA"
 						/>
 					)}
 				/>
 				<Tooltip title="See Map">
 					<Link to="/map">
 						<IconButton>
-							<MapIcon />
+							<MapIcon style={{color: '#fff'}}/>
 						</IconButton>
 					</Link>
 				</Tooltip>
