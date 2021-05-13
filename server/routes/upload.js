@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const dbConn = require("../db.js");
 const validator = require("express-validator");
-const crypto = require("crypto");
+//const crypto = require("crypto");
 const path = require("path");
 const getCsrfToken = require("../csrf").getCsrfToken;
+const { v4: uuidv4 } = require('uuid');
 
 router.post("/", checkAuthentication, async function (req, res, next) {
 	if (req.body.csrfToken !== getCsrfToken(req)) {
@@ -16,7 +17,7 @@ router.post("/", checkAuthentication, async function (req, res, next) {
 	if (file !== undefined && (file.mimetype == "image/png" || file.mimetype == "image/jpeg")) {
 		// extension are stripped, mimetype checking should be sufficient
 		// generate a random UUID filename and move it to the destination
-		let uuid = crypto.randomUUID();
+		let uuid = uuidv4();
 		let new_path = path.join(process.env.UPLOAD_DIR, uuid);
 
 		let err = await file.mv(new_path);
