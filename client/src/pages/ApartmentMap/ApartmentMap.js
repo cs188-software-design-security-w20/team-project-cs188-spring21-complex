@@ -6,9 +6,7 @@ import './ApartmentMap.css';
 function ApartmentMap() {
     return (
         <div className="searchWrapper">
-            <div className="searchResults">
-            </div>
-            <Map center={{lat: 34.0617, lng: -118.4441}} zoom={18}/>
+            <Map center={{lat: 34.0620, lng: -118.4441}} zoom={15}/>
         </div>
     );
 }

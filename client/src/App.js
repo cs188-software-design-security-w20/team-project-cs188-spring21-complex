@@ -8,6 +8,7 @@ import { Route } from "react-router-dom";
 import ApartmentListing from "./pages/ApartmentListing";
 import Navbar from './components/Navbar';
 import VerifyEmail from "./pages/verifyEmail";
+import ApartmentMap from './pages/ApartmentMap/ApartmentMap';
 
 function App() {
 	return (
@@ -17,6 +18,7 @@ function App() {
 			<Route exact path="/login" component={Login} />
 			<Route exact path="/registration" component={Registration} />
 			<Route exact path="/user-profile" component={UserProfile} />
+			<Route exact path="/map" component={ApartmentMap} />
 			<Route path="/apartment/:id" component={ApartmentListing} />
 			<Route exact path="/newreview" component={ApartmentReview} />
 			<Route exact path="/verifyEmail" component={VerifyEmail} />
