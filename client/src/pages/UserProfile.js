@@ -4,6 +4,26 @@ import "../css/UserProfile.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
 import { getUser, genCsrfToken } from "../context/auth";
+import pfp from '../assets/westwood_executive_apt.jpg';
+
+async function upload_file(file) {
+	let formData = new FormData();
+	formData.append("image", file);
+	formData.append("csrfToken", genCsrfToken());
+	return fetch(`${domain}/upload`, {
+		method: "POST",
+		body: formData,
+		mode: "cors",
+		credentials: "include",
+	})
+		.then((res) => {
+			if (!res.ok) {
+				throw res.statusText;
+			}
+			return res.json();
+		})
+		.catch((err) => console.log("err", err));
+}
 
 function UserProfile() {
 	let history = useHistory();
@@ -42,6 +62,18 @@ function UserProfile() {
 		} else alert("You're not logged in.");
 	};
 
+	const handler = async (e) => {
+		e.preventDefault();
+		let file = document.getElementById("image-upload").files[0];
+		let response = await upload_file(file);
+		if (response["success"]) {
+			// TODO: Should be saved into database
+			console.log(response.uuid);
+		} else {
+			alert(response.message);
+		}
+	};
+
 	useEffect(() => {
 		getUser().then((obj) => {
 			console.log(obj);
@@ -60,6 +92,13 @@ function UserProfile() {
 			{auth && (
 				<div className="wrapper">
 					<h2 className="profile-heading">Hello, {user.legal_name}</h2>
+
+					<img className='pfp' src={pfp} />
+					<div className='upload-image'>
+						<div className='upload-image-message'>Add/Update Profile Picture:</div>
+						<input id="image-upload" type="file" onChange={handler} />
+					</div>					
+
 					<input
 						type="text"
 						className="form-control"

@@ -3,7 +3,7 @@
 /*---------------------------------------------------------------------------------*/
 
 .gallery {
-    position: relative;
+    position: block;
     display: flex;
     justify-content: center;
     align-items: center;

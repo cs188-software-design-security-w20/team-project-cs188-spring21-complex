@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------*/
-/*------------------------------ Login Page Styles ------------------------------*/
+/*------------------------------ User Profile Page Styles ------------------------------*/
 /*-------------------------------------------------------------------------------*/
 
 body {
@@ -38,22 +38,28 @@ body {
     padding: 10px;
 }
 
-.loginButton {
-    background-color: #005AB3;
-    border: none;
-    color: white;
-    padding: 10px 32px;
-    margin-right: 25px;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-}
 
 input[type="text"] {
     margin-bottom: 10px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+}
+
+.pfp {
+    width: auto;
+    height: auto;
+    max-height: 200px;
+    max-width: 200px;
+    min-height: 200px;
+    min-width: 200px;
+    border: 2px solid black;
+}
+
+.upload-image {
+    margin-bottom: 30px;
+}
+
+.upload-image-message {
+    font-size: 10pt;
+    font-weight: bold;
 }

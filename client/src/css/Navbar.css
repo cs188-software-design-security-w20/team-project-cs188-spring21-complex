@@ -75,6 +75,7 @@
   
 .navbar .right-side #hidden {
     display: none;
+    z-index: 1;
 }
 
 .navbar .right-side .options {

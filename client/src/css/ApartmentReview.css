@@ -1,14 +1,15 @@
-/*-------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------*/
 /*------------------------------ Apartment Review Page Styles ------------------------------*/
-/*-------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------*/
 
 body {
-	background: #eee !important;	
+	background: #eee !important;
 }
 
-.wrapper {	
+.wrapper {
+    display: block;	
 	margin-top: 80px;
-    margin-bottom: 80px;
+    margin-bottom: 80px;;
 }
 
 .bottom-wrapper {
@@ -17,10 +18,11 @@ body {
 }
 
 .form-review {
+    display: block;	
     max-width: 750px;
     width: auto;
     padding: 15px 70px 45px 45px;
-    margin: 0 auto;
+    margin: auto;
     background-color: #fff;
     border: 1px solid rgba(0,0,0,0.1); 
 } 
@@ -38,12 +40,12 @@ body {
 }
 
 .form-control-user-review {
-  position: relative;
-  font-size: 16px;
-  width: 100%;
-  padding: 10px;
-  resize: vertical;
-  border: 2px solid rgba(0,0,0,0.7);
+    position: relative;
+    font-size: 16px;
+    width: 100%;
+    padding: 10px;
+    resize: vertical;
+    border: 2px solid rgba(0,0,0,0.7);
 }
 
 .upload-image-msg {
