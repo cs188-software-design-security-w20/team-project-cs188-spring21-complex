@@ -4,19 +4,19 @@ import { domain } from "../routes";
 export const UserContext = createContext({});
 
 function setCookie(cname, cvalue, exdays) {
-  let d = new Date();
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  let expires = "expires="+ d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	let d = new Date();
+	d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+	let expires = "expires=" + d.toUTCString();
+	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
 export function genCsrfToken() {
-    let buf = require('crypto').randomBytes(48);
-    let token = buf.toString('hex');
-    
-    console.log(token);
-    setCookie('XSRF-TOKEN', token, 0.1)
-    return token;
+	let buf = require("crypto").randomBytes(48);
+	let token = buf.toString("hex");
+
+	console.log(token);
+	setCookie("XSRF-TOKEN", token, 0.1);
+	return token;
 }
 
 export function useUser() {

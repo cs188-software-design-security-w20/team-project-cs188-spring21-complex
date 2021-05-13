@@ -6,7 +6,7 @@ import UserProfile from "./pages/UserProfile";
 import ApartmentReview from "./pages/ApartmentReview";
 import { Route } from "react-router-dom";
 import ApartmentListing from "./pages/ApartmentListing";
-import Navbar from './components/Navbar';
+import Navbar from "./components/Navbar";
 import VerifyEmail from "./pages/verifyEmail";
 import ApartmentMap from './pages/ApartmentMap/ApartmentMap';
 

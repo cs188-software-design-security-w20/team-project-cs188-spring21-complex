@@ -44,6 +44,7 @@ function Registration() {
 		fetch(`${domain}/user/registration`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: "include",
 			body: JSON.stringify({
 				first: first,
 				last: last,
@@ -53,7 +54,7 @@ function Registration() {
 				confirm: confirm,
 				secretKey: secretKey["secret"],
 				totp: totp,
-                csrfToken: genCsrfToken()
+				csrfToken: genCsrfToken(),
 			}),
 		})
 			.then((response) => response.json())
@@ -75,7 +76,7 @@ function Registration() {
 	};
 
 	return (
-		<div>			
+		<div>
 			<div className="wrapper">
 				<div className="form-register">
 					<h2>Two Factor Authentication</h2>

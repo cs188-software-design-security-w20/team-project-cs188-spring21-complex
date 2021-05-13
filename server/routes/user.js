@@ -7,49 +7,46 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const { session } = require("passport");
 const authenticator = require("../totp-authenticator");
-const getCsrfToken = require('../csrf.js').getCsrfToken
-const mailer = require('../mailer.js');
-const jwt = require('jwt-simple');
+const getCsrfToken = require("../csrf.js").getCsrfToken;
+const mailer = require("../mailer.js");
+const jwt = require("jwt-simple");
 require("dotenv").config({ path: __dirname + "/.env" });
 // ! rename the database table to your local one
 const user_table = "users";
-const {serverDomain,domain} = require('../routes.js')
+const { serverDomain, domain } = require("../routes.js");
 
 // #################################################################################################
 //* POST
 router.post("/logout", (req, res) => {
-    console.log(req.body);
-    if (req.body.csrfToken !== getCsrfToken(req)) {
-        return res.json({ success: false, message: "Invalid CSRF Token"})
-    }
-    killSession(req, res, (res) => {
-        res.json({ success: true });
-    });
+	console.log(req.body);
+	if (req.body.csrfToken !== getCsrfToken(req)) {
+		return res.json({ success: false, message: "Invalid CSRF Token" });
+	}
+	killSession(req, res, (res) => {
+		res.json({ success: true });
+	});
 });
 
 router.get("/QRCode", async (req, res) => {
 	res.json(await authenticator.generateSecretAndQR());
 });
 
-router.get("/test", (req,res) => {
+router.get("/test", (req, res) => {
 	console.log(domain);
 	// res.redirect(`${domain}/login`);
 	res.status(404).send("404: Not Found");
 });
 
-router.get('/verifyEmail/:token', (req, res) => {
-	var token = req.params['token'];
+router.get("/verifyEmail/:token", (req, res) => {
+	var token = req.params["token"];
 	var info = jwt.decode(token, process.env.JWT_SECRET);
 	console.log(info);
 	dbConn.getConnection((err, db) => {
-	if (err) {
-		console.log("connection failed", err.message);
-		res.json({ success: false, message: err.message });
-	}
-	else {
-		db.query(
-			`SELECT * FROM ${user_table} WHERE username = '${info['user']}'`,
-			(err, user) => {
+		if (err) {
+			console.log("connection failed", err.message);
+			res.json({ success: false, message: err.message });
+		} else {
+			db.query(`SELECT * FROM ${user_table} WHERE username = '${info["user"]}'`, (err, user) => {
 				if (err) {
 					db.release();
 					console.log(err.message);
@@ -59,35 +56,31 @@ router.get('/verifyEmail/:token', (req, res) => {
 					// query returns a list of users, but of size 1 because username should be unique
 					if (user.length !== 1) {
 						db.release();
-						res.json({success: false, message: "Invalid URL"});
-						
+						res.json({ success: false, message: "Invalid URL" });
 					} else {
 						if (user[0].verified == false) {
-							db.query (
-								`UPDATE ${user_table} SET verified = true WHERE username = '${info['user']}'`,
-								(error,user) => {
+							db.query(
+								`UPDATE ${user_table} SET verified = true WHERE username = '${info["user"]}'`,
+								(error, user) => {
 									db.release();
 									if (error) {
 										console.log(error);
-										res.json({success: true, message: error});
-									}
-									else {
+										res.json({ success: true, message: error });
+									} else {
 										console.log("Account verified!");
 										res.redirect(`${domain}/login`);
 									}
 								}
 							);
-						}
-						else {
+						} else {
 							console.log("Already verified");
 							res.send("Account already verified");
 						}
 					}
 				}
-			}
-		);
-	}
-});
+			});
+		}
+	});
 });
 
 // #################################################################################################
@@ -145,9 +138,9 @@ validate_login = [
 ];
 
 router.post("/login", validate_login, (req, res, next) => {
-    if (req.body.csrfToken !== getCsrfToken(req)) {
-        return res.json({ success: false, message: "Invalid CSRF Token"})
-    }
+	if (req.body.csrfToken !== getCsrfToken(req)) {
+		return res.json({ success: false, message: "Invalid CSRF Token" });
+	}
 	const errors = validator.validationResult(req);
 	if (errors.isEmpty()) {
 		// if authenticated, redirect to main page, and req.user will have the user_id
@@ -230,7 +223,9 @@ router.post(
 	"/registration",
 	validate_registration,
 	runAsyncWrapper(async (req, res, next) => {
-        
+		if (req.body.csrfToken !== getCsrfToken(req)) {
+			return res.json({ success: false, message: "Invalid CSRF Token" });
+		}
 		const errors = validator.validationResult(req);
 		if (errors.isEmpty()) {
 			({ email, first, last, username, pass, secretKey, totp } = req.body);
@@ -272,7 +267,7 @@ router.post(
 					} else {
 						let emailHash = mailer.createVerificationHash(username);
 						let URL = `${serverDomain}/user/verifyEmail/${emailHash}`;
-						mailer.sendEmail(email,URL);
+						mailer.sendEmail(email, URL);
 
 						console.log("Successfully registered account:", info);
 						res.json({ success: true, message: "Account created." });
@@ -291,7 +286,7 @@ router.post(
 );
 
 const vote_table = "user_votes";
-const vote_columns = '(user_id, review_id, vote_type)';
+const vote_columns = "(user_id, review_id, vote_type)";
 router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 	// Logged In
 
@@ -306,16 +301,22 @@ router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 		try {
 			const rows = await db.query(`SELECT * FROM ${vote_table}
 										WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`);
-			if (rows.length==0) {
+			if (rows.length == 0) {
 				// user never voted for this review yet, insert a new row
-				await db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUE (?)`,
-								[req.user.user_id, req.params.id, vote_type])
+				await db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUE (?)`, [
+					req.user.user_id,
+					req.params.id,
+					vote_type,
+				]);
 			} else {
 				// Update
-				await db.query(`UPDATE ${vote_table} SET vote_type = ?
-								WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`, vote_type)
+				await db.query(
+					`UPDATE ${vote_table} SET vote_type = ?
+								WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`,
+					vote_type
+				);
 			}
-			res.json({ success: true })
+			res.json({ success: true });
 		} catch (e) {
 			res.send({ success: false, error: e });
 			throw e;
