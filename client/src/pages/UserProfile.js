@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
-import "../css/Login.css";
+import "../css/UserProfile.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
 import { getUser, genCsrfToken } from "../context/auth";
@@ -88,7 +88,7 @@ function UserProfile() {
 								required=""
 								onChange={(e) => setTotp(e.target.value)}
 							/>
-							<button onClick={delete_account}>Yes, I wish to delete my account.</button>
+							<button className='deleteAcc' onClick={delete_account}>Yes, I wish to delete my account.</button>
 						</div>
 					)}
 				</div>

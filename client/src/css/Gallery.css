@@ -11,14 +11,14 @@
 
 .image {
     width: 1000px;
-    height: 600px;
+    height: 550px;
     border-radius: 10px;
 }
 
 .left-arrow {
     position: absolute;
     top: 50%;
-    left: 32px;
+    left: 50px;
     z-index: 10;
 
     font-size: 3rem;
@@ -30,7 +30,7 @@
 .right-arrow {
     position: absolute;
     top: 50%;
-    right: 32px;
+    right: 50px;
     z-index: 10;
 
     font-size: 3rem;

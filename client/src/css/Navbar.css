@@ -83,7 +83,7 @@
     margin-left: 20px;
 }
   
-@media only screen and (max-width: 1210px) {
+@media only screen and (max-width: 1350px) {
     .navbar .right-side .options {
         display: flex;
     }
@@ -96,7 +96,7 @@
         position: absolute;
         left: 0px;
         top: 80px;
-        height: 200px;
+        height: 150px;
         max-height: 150px;
         width: 100%;
         background-color: #005AB3;
@@ -107,7 +107,7 @@
   
     .navbar .right-side #hidden a {
         width: auto;
-        margin: 10px;
+        margin: 7px;
         padding: 12px 25px 12px 25px;
         font-size: 20px;
     }

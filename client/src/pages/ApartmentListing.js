@@ -54,6 +54,9 @@ function ApartmentListing(props) {
 		reviewJSX = (
 			<div className="review-list">
 				<p>No reviews yet, be the first!</p>
+				<div className='post-review-button'>
+                    <a className='post-review' href='/newreview'>Post Review</a>
+                </div>
 			</div>
 		);
 	} else if (reviews) {

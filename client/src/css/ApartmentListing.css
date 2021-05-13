@@ -40,7 +40,30 @@
     width: 1000px;
     height: auto;
     margin: 20px 20px 20px 20px;
-    padding: 0 0 20px 0;
+    padding: 20px 0 20px 0;
     background-color: white;
     border-radius: 10px;
+}
+
+.empty-reviews {
+    display: block;
+    position: relative;
+    padding-top: 10px;
+}
+
+.post-review-button {
+    padding-top: 25px;
+}
+
+.post-review {
+    background-color: #E8E253;
+    text-decoration: none;
+    color: black;
+    width: 100px;
+    font-size: 17px;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 12px 25px 12px 25px;
+    margin-left: 15px;
+    overflow: hidden;
 }

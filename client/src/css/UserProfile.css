@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------*/
-/*------------------------------ Apartment Review Page Styles ------------------------------*/
+/*------------------------------ Login Page Styles ------------------------------*/
 /*-------------------------------------------------------------------------------*/
 
 body {
@@ -7,8 +7,10 @@ body {
 }
 
 .wrapper {	
-	margin-top: 80px;
+    margin-top: 80px;
     margin-bottom: 80px;
+    max-width: 750px;
+    margin: auto;
 }
 
 .bottom-wrapper {
@@ -16,9 +18,8 @@ body {
     align-items: center;
 }
 
-.form-review {
-    max-width: 750px;
-    width: auto;
+.form-signin {
+    max-width: 380px;
     padding: 15px 70px 45px 45px;
     margin: 0 auto;
     background-color: #fff;
@@ -37,21 +38,7 @@ body {
     padding: 10px;
 }
 
-.form-control-user-review {
-  position: relative;
-  font-size: 16px;
-  width: 100%;
-  padding: 10px;
-  resize: vertical;
-  border: 2px solid rgba(0,0,0,0.7);
-}
-
-.upload-image-msg {
-    font-size: 12pt;
-    font-weight: bold;
-}
-
-.submit {
+.loginButton {
     background-color: #005AB3;
     border: none;
     color: white;
@@ -63,4 +50,10 @@ body {
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
+}
+
+input[type="text"] {
+    margin-bottom: 10px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }

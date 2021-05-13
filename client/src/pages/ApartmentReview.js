@@ -94,23 +94,31 @@ function ApartmentReview() {
 						required=""
 						onChange={(e) => setReview({ ...review, bedbath: e.target.value })}
 					/>
-					<input
+					<textarea type="text" 
 						type="text"
-						className="form-control"
+						className="form-control-user-review"
 						name="review"
 						placeholder="Your Review"
 						required=""
 						onChange={(e) => setReview({ ...review, review_text: e.target.value })}
 					/>
-					Add Image: <input id="image-upload" type="file" onChange={handler} />
+					
+					<div className='upload-images'>
+						<br />
+						<div className='upload-image-msg'>Add Image:</div>
+						<input id="image-upload" type="file" onChange={handler} />
+					</div>					
 					<br />
-					<button type="submit">Post</button>
+
 					<ReCAPTCHA
 						sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
 						onChange={(e) => setRecaptcha(e)}
 					/>
+
 					<p>Recaptcha value: {recaptcha}</p>
-					<button id="submit" type="submit" disabled={!recaptcha}>
+					<br />
+
+					<button className='submit' id="submit" type="submit" disabled={!recaptcha}>
 						Post
 					</button>
 				</form>
