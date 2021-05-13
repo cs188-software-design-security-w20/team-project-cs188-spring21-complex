@@ -1,17 +1,17 @@
 import React from 'react'
 import "../css/AptListingRatings.css";
 
-const AptListingRatings = ({ ratings }) => {
+const AptListingRatings = (props) => {
     return (
         <div className='apt-listing-ratings'>
             <text className='title'>RATINGS</text>
 
             <div className='rating-info'>
                 <text style={{paddingRight: '260px', paddingTop: '20px'}}>Overall</text>
-                {ratings.map((rating) => { return ( <div>{rating.overall}</div> ) })}
+               <div>{props.ratings.overall}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: '80%'}}></span></span>
+                <span className='bar'><span style={{width: (props.ratings.overall / .05) + '%'}}></span></span>
                 <text style={{paddingRight: '278px'}}>Bad</text>
                 <text>Good</text>
             </div>
@@ -19,40 +19,40 @@ const AptListingRatings = ({ ratings }) => {
 
             <div className='rating-info'>
                 <text style={{paddingRight: '278px'}}>Price</text>
-                {ratings.map((rating) => { return ( <div>{rating.price}</div> ) })}
+               <div>{props.ratings.price}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: '60%'}}></span></span>
+                <span className='bar'><span style={{width: (props.ratings.price / .05) + '%'}}></span></span>
                 <text style={{paddingRight: '281px'}}>High</text>
                 <text>Low</text>
             </div>
 
             <div className='rating-info'>
                 <text style={{paddingRight: '234px'}}>Amenities</text>
-                {ratings.map((rating) => { return ( <div>{rating.amenities}</div> ) })}
+               <div>{props.ratings.amenities}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: '80%'}}></span></span>
+                <span className='bar'><span style={{width: (props.ratings.amenities / .05) + '%'}}></span></span>
                 <text style={{paddingRight: '278px'}}>Bad</text>
                 <text>Good</text>
             </div>
 
             <div className='rating-info'>
                 <text style={{paddingRight: '237px'}}>Proximity</text>
-                {ratings.map((rating) => { return ( <div>{rating.proximity}</div> ) })}
+               <div>{props.ratings.proximity}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: '80%'}}></span></span>
+                <span className='bar'><span style={{width: (props.ratings.proximity / .05) + '%'}}></span></span>
                 <text style={{paddingRight: '282px'}}>Far</text>
                 <text>Close</text>
             </div>
 
             <div className='rating-info'>
                 <text style={{paddingRight: '206px'}}>Management</text>
-                {ratings.map((rating) => { return ( <div>{rating.management}</div> ) })}
+               <div>{props.ratings.management}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: '100%'}}></span></span>
+                <span className='bar'><span style={{width: (props.ratings.management / .05) + '%'}}></span></span>
                 <text style={{paddingRight: '278px'}}>Bad</text>
                 <text>Good</text>
             </div>

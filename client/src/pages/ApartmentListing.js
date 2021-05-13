@@ -7,12 +7,15 @@ import "../css/ApartmentListing.css";
 import { useParams } from "react-router-dom";
 import ApartmentReview from "./ApartmentReview";
 import { getUser } from "../context/auth";
+import { CircularProgress } from '@material-ui/core';
 
 function ApartmentListing(props) {
 	const [reviews, setReviews] = useState([]);
 	const [badPage, setBadPage] = useState(false); // if navigated without apt id
 	const [noReviews, setNoReviews] = useState(false);
 	const [auth, setAuth] = useState(false);
+	const [apt, setApartment] = useState({});
+	const [ratings, setRatings] = useState({});
 
 	const { id } = useParams();
 
@@ -28,11 +31,34 @@ function ApartmentListing(props) {
 			.then((response) => {
 				// [apartment reviews]
 				console.log(response);
+				setReviews(response);
+
+				let len = response.length + 0.0;
+				let ratings = {
+					price: 5,
+					amenities: response.reduce((a, b) => a + b.amenities, 0)/len || 0,
+					proximity: response.reduce((a, b) => a + b.location, 0)/len || 0,
+					management: response.reduce((a, b) => a + b.landlord, 0)/len || 0,
+				};
+				ratings['overall'] = len ? (ratings.price + ratings.amenities + ratings.proximity + ratings.management)/len : 0
+				setRatings(ratings);
+
 				if (response.length === 0) {
 					setNoReviews(true);
 					return;
 				}
-				setReviews(response);
+			})
+			.catch((err) => {
+				setBadPage(true);
+				console.error(err);
+			});
+		fetch("http://localhost:3000/apartment/" + id, {
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+		})
+			.then((response) => response.json())
+			.then((response) => {
+				setApartment(response[0]);
 			})
 			.catch((err) => {
 				setBadPage(true);
@@ -97,26 +123,32 @@ function ApartmentListing(props) {
 		);
 	}
 
-	return (
-		<div>
+	if (apt && ratings) {
+		return (
 			<div className="main">
 				<Gallery slides={GalleryData} className="gallery" />
 				<div className="info-columns">
 					<div className="description">
-						<AptListingDescription info={Description} />
+						<AptListingDescription name={apt.apt_name} address={apt.address} description={apt.description}/>
 					</div>
 
 					<div className="ratings">
-						<AptListingRatings ratings={Ratings} />
+						<AptListingRatings ratings={ratings} />
 					</div>
 				</div>
-				<div className="info-columns">{auth && <ApartmentReview />}</div>
+				<div className="info-columns">{auth && <ApartmentReview apt_data={apt} />}</div>
 				<div className="info-columns">
 					<div className="reviews">{reviewJSX}</div>
 				</div>
 			</div>
+		);
+	}
+
+	return (
+		<div className="main">
+			<CircularProgress style={{marginLeft: '50%', marginTop: '60px'}}/>
 		</div>
-	);
+	)
 }
 
 const GalleryData = [

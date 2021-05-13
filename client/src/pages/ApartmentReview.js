@@ -25,7 +25,7 @@ async function upload_file(file) {
 		.catch((err) => console.log("err", err));
 }
 
-function ApartmentReview() {
+function ApartmentReview(props) {
 	const [review, setReview] = useState({});
 	const [recaptcha, setRecaptcha] = useState("");
 	const [auth, setAuth] = useState(false);
@@ -81,7 +81,7 @@ function ApartmentReview() {
 		<div>
 			<div className="wrapper">
 				<form className="form-review" onSubmit={postReview}>
-					<h2 className="form-review-heading">Review Kelton 515</h2>
+					<h2 className="form-review-heading">Review {props.apt_data.apt_name}</h2>
 					<input
 						type="text"
 						className="form-control"

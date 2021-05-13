@@ -61,6 +61,7 @@ function Navbar() {
 	const selectApartment = (e, val) => {
 		if (val && val.apt_id) {
 			history.push("/apartment/" + val.apt_id);
+			history.go(0);
 		}
 	};
 

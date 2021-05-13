@@ -108,6 +108,9 @@ app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "index.html"));
 });
 
+//* Serve static uploads
+app.use("/uploads", express.static(process.env.UPLOAD_DIR));
+
 app.get("/checkAuthorization", (req, res) => {
 	// console.log("Checking if user is authenticated", req.sessionID, req.user);
 	if (req.isAuthenticated()) {
