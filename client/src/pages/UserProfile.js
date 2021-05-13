@@ -11,22 +11,32 @@ function UserProfile() {
 	// before rendering profile, check user context to see if they're logged in
 	const [auth, setAuth] = useState(false);
 	const [user, setUser] = useState({});
+	const [clickedDelete, setDelete] = useState(false);
+	const [totp, setTotp] = useState("");
 
+	const ssd = (e) => {
+		setDelete(true);
+	};
 	const delete_account = (e) => {
 		// only make delete request if they're logged in / authenticated
-		if (auth) {
+		if (auth && clickedDelete) {
+			console.log(totp);
 			e.preventDefault();
 			fetch(`${domain}/user/delete/` + user.user_id, {
 				method: "DELETE",
-				body: JSON.stringify({ csrfToken: genCsrfToken() }),
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ totp: totp, csrfToken: genCsrfToken() }),
 				credentials: "include",
 			})
 				.then((response) => response.json())
 				.then((response) => {
 					// server says correctly authenticated. so redirect to the main page
 					console.log(response);
-					history.push("/");
-					alert("Your account has been erased from existence.");
+					if (response.success) {
+						history.push("/");
+						window.location.reload();
+					}
+					alert(response.message);
 				})
 				.catch((err) => alert(err));
 		} else alert("You're not logged in.");
@@ -66,7 +76,21 @@ function UserProfile() {
 						required=""
 						autofocus=""
 					/>
-					<button onClick={delete_account}>Delete Account</button>
+					{!clickedDelete && <button onClick={ssd}>Delete Account</button>}
+					{clickedDelete && (
+						<div className="delete-code">
+							<h5 className="delete-inst">Please type in the code to delete your account.</h5>
+							<input
+								type="text"
+								className="form-control"
+								name="totp"
+								placeholder="Google Authenticator Code"
+								required=""
+								onChange={(e) => setTotp(e.target.value)}
+							/>
+							<button onClick={delete_account}>Yes, I wish to delete my account.</button>
+						</div>
+					)}
 				</div>
 			)}
 		</div>

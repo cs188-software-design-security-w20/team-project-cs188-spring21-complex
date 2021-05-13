@@ -24,7 +24,8 @@ function sendEmail(userEmail, URL) {
 		from: "teamcomplex.verify@gmail.com",
 		to: userEmail,
 		subject: "Verify Your Account",
-		text: `Thank you for signing up for Complex. Please follow this link to verify your account:\n${URL}`,
+		html: `<h1> Thank you for signing up for Complex. </h1> <br>
+      <h3> Please navigate to this link to verify your account: ${URL} </h3>`,
 	};
 
 	mailTransporter.sendMail(mailDetails, function (err, data) {

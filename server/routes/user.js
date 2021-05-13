@@ -82,22 +82,34 @@ router.delete("/delete/:id", (req, res) => {
 			console.log("connection failed", err.message);
 			res.json({ success: false, message: err.message });
 		}
-		db.query(`DELETE FROM ${user_table} WHERE user_id = ${req.params.id}`, (err, result) => {
-			if (err) {
-				// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
-				let issue = err.message;
-				console.log(issue);
-				// req.flash("danger", err.message);
-				res.json({ success: false, message: issue });
-				// res.redirect("/user/register");
-			} else {
-				console.log("Successfully deleted user id:", req.params.id);
-				killSession(req, res, (res) => {
-					res.json({ success: true });
-				});
-				// req.flash("success", "Account created");
-			}
+
+		// find user based on session user_id & verify 6-digit 2FA with secret key
+		db.query(`SELECT * FROM ${user_table} WHERE user_id = '${req.params.id}'`, (err, user) => {
+			if (authenticator.verifyTOTP(user[0].secretKey, req.body.totp)) {
+				if (user[0].verified) {
+					db.query(`DELETE FROM ${user_table} WHERE user_id = ${req.params.id}`, (err, result) => {
+						if (err) {
+							// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
+							let issue = err.message;
+							console.log(issue);
+							res.json({
+								success: false,
+								message: "Delete request cannot be processed at this time.",
+							});
+						} else {
+							console.log("Successfully deleted user id:", req.params.id);
+							killSession(req, res, (res) => {
+								res.json({
+									success: true,
+									message: "Your account has been erased from existence.",
+								});
+							});
+						}
+					});
+				} else res.json({ success: false, message: "User email is not verified, can't login." });
+			} else res.json({ success: false, message: "The time based code is incorrect." });
 		});
+
 		db.release(); // remember to release the connection when you're done
 	});
 });

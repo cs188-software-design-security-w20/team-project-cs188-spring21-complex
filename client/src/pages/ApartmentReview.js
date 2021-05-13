@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { domain } from "../routes";
 import { genCsrfToken } from "../context/auth";
 import ReCAPTCHA from "react-google-recaptcha";
 import "../css/ApartmentReview.css";
+import { getUser } from "../context/auth";
+import { useHistory } from "react-router-dom";
 
 async function upload_file(file) {
 	let formData = new FormData();
@@ -59,6 +61,18 @@ function ApartmentReview() {
 	const isDisabled = () => {
 		return !recaptcha;
 	};
+
+	// if not logged in, kick them out
+	let history = useHistory();
+	useEffect(() => {
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length <= 0) {
+				history.push("/");
+				alert("You are not logged in.");
+			}
+		});
+	}, []);
 
 	return (
 		<div>

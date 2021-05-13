@@ -24,6 +24,7 @@ function Login() {
 				// server says correctly authenticated. so redirect to the main page
 				if (response.success) {
 					history.push("/");
+					window.location.reload();
 					alert("Successfully logged in!");
 				} else {
 					// message can be an array (if input errors) or string (if database errors)
