@@ -16,17 +16,7 @@ const user_table = "users";
 const { serverDomain, domain } = require("../routes.js");
 
 // #################################################################################################
-//* POST
-router.post("/logout", (req, res) => {
-	console.log(req.body);
-	if (req.body.csrfToken !== getCsrfToken(req)) {
-		return res.json({ success: false, message: "Invalid CSRF Token" });
-	}
-	killSession(req, res, (res) => {
-		res.json({ success: true });
-	});
-});
-
+//* GET
 router.get("/QRCode", async (req, res) => {
 	res.json(await authenticator.generateSecretAndQR());
 });
@@ -114,6 +104,15 @@ router.delete("/delete/:id", (req, res) => {
 
 // #################################################################################################
 //* POST
+router.post("/logout", (req, res) => {
+	console.log(req.body);
+	if (req.body.csrfToken !== getCsrfToken(req)) {
+		return res.json({ success: false, message: "Invalid CSRF Token" });
+	}
+	killSession(req, res, (res) => {
+		res.json({ success: true });
+	});
+});
 
 validate_login = [
 	validator
@@ -127,11 +126,9 @@ validate_login = [
 	validator
 		.check("pass")
 		.isLength({ min: 8, max: 15 })
-		.withMessage("Password should be between 8-15 characters long.")
 		.matches("[0-9]")
-		.withMessage("Password must contain a number.")
 		.matches("[A-Z]")
-		.withMessage("Password must contain an uppercase letter.")
+		.withMessage("Password is incorrect.")
 		.trim()
 		.escape(),
 	validator.check("totp", "Invalid Google Authenticator Code").isNumeric().trim().escape(),
@@ -299,8 +296,9 @@ router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 			return;
 		}
 		try {
-			const rows = await db.query(`SELECT * FROM ${vote_table}
-										WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`);
+			const rows = await db.query(
+				`SELECT * FROM ${vote_table} WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`
+			);
 			if (rows.length == 0) {
 				// user never voted for this review yet, insert a new row
 				await db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUE (?)`, [
@@ -311,8 +309,7 @@ router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 			} else {
 				// Update
 				await db.query(
-					`UPDATE ${vote_table} SET vote_type = ?
-								WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`,
+					`UPDATE ${vote_table} SET vote_type = ? WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`,
 					vote_type
 				);
 			}
@@ -348,8 +345,7 @@ function runAsyncWrapper(callback) {
 			await callback(req, res, next);
 		} catch (err) {
 			console.log(err.message);
-			req.flash("danger", err.message);
-			res.redirect("/");
+			res.send({ success: false, message: "Error with asynchronous registration." });
 			next(err);
 		}
 	};

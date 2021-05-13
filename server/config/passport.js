@@ -1,7 +1,7 @@
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const dbConn = require("../db.js");
-const totpAuthenticate = require('../totp-authenticator');
+const totpAuthenticate = require("../totp-authenticator");
 // ! rename the database table to your local one
 const user_table = "users";
 
@@ -15,47 +15,52 @@ module.exports = (passport) => {
   return the user object if all goes well
   */
 	passport.use(
-		new LocalStrategy({ usernameField: "email", passwordField: "pass", passReqToCallback: true }, (req, email, pass, done) => {
-			dbConn.getConnection((err, db) => {
-				if (err) {
-					console.log("connection failed", err.message);
-					db.release();
-					return done(err);
-				}
-				db.query(
-					`SELECT * FROM ${user_table} WHERE email = '${email.split("@", 1)[0]}'`,
-					(err, user) => {
+		new LocalStrategy(
+			{ usernameField: "email", passwordField: "pass", passReqToCallback: true },
+			(req, email, pass, done) => {
+				dbConn.getConnection((err, db) => {
+					if (err) {
+						console.log("connection failed", err.message);
 						db.release();
-						if (err) {
-							console.log(err.message);
-							return done(err.message);
-							// return done(null, false, { message: "Error occured, please contact the admin." });
-						} else {
-							// query returns a list of users, but of size 1 because email should be unique
-							if (user.length !== 1) {
-								return done(null, false, {
-									message: "This email is not registered with any account.",
-								});
+						return done(err);
+					}
+					db.query(
+						`SELECT * FROM ${user_table} WHERE email = '${email.split("@", 1)[0]}'`,
+						(err, user) => {
+							db.release();
+							if (err) {
+								console.log(err.message);
+								return done(err.message);
+								// return done(null, false, { message: "Error occured, please contact the admin." });
 							} else {
-								bcrypt.compare(pass, user[0].password, (err, match) => {
-									if (err) return done(err);
-									// throw err;
-									else if (match) {
-										if(totpAuthenticate.verifyTOTP(user[0].secretKey, req.body.totp)) {
-											if (user[0].verified) {
-												return done(null, user[0]);
-											}
-											else return done(null, false, { message: "User email is not verified, can't login." });
-										}
-										else return done(null, false, { message: "The time-based code is incorrect." });
-									} else return done(null, false, { message: "The password is incorrect." });
-								});
+								// query returns a list of users, but of size 1 because email should be unique
+								if (user.length !== 1) {
+									return done(null, false, {
+										message: "This email is not registered with any account.",
+									});
+								} else {
+									bcrypt.compare(pass, user[0].password, (err, match) => {
+										if (err) return done(err);
+										// throw err;
+										else if (match) {
+											if (totpAuthenticate.verifyTOTP(user[0].secretKey, req.body.totp)) {
+												if (user[0].verified) {
+													return done(null, user[0]);
+												} else
+													return done(null, false, {
+														message: "User email is not verified, can't login.",
+													});
+											} else
+												return done(null, false, { message: "The time-based code is incorrect." });
+										} else return done(null, false, { message: "The password is incorrect." });
+									});
+								}
 							}
 						}
-					}
-				);
-			});
-		})
+					);
+				});
+			}
+		)
 	);
 
 	/* (1) Login --> [2] Database --> (3) serializeUser --> [4] Session --> [5] Cookie
@@ -84,18 +89,5 @@ module.exports = (passport) => {
   */
 	passport.deserializeUser(function (sessionUser, done) {
 		return done(null, sessionUser);
-		/*
-		dbConn.getConnection((err, db) => {
-			if (err) {
-				console.log("connection failed", err);
-				throw err;
-			}
-			db.query(`SELECT * FROM ${user_table} WHERE user_id = ${id}`, (err, user) => {
-				return done(err, user[0]);
-			});
-
-			db.release(); // remember to release the connection when you're done
-		});
-    */
 	});
 };

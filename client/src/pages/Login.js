@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Login.css";
 import { useHistory } from "react-router-dom";

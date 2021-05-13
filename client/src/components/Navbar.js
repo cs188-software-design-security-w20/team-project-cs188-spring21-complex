@@ -4,8 +4,8 @@ import "../css/Navbar.css";
 import ReorderIcon from "@material-ui/icons/Reorder";
 import SearchIcon from "@material-ui/icons/Search";
 import MapIcon from "@material-ui/icons/Map";
-import { IconButton, TextField, InputAdornment, Tooltip } from '@material-ui/core';
-import { Autocomplete } from '@material-ui/lab';
+import { IconButton, TextField, InputAdornment, Tooltip } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import { getUser, genCsrfToken } from "../context/auth";
 import { useHistory, Link } from "react-router-dom";
 import { domain } from "../routes";
@@ -22,8 +22,8 @@ function Navbar() {
 			e.preventDefault();
 			fetch(`${domain}/user/logout`, {
 				method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ csrfToken: genCsrfToken() }),
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ csrfToken: genCsrfToken() }),
 				credentials: "include",
 			})
 				.then((response) => response.json())
@@ -41,8 +41,8 @@ function Navbar() {
 		} else alert("You're not logged in.");
 	};
 
-	// if already logged in, kick them out
 	useEffect(() => {
+		// if logged in, hide "Login|Signup" and show "Post Review, Logout, Profile"
 		getUser().then((obj) => {
 			console.log(obj);
 			if (Object.keys(obj.user).length > 0) setAuth(true);
@@ -50,19 +50,19 @@ function Navbar() {
 
 		// redundant on home and map
 		fetch("http://localhost:3000/apartment/list")
-        .then(response => response.json())
-        .then(response => {
-            console.log(response);
-            setSearchList(response);
-        })
-        .catch(err => console.error(err))
+			.then((response) => response.json())
+			.then((response) => {
+				console.log(response);
+				setSearchList(response);
+			})
+			.catch((err) => console.error(err));
 	}, []);
 
 	const selectApartment = (e, val) => {
-		if(val && val.apt_id) {
-			history.push('/apartment/' + val.apt_id);
+		if (val && val.apt_id) {
+			history.push("/apartment/" + val.apt_id);
 		}
-	}
+	};
 
 	return (
 		<div className="navbar">
@@ -71,10 +71,20 @@ function Navbar() {
 			</div>
 
 			<div className="center">
-				<Autocomplete className="search" options={searchList} getOptionLabel={option => option.apt_name} onChange={selectApartment} style={{width: 300}}
-						renderInput={params => <TextField {... params}
-													variant="outlined" className="search" label="Search for apartments near UCLA" 
-													/>}
+				<Autocomplete
+					className="search"
+					options={searchList}
+					getOptionLabel={(option) => option.apt_name}
+					onChange={selectApartment}
+					style={{ width: 300 }}
+					renderInput={(params) => (
+						<TextField
+							{...params}
+							variant="outlined"
+							className="search"
+							label="Search for apartments near UCLA"
+						/>
+					)}
 				/>
 				<Tooltip title="See Map">
 					<Link to="/map">
@@ -87,10 +97,10 @@ function Navbar() {
 
 			<div className="right-side">
 				<div className="links" id={showLinks ? "hidden" : ""}>
-					<a href="/newreview">Post Review</a>
 					{!auth && <a href="/login">Login | Sign Up</a>}
 					{auth && (
 						<React.Fragment>
+							<a href="/newreview">Post Review</a>
 							<a href="/user-profile">Profile</a>
 							<a href="/" onClick={logout}>
 								Logout

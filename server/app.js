@@ -37,7 +37,7 @@ app.use(
 		resave: true,
 		saveUninitialized: false, // only store sessions when they've been modified
 		cookie: {
-			maxAge: 3 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
+			maxAge: 1 * 60 * 1000, // in ms, so minutes = x * 60 * 1000
 			httpOnly: true, // prevents browser js from reading cookie session data
 			sameSite: "strict",
 			// domain: '.our-domain.com' // Set to our domain later

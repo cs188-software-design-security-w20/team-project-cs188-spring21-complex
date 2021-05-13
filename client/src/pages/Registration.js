@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import "../App.css";
 import "../css/Registration.css";
 import { useHistory } from "react-router-dom";
@@ -83,7 +82,7 @@ function Registration() {
 					<p>
 						To create your account, you must first download the Google Authenticator App. Then, scan
 						the QR code or enter the secret key manually. Once authenticated, please type in the
-						time-based code below to verify that you've registered with Google Authenticator.
+						time-based code below to verify that you have registered with Google Authenticator.
 					</p>
 					<div className="center">
 						{secretKey && <img src={secretKey["QRcode"]}></img>}
