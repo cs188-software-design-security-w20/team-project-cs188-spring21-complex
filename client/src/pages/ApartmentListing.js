@@ -5,11 +5,14 @@ import AptListingRatings from "../components/AptListingRatings";
 import "../App.css";
 import "../css/ApartmentListing.css";
 import { useParams } from "react-router-dom";
+import ApartmentReview from "./ApartmentReview";
+import { getUser } from "../context/auth";
 
 function ApartmentListing(props) {
 	const [reviews, setReviews] = useState([]);
 	const [badPage, setBadPage] = useState(false); // if navigated without apt id
 	const [noReviews, setNoReviews] = useState(false);
+	const [auth, setAuth] = useState(false);
 
 	const { id } = useParams();
 
@@ -35,10 +38,19 @@ function ApartmentListing(props) {
 				setBadPage(true);
 				console.error(err);
 			});
+
+		getUser().then((obj) => {
+			console.log(obj);
+			if (Object.keys(obj.user).length > 0) setAuth(true);
+		});
 	}, []);
 
 	const toggleUpvote = (e) => {
 		// TODO: check if user is logged in
+		if (auth) {
+			// set toggles here?
+			alert("hello");
+		}
 	};
 
 	if (badPage) {
@@ -53,15 +65,20 @@ function ApartmentListing(props) {
 	if (noReviews) {
 		reviewJSX = (
 			<div className="review-list">
-				<p>No reviews yet, be the first!</p>
-				<div className='post-review-button'>
-                    <a className='post-review' href='/newreview'>Post Review</a>
-                </div>
+				<p>There are no reviews yet, be the first!</p>
+				{!auth && <p>Please login if you wish to post a review.</p>}
+				{/* <div className="post-review-button">
+					<a className="post-review" href="/newreview">
+						Post Review
+					</a>
+				</div> */}
 			</div>
 		);
 	} else if (reviews) {
 		reviewJSX = (
 			<div className="review-list">
+				{!auth && <p>Please login if you wish to post a review.</p>}
+
 				{reviews.map((review) => (
 					<div className="review" key={review.review_num}>
 						<p>user: {review.user_id}</p>
@@ -93,6 +110,7 @@ function ApartmentListing(props) {
 						<AptListingRatings ratings={Ratings} />
 					</div>
 				</div>
+				<div className="info-columns">{auth && <ApartmentReview />}</div>
 				<div className="info-columns">
 					<div className="reviews">{reviewJSX}</div>
 				</div>

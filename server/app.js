@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const path = require("path");
-const flash = require("connect-flash");
+// const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
@@ -67,6 +67,7 @@ app.use(function (req, res, next) {
 });
 // */
 
+/*
 // express flash
 app.use(flash());
 
@@ -75,7 +76,7 @@ app.use(function (req, res, next) {
 	res.locals.messages = require("express-messages")(req, res);
 	next();
 });
-
+*/
 // #################################################################################################
 //* Passport
 

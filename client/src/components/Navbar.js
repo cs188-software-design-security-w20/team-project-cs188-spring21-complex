@@ -89,7 +89,7 @@ function Navbar() {
 				<Tooltip title="See Map">
 					<Link to="/map">
 						<IconButton>
-							<MapIcon style={{color: '#fff'}}/>
+							<MapIcon style={{ color: "#fff" }} />
 						</IconButton>
 					</Link>
 				</Tooltip>
@@ -100,7 +100,6 @@ function Navbar() {
 					{!auth && <a href="/login">Login | Sign Up</a>}
 					{auth && (
 						<React.Fragment>
-							<a href="/newreview">Post Review</a>
 							<a href="/user-profile">Profile</a>
 							<a href="/" onClick={logout}>
 								Logout

@@ -28,22 +28,28 @@ async function upload_file(file) {
 function ApartmentReview() {
 	const [review, setReview] = useState({});
 	const [recaptcha, setRecaptcha] = useState("");
+	const [auth, setAuth] = useState(false);
 
 	const postReview = (e) => {
 		e.preventDefault();
-		review["csrfToken"] = genCsrfToken();
-		console.log(review);
-		fetch(`${domain}/apartment/review/1`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(review),
-			credentials: "include",
-		})
-			.then((response) => response.json())
-			.then((response) => {
-				console.log(response);
+		if (auth) {
+			review["csrfToken"] = genCsrfToken();
+			console.log(review);
+			fetch(`${domain}/apartment/review/1`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(review),
+				credentials: "include",
 			})
-			.catch((err) => alert(err));
+				.then((response) => response.json())
+				.then((response) => {
+					console.log(response);
+				})
+				.catch((err) => alert(err));
+		} else {
+			history.push("/login");
+			alert("You are not logged in.");
+		}
 	};
 
 	const handler = async (e) => {
@@ -67,10 +73,7 @@ function ApartmentReview() {
 	useEffect(() => {
 		getUser().then((obj) => {
 			console.log(obj);
-			if (Object.keys(obj.user).length <= 0) {
-				history.push("/");
-				alert("You are not logged in.");
-			}
+			if (Object.keys(obj.user).length > 0) setAuth(true);
 		});
 	}, []);
 
@@ -94,7 +97,8 @@ function ApartmentReview() {
 						required=""
 						onChange={(e) => setReview({ ...review, bedbath: e.target.value })}
 					/>
-					<textarea type="text" 
+					<textarea
+						type="text"
 						type="text"
 						className="form-control-user-review"
 						name="review"
@@ -102,12 +106,12 @@ function ApartmentReview() {
 						required=""
 						onChange={(e) => setReview({ ...review, review_text: e.target.value })}
 					/>
-					
-					<div className='upload-images'>
+
+					<div className="upload-images">
 						<br />
-						<div className='upload-image-msg'>Add Image:</div>
+						<div className="upload-image-msg">Add Image:</div>
 						<input id="image-upload" type="file" onChange={handler} />
-					</div>					
+					</div>
 					<br />
 
 					<ReCAPTCHA
@@ -118,7 +122,7 @@ function ApartmentReview() {
 					<p>Recaptcha value: {recaptcha}</p>
 					<br />
 
-					<button className='submit' id="submit" type="submit" disabled={!recaptcha}>
+					<button className="submit" id="submit" type="submit" disabled={!recaptcha}>
 						Post
 					</button>
 				</form>
