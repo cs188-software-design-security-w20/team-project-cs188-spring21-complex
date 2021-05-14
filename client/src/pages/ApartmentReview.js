@@ -38,19 +38,19 @@ function ApartmentReview(props) {
 	const [ratingManagement, setRatingManagement] = useState(0);
 	const handleRatingChangeCleanliness = (event, newRating) => {	
 		setRatingCleanliness(newRating);
-		setReview({ ...review, cleanliness: ratingCleanliness });
+		setReview({ ...review, cleanliness: newRating });
 	}
 	const handleRatingChangeAmenities = (event, newRating) => {	
 		setRatingAmenities(newRating);
-		setReview({ ...review, amenities: ratingAmenities });
+		setReview({ ...review, amenities: newRating });
 	}
 	const handleRatingChangeProximity = (event, newRating) => {	
 		setRatingProximity(newRating);
-		setReview({ ...review, location: ratingProximity });
+		setReview({ ...review, location: newRating });
 	}
 	const handleRatingChangeManagement = (event, newRating) => { 
 		setRatingManagement(newRating);
-		setReview({ ...review, landlord: ratingManagement });
+		setReview({ ...review, landlord: newRating });
 	}
 
 	const postReview = (e) => {
