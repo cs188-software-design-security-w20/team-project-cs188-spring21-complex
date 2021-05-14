@@ -11,9 +11,8 @@ function AptListing(props) {
 			</div>
 			<div className="apt-info">
 				<div className="apt-info-name">{props.data.apt_name}</div>
-				<div className="apt-info-address1">{props.data.apt_address}</div>
-				<div className="apt-info-address2">ID: {props.data.apt_id}</div>
-				<div className="apt-info-unit">${props.data.lower_price}</div>
+				<div className="apt-info-address1">{props.data.address}</div>
+				<div className="apt-info-unit">Price Range: ${props.data.lower_price}-${props.data.upper_price}</div>
 			</div>
 		</div>
 	);

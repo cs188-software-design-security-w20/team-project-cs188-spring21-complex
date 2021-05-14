@@ -218,7 +218,7 @@ function ApartmentListing(props) {
 
 				{reviews.map((review) => (
 					<div className="review" key={review.review_num}>
-						<p>user: {review.user_id}</p>
+						<p>user: {review.username}</p>
 						<p>bedbath: {review.bedbath}</p>
 						<p>review: {review.review_text}</p>
 						<p>

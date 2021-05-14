@@ -42,7 +42,7 @@ router.get("/list", function (req, res) {
 			res.send(err);
 			return;
 		}
-		db.query(`SELECT apt_id, apt_name, address, lower_price, latitude, longitude, home_image from ${apt_table}`, (err, rows) => {
+		db.query(`SELECT apt_id, apt_name, address, lower_price, upper_price, latitude, longitude, home_image from ${apt_table}`, (err, rows) => {
 			if (err) {
 				res.send("ERROR");
 			} else {
@@ -103,15 +103,18 @@ router.get("/:id/reviews", function (req, res) {
 			res.send(err);
 			return;
 		}
-		db.query(`SELECT r.review_num, r.user_id, r.review_text, r.bedbath, r.date, r.cleanliness, r.location, r.amenities, r.landlord, r.noise,
+		//console.log("ID: ", req.params.id);
+		db.query(`SELECT r.review_num, r.user_id, u.username, r.review_text, r.bedbath, r.date, r.cleanliness, r.location, r.amenities, r.landlord,
 					COUNT(IF(vote_type=1, 1, null)) as upvotes, COUNT(IF(vote_type=2, 1, null)) as downvotes
 					FROM ${review_table} r
 					LEFT JOIN user_votes uv ON r.review_num=uv.review_id
-					WHERE apt_id = ?
-					GROUP BY IF(vote_type IS NULL, 0, vote_type)`, req.params.id, (err, rows) => {
+					JOIN users u ON u.user_id=r.user_id
+					WHERE r.apt_id = ${req.params.id}
+					GROUP BY review_num`, (err, rows) => {
 			if (err) {
 				res.send({ success: false, error: err });
 			} else {
+				console.log(rows);
 				res.send(rows);
 			}
 		});
@@ -141,12 +144,12 @@ router.get("/:id/images", function (req, res) {
 });
 
 
-const review_columns = "(apt_id, user_id, bedbath, review_text, date)";
+const review_columns = "(apt_id, user_id, bedbath, review_text, date, cleanliness, location, amenities, landlord)";
 router.post("/:id/review", checkAuthentication, function (req, res) {
 	// Validate review
 	({ bedbath, review_text } = req.body);
 	console.log(req.body);
-	const row = [req.params['id'], req.user.user_id, bedbath, review_text, new Date()];
+	const row = [req.params['id'], req.user.user_id, bedbath, review_text, new Date(), req.body['cleanliness'], req.body['location'], req.body['amenities'], req.body['landlord']];
 	let image = null;
 	console.log(req.params);
 
