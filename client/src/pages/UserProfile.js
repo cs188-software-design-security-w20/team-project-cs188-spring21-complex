@@ -4,6 +4,7 @@ import "../css/UserProfile.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
 import { getUser, genCsrfToken } from "../context/auth";
+import e from "cors";
 //import pfp from '../assets/westwood_executive_apt.jpg';
 
 async function upload_file(file, user_id) {
@@ -88,7 +89,12 @@ function UserProfile() {
 			if (Object.keys(obj.user).length > 0) {
 				setAuth(true);
 				setUser(obj.user);
-				setPfp(`${domain}/uploads/` +obj.user.image_uuid);
+				if (obj.user.image_uuid) {
+					setPfp(`${domain}/uploads/` +obj.user.image_uuid);
+				}
+				else {
+					setPfp(`${domain}/uploads/DefaultProfilePicture.jpg`);
+				}
 			} else {
 				history.push("/login");
 				alert("You are not logged in.");
