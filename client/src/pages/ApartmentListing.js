@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 import ApartmentReview from "./ApartmentReview";
 import { getUser } from "../context/auth";
 import { CircularProgress } from '@material-ui/core';
+import { domain } from "../routes";
+
 
 function ApartmentListing(props) {
 	const [reviews, setReviews] = useState([]);
@@ -16,7 +18,7 @@ function ApartmentListing(props) {
 	const [auth, setAuth] = useState(false);
 	const [apt, setApartment] = useState({});
 	const [ratings, setRatings] = useState({});
-
+	const [GalleryData, setGalleryData] = useState([]);
 	const { id } = useParams();
 
 	useEffect(() => {
@@ -52,6 +54,23 @@ function ApartmentListing(props) {
 				setBadPage(true);
 				console.error(err);
 			});
+		fetch(`${domain}/apartment/` + id + "/images", {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			//body: JSON.stringify({ totp: totp, csrfToken: genCsrfToken() }),
+			credentials: "include",
+		})
+			.then((response) => response.json())
+			.then((response) => {
+				response.forEach((element,index,arr) => {
+					arr[index]['image'] = `${domain}/uploads/${element['image']}`;
+				});
+				setGalleryData(response);
+				console.log(response);
+				// server says correctly authenticated. so redirect to the main page
+				// console.log(response);
+			})
+			.catch((err) => alert(err));
 		fetch("http://localhost:3000/apartment/" + id, {
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
@@ -151,32 +170,32 @@ function ApartmentListing(props) {
 	)
 }
 
-const GalleryData = [
-	{
-		image:
-			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/430c3aac0523a2e5c1641a47f408df83-full.webp",
-	},
+// const GalleryData = [
+// 	{
+// 		image:
+// 			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/430c3aac0523a2e5c1641a47f408df83-full.webp",
+// 	},
 
-	{
-		image:
-			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/55c5323498545f73ab10111375b4227b-full.webp",
-	},
+// 	{
+// 		image:
+// 			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/55c5323498545f73ab10111375b4227b-full.webp",
+// 	},
 
-	{
-		image:
-			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/17a0dc3c40552f9b1c93f88b3ec11491-full.webp",
-	},
+// 	{
+// 		image:
+// 			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/17a0dc3c40552f9b1c93f88b3ec11491-full.webp",
+// 	},
 
-	{
-		image:
-			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/1766934bcf77f501a5821c5d118c2c0c-full.webp",
-	},
+// 	{
+// 		image:
+// 			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/1766934bcf77f501a5821c5d118c2c0c-full.webp",
+// 	},
 
-	{
-		image:
-			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/1557d5b5e5beda24cc30befcbbb74c7b-full.webp",
-	},
-];
+// 	{
+// 		image:
+// 			"https://www.trulia.com/pictures/thumbs_5/zillowstatic/fp/1557d5b5e5beda24cc30befcbbb74c7b-full.webp",
+// 	},
+// ];
 
 const Description = [
 	{

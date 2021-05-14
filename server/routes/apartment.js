@@ -7,6 +7,7 @@ const getCsrfToken = require("../csrf").getCsrfToken;
 // ! rename the database table to your local one
 const apt_table = "apartments";
 const review_table = "reviews";
+const image_table = "apartment_image";
 
 const { checkAuthentication } = require('./user');
 
@@ -118,6 +119,27 @@ router.get("/:id/reviews", function (req, res) {
 	});
 	// res.send('success');
 });
+
+router.get("/:id/images", function (req, res) {
+	dbConn.getConnection((err, db) => {
+		if (err) {
+			console.log("connection failed", err);
+			res.send(err);
+			return;
+		}
+		db.query(`SELECT image_uuid AS image FROM ${image_table} WHERE apt_id = ${req.params.id} `, (err, rows) => {
+			if (err) {
+				res.send({ success: false, error: err });
+			} else {
+				res.send(rows);
+				console.log(rows);
+			}
+		});
+		db.release(); // remember to release the connection when you're done
+	});
+	// res.send('success');
+});
+
 
 const review_columns = "(apt_id, user_id, bedbath, review_text, date)";
 router.post("/:id/review", checkAuthentication, function (req, res) {

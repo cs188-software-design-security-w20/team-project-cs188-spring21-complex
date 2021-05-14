@@ -81,20 +81,7 @@ function UserProfile() {
 			if (Object.keys(obj.user).length > 0) {
 				setAuth(true);
 				setUser(obj.user);
-				fetch(`${domain}/uploads/` +obj.user.image_uuid, {
-					method: "GET",
-					headers: { "Content-Type": "image" },
-					//body: JSON.stringify({ totp: totp, csrfToken: genCsrfToken() }),
-					credentials: "include",
-				})
-					.then((response) => response.blob())
-					.then((response) => {
-						console.log(response);
-						// server says correctly authenticated. so redirect to the main page
-						// console.log(response);
-						setPfp(URL.createObjectURL(response));
-					})
-					.catch((err) => alert(err));
+				setPfp(`${domain}/uploads/` +obj.user.image_uuid);
 			} else {
 				history.push("/login");
 				alert("You are not logged in.");
