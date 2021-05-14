@@ -145,8 +145,10 @@ const review_columns = "(apt_id, user_id, bedbath, review_text, date)";
 router.post("/:id/review", checkAuthentication, function (req, res) {
 	// Validate review
 	({ bedbath, review_text } = req.body);
-	const row = [req.params.id, req.user.user_id, bedbath, review_text, new Date()];
+	console.log(req.body);
+	const row = [req.params['id'], req.user.user_id, bedbath, review_text, new Date()];
 	let image = null;
+	console.log(req.params);
 
 	dbConn.getConnection(async (err, db) => {
 		if (err) {
@@ -156,10 +158,12 @@ router.post("/:id/review", checkAuthentication, function (req, res) {
 		}
 		try {
 			await db.beginTransaction(); // start a unit of work
-			await db.query(`INSERT INTO ${review_table} ${review_columns} VALUES (?)`, [row]);
-			if (image) {
-				await db.query(`INSERT INTO ${image_table} (?, ?)`, [req.params.id, image]);
-			} 
+			await db.query(`INSERT INTO ${review_table} ${review_columns} VALUES (?)`, [row], (err,val) => {
+				console.log(err);
+			});
+			// if (image) {
+			// 	await db.query(`INSERT INTO ${image_table} (?, ?)`, [req.params.id, image]);
+			// } 
 			await db.commit();
 			res.json({ success: true })
 		} catch (e) {

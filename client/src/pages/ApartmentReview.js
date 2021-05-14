@@ -46,7 +46,8 @@ function ApartmentReview(props) {
 		if (auth) {
 			review["csrfToken"] = genCsrfToken();
 			console.log(review);
-			fetch(`${domain}/apartment/review/1`, {
+			console.log(props['apt_data']['apt_id']);
+			fetch(`${domain}/apartment/${props['apt_data']['apt_id']}/review`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(review),
@@ -55,6 +56,7 @@ function ApartmentReview(props) {
 				.then((response) => response.json())
 				.then((response) => {
 					console.log(response);
+					window.location.reload();
 				})
 				.catch((err) => alert(err));
 		} else {
