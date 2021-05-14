@@ -39,6 +39,30 @@ body {
     padding: 10px;
 }
 
+.form-rating-title {
+    font-weight: bold;
+}
+
+.form-rating-bar {
+    display: flex;
+}
+
+.form-rating-slider {
+    color: #005AB3;
+}
+
+.form-rating-bar-left {
+    padding-right: 15px;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.form-rating-bar-right {
+    padding-left: 15px;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
 .form-control-user-review {
     position: relative;
     font-size: 16px;

@@ -5,6 +5,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import "../css/ApartmentReview.css";
 import { getUser } from "../context/auth";
 import { useHistory } from "react-router-dom";
+import { Slider, Grid} from '@material-ui/core';
 
 async function upload_file(file) {
 	let formData = new FormData();
@@ -29,6 +30,16 @@ function ApartmentReview(props) {
 	const [review, setReview] = useState({});
 	const [recaptcha, setRecaptcha] = useState("");
 	const [auth, setAuth] = useState(false);
+
+	// Used for changing the value of the sliders for the apt-ratings
+	const [ratingPrice, setRatingPrice] = useState(0);
+	const [ratingAmenities, setRatingAmenities] = useState(0);
+	const [ratingProximity, setRatingProximity] = useState(0);
+	const [ratingManagement, setRatingManagement] = useState(0);
+	const handleRatingChangePrice = (event, newRating) => {	setRatingPrice(newRating) }
+	const handleRatingChangeAmenities = (event, newRating) => {	setRatingAmenities(newRating) }
+	const handleRatingChangeProximity = (event, newRating) => {	setRatingProximity(newRating) }
+	const handleRatingChangeManagement = (event, newRating) => { setRatingManagement(newRating)	}
 
 	const postReview = (e) => {
 		e.preventDefault();
@@ -97,6 +108,66 @@ function ApartmentReview(props) {
 						required=""
 						onChange={(e) => setReview({ ...review, bedbath: e.target.value })}
 					/>
+
+					<div className='user-review-ratings'>
+						<div className='form-rating-title'>Price: {ratingPrice}</div> 
+						<div className='form-rating-bar'>
+							<text className='form-rating-bar-left'>High</text>
+							<Slider className='form-rating-slider'
+								rating={ratingPrice} 
+								onChange={handleRatingChangePrice}
+								step={1}
+								marks
+								min={0}
+								max={5}
+							/>
+							<text className='form-rating-bar-right' style={{paddingLeft: '22px'}}>Low</text>
+						</div>
+
+						<div className='form-rating-title'>Amenities: {ratingAmenities}</div> 
+						<div className='form-rating-bar'>
+							<text className='form-rating-bar-left' style={{paddingRight: '21px'}}>Bad</text>
+							<Slider className='form-rating-slider'
+								rating={ratingAmenities} 
+								onChange={handleRatingChangeAmenities}
+								step={1}
+								marks
+								min={0}
+								max={5}
+							/>
+							<text className='form-rating-bar-right'>Good</text>
+						</div>
+
+						<div className='form-rating-title'>Proximity: {ratingProximity}</div> 
+						<div className='form-rating-bar'>
+							<text className='form-rating-bar-left' style={{paddingRight: '25px'}}>Far</text>
+							<Slider className='form-rating-slider'
+								rating={ratingProximity} 
+								onChange={handleRatingChangeProximity}
+								step={1}
+								marks
+								min={0}
+								max={5}
+							/>
+							<text className='form-rating-bar-right' style={{paddingLeft: '17px'}}>Close</text>
+						</div>							
+
+						<div className='form-rating-title'>Management: {ratingManagement}</div> 
+						<div className='form-rating-bar'>
+							<text className='form-rating-bar-left' style={{paddingRight: '21px'}}>Bad</text>
+							<Slider className='form-rating-slider'
+								rating={ratingManagement} 
+								onChange={handleRatingChangeManagement}
+								step={1}
+								marks
+								min={0}
+								max={5}
+							/>
+							<text className='form-rating-bar-right'>Good</text>
+						</div>										
+					</div>
+					<br />
+
 					<textarea
 						type="text"
 						type="text"
