@@ -32,14 +32,26 @@ function ApartmentReview(props) {
 	const [auth, setAuth] = useState(false);
 
 	// Used for changing the value of the sliders for the apt-ratings
-	const [ratingPrice, setRatingPrice] = useState(0);
+	const [ratingCleanliness, setRatingCleanliness] = useState(0);
 	const [ratingAmenities, setRatingAmenities] = useState(0);
 	const [ratingProximity, setRatingProximity] = useState(0);
 	const [ratingManagement, setRatingManagement] = useState(0);
-	const handleRatingChangePrice = (event, newRating) => {	setRatingPrice(newRating) }
-	const handleRatingChangeAmenities = (event, newRating) => {	setRatingAmenities(newRating) }
-	const handleRatingChangeProximity = (event, newRating) => {	setRatingProximity(newRating) }
-	const handleRatingChangeManagement = (event, newRating) => { setRatingManagement(newRating)	}
+	const handleRatingChangeCleanliness = (event, newRating) => {	
+		setRatingCleanliness(newRating);
+		setReview({ ...review, cleanliness: ratingCleanliness });
+	}
+	const handleRatingChangeAmenities = (event, newRating) => {	
+		setRatingAmenities(newRating);
+		setReview({ ...review, amenities: ratingAmenities });
+	}
+	const handleRatingChangeProximity = (event, newRating) => {	
+		setRatingProximity(newRating);
+		setReview({ ...review, location: ratingProximity });
+	}
+	const handleRatingChangeManagement = (event, newRating) => { 
+		setRatingManagement(newRating);
+		setReview({ ...review, landlord: ratingManagement });
+	}
 
 	const postReview = (e) => {
 		e.preventDefault();
@@ -56,7 +68,7 @@ function ApartmentReview(props) {
 				.then((response) => response.json())
 				.then((response) => {
 					console.log(response);
-					window.location.reload();
+					//window.location.reload();
 				})
 				.catch((err) => alert(err));
 		} else {
@@ -112,12 +124,12 @@ function ApartmentReview(props) {
 					/>
 
 					<div className='user-review-ratings'>
-						<div className='form-rating-title'>Price: {ratingPrice}</div> 
+						<div className='form-rating-title'>Cleanliness: {ratingCleanliness}</div> 
 						<div className='form-rating-bar'>
 							<text className='form-rating-bar-left'>High</text>
 							<Slider className='form-rating-slider'
-								rating={ratingPrice} 
-								onChange={handleRatingChangePrice}
+								rating={ratingCleanliness} 
+								onChange={handleRatingChangeCleanliness}
 								step={1}
 								marks
 								min={0}
