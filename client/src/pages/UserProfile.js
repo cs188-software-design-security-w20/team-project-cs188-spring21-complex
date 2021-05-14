@@ -66,12 +66,19 @@ function UserProfile() {
 	const handler = async (e) => {
 		e.preventDefault();
 		let file = document.getElementById("image-upload").files[0];
-		let response = await upload_file(file, user.user_id);
-		if (response["success"]) {
-			// TODO: Should be saved into database
-			console.log(response.uuid);
-		} else {
-			alert(response.message);
+		if (file) {
+			let response = await upload_file(file, user.user_id);
+			if (response["success"]) {
+				// TODO: Should be saved into database
+				console.log(response.uuid);
+				alert("Profile picture updated, please re-login to see the changes!");
+				window.location.reload();
+			} else {
+				alert(response.message);
+			}
+		}
+		else {
+			alert("Please insert an image to upload before submittting.");
 		}
 	};
 
@@ -98,7 +105,8 @@ function UserProfile() {
 					<img className='pfp' src={pfp} />
 					<div className='upload-image'>
 						<div className='upload-image-message'>Add/Update Profile Picture:</div>
-						<input id="image-upload" type="file" onChange={handler} />
+						<input id="image-upload" type="file" /> <br></br><br></br>
+						<button onClick={handler}>Upload image</button>
 					</div>					
 
 					<input
