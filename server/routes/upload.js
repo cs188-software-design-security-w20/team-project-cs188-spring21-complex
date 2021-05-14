@@ -4,7 +4,7 @@ const dbConn = require("../db.js");
 const validator = require("express-validator");
 const path = require("path");
 const getCsrfToken = require("../csrf").getCsrfToken;
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 var table = "apartment_image";
 
 router.post("/user/:id", checkAuthentication, async function (req, res, next) {
@@ -35,8 +35,10 @@ router.post("/user/:id", checkAuthentication, async function (req, res, next) {
 				});
 				return;
 			}
+
+			req.user.image_uuid = uuid;
 			db.query(
-				`UPDATE users SET image_uuid = '${uuid}' WHERE user_id = '${req.params['id']}' `,
+				`UPDATE users SET image_uuid = '${uuid}' WHERE user_id = '${req.params["id"]}' `,
 				(err, user) => {
 					db.release();
 					if (err) {
@@ -44,18 +46,18 @@ router.post("/user/:id", checkAuthentication, async function (req, res, next) {
 						res.json({
 							success: false,
 							message: err,
-						}); 
-					}
-					else
-					{
+						});
+					} else {
 						res.json({
 							success: true,
 							message: "success",
 						});
 					}
+				}
+			);
 		});
-	});
-}});
+	}
+});
 
 router.post("/apt/:id", checkAuthentication, async function (req, res, next) {
 	if (req.body.csrfToken !== getCsrfToken(req)) {
@@ -86,7 +88,7 @@ router.post("/apt/:id", checkAuthentication, async function (req, res, next) {
 				return;
 			}
 			db.query(
-				`INSERT INTO apartment_image (apt_id, image_uuid) VALUES (${req.params['id']},'${uuid}')`,
+				`INSERT INTO apartment_image (apt_id, image_uuid) VALUES (${req.params["id"]},'${uuid}')`,
 				(err, user) => {
 					db.release();
 					if (err) {
@@ -94,18 +96,18 @@ router.post("/apt/:id", checkAuthentication, async function (req, res, next) {
 						res.json({
 							success: false,
 							message: err,
-						}); 
-					}
-					else
-					{
+						});
+					} else {
 						res.json({
 							success: true,
 							message: "success",
 						});
 					}
+				}
+			);
 		});
-	});
-}});
+	}
+});
 
 // check that req.user is valid before user accesses some URL
 function checkAuthentication(req, res, next) {

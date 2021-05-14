@@ -72,13 +72,12 @@ function UserProfile() {
 			if (response["success"]) {
 				// TODO: Should be saved into database
 				console.log(response.uuid);
-				alert("Profile picture updated, please re-login to see the changes!");
+				alert("Profile picture updated!");
 				window.location.reload();
 			} else {
 				alert(response.message);
 			}
-		}
-		else {
+		} else {
 			alert("Please insert an image to upload before submittting.");
 		}
 	};
@@ -89,10 +88,10 @@ function UserProfile() {
 			if (Object.keys(obj.user).length > 0) {
 				setAuth(true);
 				setUser(obj.user);
+
 				if (obj.user.image_uuid) {
-					setPfp(`${domain}/uploads/` +obj.user.image_uuid);
-				}
-				else {
+					setPfp(`${domain}/uploads/` + obj.user.image_uuid);
+				} else {
 					setPfp(`${domain}/uploads/DefaultProfilePicture.jpg`);
 				}
 			} else {
@@ -108,12 +107,13 @@ function UserProfile() {
 				<div className="wrapper">
 					<h2 className="profile-heading">Hello, {user.legal_name}</h2>
 
-					<img className='pfp' src={pfp} />
-					<div className='upload-image'>
-						<div className='upload-image-message'>Add/Update Profile Picture:</div>
-						<input id="image-upload" type="file" /> <br></br><br></br>
+					<img className="pfp" src={pfp} />
+					<div className="upload-image">
+						<div className="upload-image-message">Add/Update Profile Picture:</div>
+						<input id="image-upload" type="file" /> <br></br>
+						<br></br>
 						<button onClick={handler}>Upload image</button>
-					</div>					
+					</div>
 
 					<input
 						type="text"
@@ -143,7 +143,9 @@ function UserProfile() {
 								required=""
 								onChange={(e) => setTotp(e.target.value)}
 							/>
-							<button className='deleteAcc' onClick={delete_account}>Yes, I wish to delete my account.</button>
+							<button className="deleteAcc" onClick={delete_account}>
+								Yes, I wish to delete my account.
+							</button>
 						</div>
 					)}
 				</div>
