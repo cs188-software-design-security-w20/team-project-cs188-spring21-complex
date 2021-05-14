@@ -67,3 +67,9 @@
     margin-left: 15px;
     overflow: hidden;
 }
+
+.voting {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}

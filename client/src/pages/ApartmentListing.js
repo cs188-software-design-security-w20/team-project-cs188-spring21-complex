@@ -7,9 +7,9 @@ import "../css/ApartmentListing.css";
 import { useParams } from "react-router-dom";
 import ApartmentReview from "./ApartmentReview";
 import { getUser } from "../context/auth";
-import { CircularProgress } from '@material-ui/core';
 import { domain } from "../routes";
-
+import { CircularProgress, IconButton, Tooltip } from '@material-ui/core';
+import { ThumbUp, ThumbDown } from '@material-ui/icons'
 
 function ApartmentListing(props) {
 	const [reviews, setReviews] = useState([]);
@@ -18,6 +18,8 @@ function ApartmentListing(props) {
 	const [auth, setAuth] = useState(false);
 	const [apt, setApartment] = useState({});
 	const [ratings, setRatings] = useState({});
+	const [userUpvotes, setUserUpvotes] = useState([]);
+	const [userDownvotes, setUserDownvotes] = useState([]);
 	const [GalleryData, setGalleryData] = useState([]);
 	const { id } = useParams();
 
@@ -32,7 +34,6 @@ function ApartmentListing(props) {
 			.then((response) => response.json())
 			.then((response) => {
 				// [apartment reviews]
-				console.log(response);
 				setReviews(response);
 
 				let len = response.length + 0.0;
@@ -60,29 +61,56 @@ function ApartmentListing(props) {
 			//body: JSON.stringify({ totp: totp, csrfToken: genCsrfToken() }),
 			credentials: "include",
 		})
-			.then((response) => response.json())
-			.then((response) => {
-				response.forEach((element,index,arr) => {
-					arr[index]['image'] = `${domain}/uploads/${element['image']}`;
-				});
-				setGalleryData(response);
-				console.log(response);
-				// server says correctly authenticated. so redirect to the main page
-				// console.log(response);
-			})
-			.catch((err) => alert(err));
+		.then((response) => response.json())
+		.then((response) => {
+			response.forEach((element,index,arr) => {
+				arr[index]['image'] = `${domain}/uploads/${element['image']}`;
+			});
+			setGalleryData(response);
+			// server says correctly authenticated. so redirect to the main page
+			// console.log(response);
+		})
+		.catch((err) => alert(err));
+
 		fetch("http://localhost:3000/apartment/" + id, {
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
 		})
-			.then((response) => response.json())
-			.then((response) => {
-				setApartment(response[0]);
-			})
-			.catch((err) => {
-				setBadPage(true);
-				console.error(err);
-			});
+		.then((response) => response.json())
+		.then((response) => {
+			setApartment(response[0]);
+		})
+		.catch((err) => {
+			setBadPage(true);
+			console.error(err);
+		});
+
+		fetch(`${domain}/user/review/votes`, {
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+		})
+		.then((response) => response.json())
+		.then((response) => {
+			if (response.success) {
+				setUserUpvotes(response.results.filter(row => row.vote_type == 1).map(row => row.review_id));
+				setUserDownvotes(response.results.filter(row => row.vote_type == 2).map(row => row.review_id));
+			}
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+
+		// fetch("http://localhost:3000/users/review/vote", {
+		// 	headers: { "Content-Type": "application/json" },
+		// 	credentials: "include",
+		// })
+		// .then((response) => response.json())
+		// .then((response) => {
+		// 	setUser(response[0]);
+		// })
+		// .catch((err) => {
+		// 	console.error(err);
+		// });
 
 		getUser().then((obj) => {
 			console.log(obj);
@@ -90,12 +118,76 @@ function ApartmentListing(props) {
 		});
 	}, []);
 
-	const toggleUpvote = (e) => {
-		// TODO: check if user is logged in
-		if (auth) {
-			// set toggles here?
-			alert("hello");
+	const toggleUpvote = (id) => {
+		if (!auth) return;
+		let newType;
+		if (userUpvotes.includes(id)) {
+			newType = 0;
+		} else {
+			newType = 1;
 		}
+		fetch("http://localhost:3000/user/review/" + id + "/vote", {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({vote_type: newType})
+		})
+		.then(response => response.json())
+		.then(response => {
+			let review = reviews.find(r => r.review_num == id);
+			if (userUpvotes.includes(id)) {
+				review.upvotes--;
+				userUpvotes.splice(userUpvotes.indexOf(id), 1);
+			} else {
+				review.upvotes++;
+				userUpvotes.push(id);
+			}
+			if (userDownvotes.includes(id)) {
+				review.downvotes--;
+				userDownvotes.splice(userDownvotes.indexOf(id), 1);
+			} else {
+				review.downvotes++;
+				userDownvotes.push(id);
+			}
+			setReviews([...reviews]);
+		})
+		.catch(err => console.error(err))
+	};
+
+	const toggleDownvote = (id) => {
+		if (!auth) return
+		let newType;
+		if (userDownvotes.includes(id)) {
+			newType = 0;
+		} else {
+			newType = 2;
+		}
+		fetch("http://localhost:3000/user/review/" + id + "/vote", {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({vote_type: newType})
+		})
+		.then(response => response.json())
+		.then(response => {
+			let review = reviews.find(r => r.review_num == id);
+			if (userDownvotes.includes(id)) {
+				review.downvotes--;
+				userDownvotes.splice(userDownvotes.indexOf(id), 1);
+			} else {
+				review.downvotes++;
+				userDownvotes.push(id);
+			}
+			if (userUpvotes.includes(id)) {
+				review.upvotes--;
+				userUpvotes.splice(userUpvotes.indexOf(id), 1);
+			} else {
+				review.upvotes++;
+				userUpvotes.push(id);
+			}
+			setReviews([...reviews]);
+		})
+		.catch(err => console.error(err))
 	};
 
 	if (badPage) {
@@ -129,13 +221,31 @@ function ApartmentListing(props) {
 						<p>user: {review.user_id}</p>
 						<p>bedbath: {review.bedbath}</p>
 						<p>review: {review.review_text}</p>
-						<p>upvotes: {review.upvotes}</p>
-						<p>downvotes: {review.downvotes}</p>
 						<p>
 							scores (clean, location, amenities, landlord): {review.cleanliness} {review.location}{" "}
 							{review.amenities} {review.landlord}
 						</p>
-						<button onClick={toggleUpvote}>UP!</button>
+						<div className="voting">
+							<Tooltip title={auth ? "" : "Please login to vote"}>
+								<IconButton onClick={() => toggleUpvote(review.review_num)}>
+									{userUpvotes.includes(review.review_num) ?
+										<ThumbUp style={{color: '#005AB3'}} />
+										:
+										<ThumbUp />
+									}
+								</IconButton>
+							</Tooltip>
+							<p>{review.upvotes - review.downvotes}</p>
+							<Tooltip title={auth ? "" : "Please login to vote"}>
+								<IconButton onClick={() => toggleDownvote(review.review_num)}>
+									{userDownvotes.includes(review.review_num) ?
+										<ThumbDown style={{color: '#005AB3'}} />
+										:
+										<ThumbDown />
+									}
+								</IconButton>
+							</Tooltip>
+						</div>
 					</div>
 				))}
 			</div>

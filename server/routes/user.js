@@ -296,36 +296,65 @@ router.post(
 
 const vote_table = "user_votes";
 const vote_columns = "(user_id, review_id, vote_type)";
+router.get('/review/votes', checkAuthentication, function (req, res) {
+	dbConn.getConnection((err, db) => {
+	if (err) {
+		console.log("connection failed", err);
+		res.send(err);
+		return;
+	}
+	try {
+		db.query(`SELECT * FROM ${vote_table} WHERE user_id = ${req.user.user_id}`,
+			(err, rows) => {
+				if (err) throw err;
+				res.json({ success: true, results: rows });
+			}
+		);
+	} catch (e) {
+		res.send({ success: false, error: e });
+		throw e;
+	} finally {
+		db.release(); // release connection back to pool regardless of outcome
+	}
+});
+});
+
 router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 	// Logged In
 
 	({ vote_type } = req.body);
 
-	dbConn.getConnection(async (err, db) => {
+	dbConn.getConnection((err, db) => {
 		if (err) {
 			console.log("connection failed", err);
 			res.send(err);
 			return;
 		}
 		try {
-			const rows = await db.query(
-				`SELECT * FROM ${vote_table} WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`
+			db.query(`SELECT * FROM ${vote_table} WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`,
+				(err, rows) => {
+					if (err) throw err;
+					console.log(rows);
+					if (rows.length == 0) {
+						// user never voted for this review yet, insert a new row
+						db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUES (?)`, [[
+							req.user.user_id,
+							req.params.id,
+							vote_type,
+						]], (err, result) => {
+							if (err) throw err;
+							res.json({ success: true });
+						});
+					} else {
+						// Update
+						db.query(`UPDATE ${vote_table} SET vote_type = ? WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`, vote_type,
+							(err, result) => {
+								if (err) throw err;
+								res.json({ success: true });
+						});
+					}
+				}
 			);
-			if (rows.length == 0) {
-				// user never voted for this review yet, insert a new row
-				await db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUE (?)`, [
-					req.user.user_id,
-					req.params.id,
-					vote_type,
-				]);
-			} else {
-				// Update
-				await db.query(
-					`UPDATE ${vote_table} SET vote_type = ? WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`,
-					vote_type
-				);
-			}
-			res.json({ success: true });
 		} catch (e) {
 			res.send({ success: false, error: e });
 			throw e;
