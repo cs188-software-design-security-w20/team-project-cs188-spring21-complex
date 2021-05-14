@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../css/AptListing.css";
+import { domain } from "../routes";
 
-import aptImage from "../assets/westwood_executive_apt.jpg";
 
 function AptListing(props) {
 	return (
 		<div className="listing">
 			<div className="apt-img">
-				<img src={aptImage} alt="apt" />
+				<img src={domain + "/uploads/" + props.data.home_image} alt="apt" />
 			</div>
 			<div className="apt-info">
 				<div className="apt-info-name">{props.data.apt_name}</div>

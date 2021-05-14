@@ -42,7 +42,7 @@ router.get("/list", function (req, res) {
 			res.send(err);
 			return;
 		}
-		db.query(`SELECT apt_id, apt_name, address, lower_price, latitude, longitude from ${apt_table}`, (err, rows) => {
+		db.query(`SELECT apt_id, apt_name, address, lower_price, latitude, longitude, home_image from ${apt_table}`, (err, rows) => {
 			if (err) {
 				res.send("ERROR");
 			} else {
