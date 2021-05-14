@@ -37,8 +37,16 @@ UNIQUE KEY `user_id` (`user_id`) USING BTREE, CONSTRAINT `reviews_ibfk_2`
 FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`), CONSTRAINT `reviews_ibfk_3` 
 FOREIGN KEY (`apt_id`) REFERENCES `apartments` (`apt_id`)) 
 ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE IF NOT EXISTS `apartment_image` (
+`apt_id` smallint(6) NOT NULL, 
+`image_uuid` varchar(50), 
+PRIMARY KEY (`image_uuid`),
+FOREIGN KEY (`apt_id`) REFERENCES `apartments` (`apt_id`)) 
+ENGINE=InnoDB DEFAULT CHARSET=latin1;
 show databases; 
 show tables from complex; 
 show columns from apartments from complex; 
 show columns from reviews from complex; 
 show columns from users from complex;
+
+ALTER TABLE users ADD COLUMN image_uuid VARCHAR(50) AFTER password

@@ -76,6 +76,7 @@ module.exports = (passport) => {
 			username: user.username,
 			legal_name: user.legal_name,
 			email: user.email,
+			image_uuid: user.image_uuid
 		};
 		return done(null, sessionUser);
 	});

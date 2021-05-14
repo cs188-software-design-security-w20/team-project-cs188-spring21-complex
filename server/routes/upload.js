@@ -2,17 +2,16 @@ const express = require("express");
 const router = express.Router();
 const dbConn = require("../db.js");
 const validator = require("express-validator");
-//const crypto = require("crypto");
 const path = require("path");
 const getCsrfToken = require("../csrf").getCsrfToken;
 const { v4: uuidv4 } = require('uuid');
+var table = "apartment_image";
 
-router.post("/", checkAuthentication, async function (req, res, next) {
+router.post("/user/:id", checkAuthentication, async function (req, res, next) {
 	if (req.body.csrfToken !== getCsrfToken(req)) {
 		return res.json({ success: false, message: "Invalid CSRF Token" });
 	}
 	// TODO: Check session, ensure user is logged in
-
 	let file = req.files.image;
 	if (file !== undefined && (file.mimetype == "image/png" || file.mimetype == "image/jpeg")) {
 		// extension are stripped, mimetype checking should be sufficient
@@ -27,17 +26,36 @@ router.post("/", checkAuthentication, async function (req, res, next) {
 		}
 		console.log(`Saved ${file.name} to ${new_path}`);
 
-		res.send({
-			success: true,
-			uuid: uuid,
+		dbConn.getConnection(async (err, db) => {
+			if (err) {
+				console.log("connection failed", err);
+				res.json({
+					success: false,
+					uuid: uuid,
+				});
+				return;
+			}
+			db.query(
+				`UPDATE users SET image_uuid = '${uuid}' WHERE user_id = '${req.params['id']}' `,
+				(err, user) => {
+					db.release();
+					if (err) {
+						console.log(err);
+						res.json({
+							success: false,
+							message: err,
+						}); 
+					}
+					else
+					{
+						res.json({
+							success: true,
+							message: "success",
+						});
+					}
 		});
-	} else {
-		res.send({
-			success: false,
-			message: "Invalid File",
-		});
-	}
-});
+	});
+}});
 
 // check that req.user is valid before user accesses some URL
 function checkAuthentication(req, res, next) {

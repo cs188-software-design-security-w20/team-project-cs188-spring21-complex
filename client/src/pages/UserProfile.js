@@ -4,13 +4,13 @@ import "../css/UserProfile.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
 import { getUser, genCsrfToken } from "../context/auth";
-import pfp from '../assets/westwood_executive_apt.jpg';
+//import pfp from '../assets/westwood_executive_apt.jpg';
 
-async function upload_file(file) {
+async function upload_file(file, user_id) {
 	let formData = new FormData();
 	formData.append("image", file);
 	formData.append("csrfToken", genCsrfToken());
-	return fetch(`${domain}/upload`, {
+	return fetch(`${domain}/upload/user/${user_id}`, {
 		method: "POST",
 		body: formData,
 		mode: "cors",
@@ -33,6 +33,7 @@ function UserProfile() {
 	const [user, setUser] = useState({});
 	const [clickedDelete, setDelete] = useState(false);
 	const [totp, setTotp] = useState("");
+	const [pfp, setPfp] = useState("");
 
 	const ssd = (e) => {
 		setDelete(true);
@@ -65,7 +66,7 @@ function UserProfile() {
 	const handler = async (e) => {
 		e.preventDefault();
 		let file = document.getElementById("image-upload").files[0];
-		let response = await upload_file(file);
+		let response = await upload_file(file, user.user_id);
 		if (response["success"]) {
 			// TODO: Should be saved into database
 			console.log(response.uuid);
@@ -80,6 +81,20 @@ function UserProfile() {
 			if (Object.keys(obj.user).length > 0) {
 				setAuth(true);
 				setUser(obj.user);
+				fetch(`${domain}/uploads/` +obj.user.image_uuid, {
+					method: "GET",
+					headers: { "Content-Type": "image" },
+					//body: JSON.stringify({ totp: totp, csrfToken: genCsrfToken() }),
+					credentials: "include",
+				})
+					.then((response) => response.blob())
+					.then((response) => {
+						console.log(response);
+						// server says correctly authenticated. so redirect to the main page
+						// console.log(response);
+						setPfp(URL.createObjectURL(response));
+					})
+					.catch((err) => alert(err));
 			} else {
 				history.push("/login");
 				alert("You are not logged in.");
