@@ -38,12 +38,12 @@ function ApartmentListing(props) {
 
 				let len = response.length + 0.0;
 				let ratings = {
-					price: 5,
+					cleanliness: response.reduce((a, b) => a + b.cleanliness, 0)/len || 0,
 					amenities: response.reduce((a, b) => a + b.amenities, 0)/len || 0,
-					proximity: response.reduce((a, b) => a + b.location, 0)/len || 0,
-					management: response.reduce((a, b) => a + b.landlord, 0)/len || 0,
+					location: response.reduce((a, b) => a + b.location, 0)/len || 0,
+					landlord: response.reduce((a, b) => a + b.landlord, 0)/len || 0,
 				};
-				ratings['overall'] = len ? (ratings.price + ratings.amenities + ratings.proximity + ratings.management)/len : 0
+				ratings['overall'] = len ? (ratings.cleanliness + ratings.amenities + ratings.location + ratings.landlord)/4 : 0
 				setRatings(ratings);
 
 				if (response.length === 0) {
@@ -222,8 +222,7 @@ function ApartmentListing(props) {
 						<p>bedbath: {review.bedbath}</p>
 						<p>review: {review.review_text}</p>
 						<p>
-							scores (clean, location, amenities, landlord): {review.cleanliness} {review.location}{" "}
-							{review.amenities} {review.landlord}
+							scores (clean, amenities, location, landlord): {review.cleanliness}  {review.amenities} {review.location}{" "} {review.landlord}
 						</p>
 						<div className="voting">
 							<Tooltip title={auth ? "" : "Please login to vote"}>

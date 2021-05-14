@@ -18,13 +18,13 @@ const AptListingRatings = (props) => {
             
 
             <div className='rating-info'>
-                <text style={{paddingRight: '278px'}}>Price</text>
-               <div>{props.ratings.price}</div>
+                <text style={{paddingRight: '226px'}}>Cleanliness</text>
+               <div>{props.ratings.cleanliness}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: (props.ratings.price / .05) + '%'}}></span></span>
-                <text style={{paddingRight: '281px'}}>High</text>
-                <text>Low</text>
+                <span className='bar'><span style={{width: (props.ratings.cleanliness / .05) + '%'}}></span></span>
+                <text style={{paddingRight: '272px'}}>Dirty</text>
+                <text>Clean</text>
             </div>
 
             <div className='rating-info'>
@@ -39,20 +39,20 @@ const AptListingRatings = (props) => {
 
             <div className='rating-info'>
                 <text style={{paddingRight: '237px'}}>Proximity</text>
-               <div>{props.ratings.proximity}</div>
+               <div>{props.ratings.location}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: (props.ratings.proximity / .05) + '%'}}></span></span>
+                <span className='bar'><span style={{width: (props.ratings.location / .05) + '%'}}></span></span>
                 <text style={{paddingRight: '282px'}}>Far</text>
                 <text>Close</text>
             </div>
 
             <div className='rating-info'>
                 <text style={{paddingRight: '206px'}}>Management</text>
-               <div>{props.ratings.management}</div>
+               <div>{props.ratings.landlord}</div>
             </div>
             <div className='rating-bar'>             
-                <span className='bar'><span style={{width: (props.ratings.management / .05) + '%'}}></span></span>
+                <span className='bar'><span style={{width: (props.ratings.landlord / .05) + '%'}}></span></span>
                 <text style={{paddingRight: '278px'}}>Bad</text>
                 <text>Good</text>
             </div>
