@@ -17,6 +17,7 @@
 .address {
     padding-left: 30px;
     padding-right: 30px;
+    padding-top: 10px;
     font-style: italic;
 }
 
@@ -28,4 +29,5 @@
 .about {
     padding-left: 30px;
     padding-right: 30px;
+    padding-top: 30px;
 }

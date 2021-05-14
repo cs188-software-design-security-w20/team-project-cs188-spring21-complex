@@ -2,6 +2,10 @@
 /*------------------------------ Apartment Listing Page Styles ------------------------------*/
 /*-------------------------------------------------------------------------------------------*/
 
+.main {
+    min-height: 100vh;
+}
+
 .gallery {
     display: flex;
     margin-top: 40px;
@@ -14,7 +18,7 @@
 }
 
 .description {
-    display: block;
+    display: flex;
     width: 560px;
     height: auto;
     margin: 20px 20px 20px 20px;
@@ -24,7 +28,7 @@
 }
 
 .ratings {
-    display: block;
+    display: flex;
     width: 400px;
     height: auto;
     margin: 20px 20px 20px 20px;
@@ -32,6 +36,59 @@
     background-color: white;
     border-radius: 10px;
 }
+
+.review-list {
+    padding-top: 30px;
+    width: 750px;
+}
+
+.single-review {
+    border: 3px solid black;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.single-review-top-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 30px 30px 0px;
+}
+
+.single-review-text {
+    margin: 30px 30px 0px;
+}
+
+.single-review-top-info .info-2 {
+    display: flex;
+    flex-direction: row;
+}
+
+.single-review-top-info .review-rating-spacing {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.single-review-top-info .review-info-spacing {
+    display: flex;
+    flex-direction: row;
+}
+
+.single-review-top-info .basic-info-space {
+    padding-right: 10px;
+    font-weight: bold;
+}
+
+.single-review-top-info .small-space {
+    padding-right: 10px;
+    font-weight: bold;
+}
+
+.single-review-top-info .info-2 .col-1 {
+    padding-right: 30px;
+}
+
 
 .reviews {
     display: flex;
@@ -72,4 +129,5 @@
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+    margin-left: 20px;
 }

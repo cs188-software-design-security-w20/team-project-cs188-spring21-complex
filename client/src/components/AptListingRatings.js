@@ -2,13 +2,21 @@ import React from 'react'
 import "../css/AptListingRatings.css";
 
 const AptListingRatings = (props) => {
+    const roundedRatingOverall = Math.round(props.ratings.overall * 100)/100;
+    const roundedRatingCleanliness = Math.round(props.ratings.cleanliness * 100)/100;
+    const roundedRatingAmenities = Math.round(props.ratings.amenities * 100)/100;
+    const roundedRatingProximity = Math.round(props.ratings.location * 100)/100;
+    const roundedRatingManagement = Math.round(props.ratings.landlord * 100)/100;
+
     return (
         <div className='apt-listing-ratings'>
             <text className='title'>RATINGS</text>
 
+            <br /><br />
+
             <div className='rating-info'>
-                <text style={{paddingRight: '260px', paddingTop: '20px'}}>Overall</text>
-               <div>{props.ratings.overall}</div>
+                <text>Overall</text>
+               <div>{roundedRatingOverall}</div>
             </div>
             <div className='rating-bar'>             
                 <span className='bar'><span style={{width: (props.ratings.overall / .05) + '%'}}></span></span>
@@ -16,10 +24,9 @@ const AptListingRatings = (props) => {
                 <text>Good</text>
             </div>
             
-
             <div className='rating-info'>
-                <text style={{paddingRight: '226px'}}>Cleanliness</text>
-               <div>{props.ratings.cleanliness}</div>
+                <text>Cleanliness</text>
+               <div>{roundedRatingCleanliness}</div>
             </div>
             <div className='rating-bar'>             
                 <span className='bar'><span style={{width: (props.ratings.cleanliness / .05) + '%'}}></span></span>
@@ -28,8 +35,8 @@ const AptListingRatings = (props) => {
             </div>
 
             <div className='rating-info'>
-                <text style={{paddingRight: '234px'}}>Amenities</text>
-               <div>{props.ratings.amenities}</div>
+                <text>Amenities</text>
+               <div>{roundedRatingAmenities}</div>
             </div>
             <div className='rating-bar'>             
                 <span className='bar'><span style={{width: (props.ratings.amenities / .05) + '%'}}></span></span>
@@ -38,8 +45,8 @@ const AptListingRatings = (props) => {
             </div>
 
             <div className='rating-info'>
-                <text style={{paddingRight: '237px'}}>Proximity</text>
-               <div>{props.ratings.location}</div>
+                <text>Proximity</text>
+               <div>{roundedRatingProximity}</div>
             </div>
             <div className='rating-bar'>             
                 <span className='bar'><span style={{width: (props.ratings.location / .05) + '%'}}></span></span>
@@ -48,8 +55,8 @@ const AptListingRatings = (props) => {
             </div>
 
             <div className='rating-info'>
-                <text style={{paddingRight: '206px'}}>Management</text>
-               <div>{props.ratings.landlord}</div>
+                <text>Management</text>
+               <div>{roundedRatingManagement}</div>
             </div>
             <div className='rating-bar'>             
                 <span className='bar'><span style={{width: (props.ratings.landlord / .05) + '%'}}></span></span>

@@ -214,16 +214,41 @@ function ApartmentListing(props) {
 	} else if (reviews) {
 		reviewJSX = (
 			<div className="review-list">
-				{!auth && <p>Please login if you wish to post a review.</p>}
-
+				{!auth && <h2>Please login to post a review.</h2>}
+				<br />
 				{reviews.map((review) => (
-					<div className="review" key={review.review_num}>
-						<p>user: {review.username}</p>
-						<p>bedbath: {review.bedbath}</p>
-						<p>review: {review.review_text}</p>
-						<p>
-							scores (clean, amenities, location, landlord): {review.cleanliness}  {review.amenities} {review.location}{" "} {review.landlord}
-						</p>
+					<div className="single-review" key={review.review_num}>
+						<div className='single-review-top-info'>
+							<div className='info-1'>
+								<div><b>User: </b>{review.username}</div>
+								<div><b>Bed/Bath: </b>{review.bedbath}</div>
+							</div>
+							<div className='info-2'>
+								<div className='col-1'>
+									<div className='review-rating-spacing'>
+										<div className='small-space'>Cleanliness:</div>
+										<div>{review.cleanliness}</div>										
+									</div>
+									<div className='review-rating-spacing'>
+										<div className='small-space'>Amenities:</div>											
+										<div>{review.amenities}</div>
+									</div>
+								</div>
+								<div className='col-2'>
+									<div className='review-rating-spacing'>
+										<div className='small-space'>Proximity: </div>											
+										<div>{review.location}{" "}</div>
+									</div>
+									<div className='review-rating-spacing'>
+										<div className='small-space'>Management: </div>											
+										<div>{review.landlord}</div>									
+									</div>
+								</div>																																					
+							</div>
+						</div>
+						
+						<div className='single-review-text'><b>Review:</b> {review.review_text}</div>
+						
 						<div className="voting">
 							<Tooltip title={auth ? "" : "Please login to vote"}>
 								<IconButton onClick={() => toggleUpvote(review.review_num)}>
@@ -245,6 +270,7 @@ function ApartmentListing(props) {
 								</IconButton>
 							</Tooltip>
 						</div>
+						<br />
 					</div>
 				))}
 			</div>

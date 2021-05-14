@@ -68,7 +68,7 @@ function ApartmentReview(props) {
 				.then((response) => response.json())
 				.then((response) => {
 					console.log(response);
-					//window.location.reload();
+					window.location.reload();
 				})
 				.catch((err) => alert(err));
 		} else {
@@ -191,20 +191,14 @@ function ApartmentReview(props) {
 						required=""
 						onChange={(e) => setReview({ ...review, review_text: e.target.value })}
 					/>
-
-					<div className="upload-images">
-						<br />
-						<div className="upload-image-msg">Add Image:</div>
-						<input id="image-upload" type="file" onChange={handler} />
-					</div>
-					<br />
+					<br /><br /><br />
 
 					<ReCAPTCHA
 						sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
 						onChange={(e) => setRecaptcha(e)}
 					/>
-
-					<p>Recaptcha value: {recaptcha}</p>
+					{/* <p style={{width:'200px'}}>Recaptcha value: {recaptcha}</p> */}
+					
 					<br />
 
 					<button className="submit" id="submit" type="submit" disabled={!recaptcha}>
