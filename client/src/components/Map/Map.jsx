@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import GoogleMapReact from 'google-map-react';
 import HomeIcon from '@material-ui/icons/Home';
+import { domain } from '../../routes'
 
 import './Map.css';
 
@@ -27,7 +28,7 @@ const Map = (props) => {
   const [hoverKey, setHoverKey] = useState(null);
 
   useEffect(() => {
-      fetch("http://localhost:3000/apartment/list")
+      fetch(`${domain}/apartment/list`)
       .then(response => response.json())
       .then(response => {
         console.log(response)

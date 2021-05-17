@@ -4,7 +4,6 @@ import "../css/UserProfile.css";
 import { useHistory } from "react-router-dom";
 import { domain } from "../routes";
 import { getUser, genCsrfToken } from "../context/auth";
-import e from "cors";
 //import pfp from '../assets/westwood_executive_apt.jpg';
 
 async function upload_file(file, user_id) {

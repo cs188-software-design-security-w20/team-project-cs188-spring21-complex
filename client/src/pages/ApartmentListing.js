@@ -27,7 +27,7 @@ function ApartmentListing(props) {
 		if (!id) {
 			setBadPage(true);
 		}
-		fetch("http://localhost:3000/apartment/" + id + "/reviews", {
+		fetch(`${domain}/apartment/` + id + "/reviews", {
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
 		})
@@ -72,7 +72,7 @@ function ApartmentListing(props) {
 		})
 		.catch((err) => alert(err));
 
-		fetch("http://localhost:3000/apartment/" + id, {
+		fetch(`${domain}/apartment/` + id, {
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
 		})
@@ -100,7 +100,7 @@ function ApartmentListing(props) {
 			console.error(err);
 		});
 
-		// fetch("http://localhost:3000/users/review/vote", {
+		// fetch(`${domain}/users/review/vote`, {
 		// 	headers: { "Content-Type": "application/json" },
 		// 	credentials: "include",
 		// })
@@ -126,7 +126,7 @@ function ApartmentListing(props) {
 		} else {
 			newType = 1;
 		}
-		fetch("http://localhost:3000/user/review/" + id + "/vote", {
+		fetch(`${domain}/user/review/` + id + "/vote", {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
@@ -162,7 +162,7 @@ function ApartmentListing(props) {
 		} else {
 			newType = 2;
 		}
-		fetch("http://localhost:3000/user/review/" + id + "/vote", {
+		fetch(`${domain}/user/review/` + id + "/vote", {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",

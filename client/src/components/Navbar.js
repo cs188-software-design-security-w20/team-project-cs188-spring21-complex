@@ -49,7 +49,7 @@ function Navbar() {
 		});
 
 		// redundant on home and map
-		fetch("http://localhost:3000/apartment/list")
+		fetch(`${domain}/apartment/list`)
 			.then((response) => response.json())
 			.then((response) => {
 				console.log(response);

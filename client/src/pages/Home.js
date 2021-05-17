@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import "../css/Home.css";
 import AptListing from "../components/AptListing";
 import { Link } from "react-router-dom";
+import { domain } from "../routes"
 
 function Home() {
 	const [apartmentList, setList] = useState([]);
 
 	useEffect(() => {
-		fetch("http://localhost:3000/apartment/list")
+		fetch(`${domain}/apartment/list`)
 			.then((response) => response.json())
 			.then((response) => {
 				console.log(response);
