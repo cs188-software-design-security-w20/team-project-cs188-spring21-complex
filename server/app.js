@@ -7,12 +7,13 @@ const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
+const serverDomain = require("./routes.js");
 
 app.use(
 	require("cors")({
 		credentials: true,
 		methods: ["POST", "PUT", "DELETE", "GET", "PATCH", "OPTIONS", "HEAD"],
-		origin: "http://localhost:4200",
+		origin: serverDomain,
 	})
 );
 
