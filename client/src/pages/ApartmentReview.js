@@ -126,7 +126,7 @@ function ApartmentReview(props) {
 					<div className='user-review-ratings'>
 						<div className='form-rating-title'>Cleanliness: {ratingCleanliness}</div> 
 						<div className='form-rating-bar'>
-							<text className='form-rating-bar-left'>High</text>
+							<text className='form-rating-bar-left'>Low</text>
 							<Slider className='form-rating-slider'
 								rating={ratingCleanliness} 
 								onChange={handleRatingChangeCleanliness}
@@ -135,7 +135,7 @@ function ApartmentReview(props) {
 								min={0}
 								max={5}
 							/>
-							<text className='form-rating-bar-right' style={{paddingLeft: '22px'}}>Low</text>
+							<text className='form-rating-bar-right' style={{paddingLeft: '22px'}}>High</text>
 						</div>
 
 						<div className='form-rating-title'>Amenities: {ratingAmenities}</div> 

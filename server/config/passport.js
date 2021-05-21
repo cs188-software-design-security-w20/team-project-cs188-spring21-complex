@@ -25,7 +25,7 @@ module.exports = (passport) => {
 						return done(err);
 					}
 					db.query(
-						`SELECT * FROM ${user_table} WHERE email = '${email.split("@", 1)[0]}'`,
+						`SELECT * FROM ?? WHERE email = ?`, [user_table, email.split("@", 1)[0]],
 						(err, user) => {
 							db.release();
 							if (err) {
