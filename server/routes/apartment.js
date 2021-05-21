@@ -21,8 +21,9 @@ router.get("/", function (req, res) {
 			return;
 		}
 		console.log("connection success");
-		db.query(`SELECT * from ${apt_table}`, (err, rows) => {
+		db.query(`SELECT * from ??`, [apt_table], (err, rows) => {
 			if (err) {
+                console.log(err)
 				res.send("ERROR");
 			} else {
 				// res.sendFile(path.join(__dirname, '../html/apartment.html'));
@@ -42,8 +43,10 @@ router.get("/list", function (req, res) {
 			res.send(err);
 			return;
 		}
-		db.query(`SELECT apt_id, apt_name, address, lower_price, upper_price, latitude, longitude, home_image from ${apt_table}`, (err, rows) => {
+		db.query(`SELECT apt_id, apt_name, address, lower_price, upper_price, latitude, longitude, home_image from ??`, [apt_table],
+            (err, rows) => {
 			if (err) {
+                console.log(err)
 				res.send("ERROR");
 			} else {
 				res.send(rows);
@@ -62,8 +65,9 @@ router.get("/:id", function (req, res) {
 			return;
 		}
 		console.log("connection success");
-		db.query(`SELECT * from ${apt_table} WHERE apt_id = ?`, req.params.id, (err, rows) => {
+		db.query(`SELECT * from ?? WHERE apt_id = ?`, [apt_table, req.params.id], (err, rows) => {
 			if (err) {
+                console.log(err)
 				res.send("ERROR");
 			} else {
 				res.send(rows);
@@ -84,7 +88,7 @@ router.get("/:id/votes", checkAuthentication, function (req, res) {
 			return;
 		}
 		try {
-			const rows = await db.query(`SELECT * FROM ${vote_table} WHERE user_id = ?`, req.user.user_id);
+			const rows = await db.query(`SELECT * FROM ?? WHERE user_id = ?`, [vote_table, req.user.user_id]);
 			res.json({ success: true, result: rows })
 		} catch (e) {
 			res.send({ success: false, error: e });
@@ -106,11 +110,11 @@ router.get("/:id/reviews", function (req, res) {
 		//console.log("ID: ", req.params.id);
 		db.query(`SELECT r.review_num, r.user_id, u.username, r.review_text, r.bedbath, r.date, r.cleanliness, r.location, r.amenities, r.landlord,
 					COUNT(IF(vote_type=1, 1, null)) as upvotes, COUNT(IF(vote_type=2, 1, null)) as downvotes
-					FROM ${review_table} r
+					FROM ?? r
 					LEFT JOIN user_votes uv ON r.review_num=uv.review_id
 					JOIN users u ON u.user_id=r.user_id
-					WHERE r.apt_id = ${req.params.id}
-					GROUP BY review_num`, (err, rows) => {
+					WHERE r.apt_id = ?
+					GROUP BY review_num`, [review_table, req.params.id], (err, rows) => {
 			if (err) {
 				res.send({ success: false, error: err });
 			} else {
@@ -130,7 +134,7 @@ router.get("/:id/images", function (req, res) {
 			res.send(err);
 			return;
 		}
-		db.query(`SELECT image_uuid AS image FROM ${image_table} WHERE apt_id = ${req.params.id} `, (err, rows) => {
+		db.query(`SELECT image_uuid AS image FROM ?? WHERE apt_id = ? `, [image_table, req.params.id], (err, rows) => {
 			if (err) {
 				res.send({ success: false, error: err });
 			} else {
@@ -161,7 +165,8 @@ router.post("/:id/review", checkAuthentication, function (req, res) {
 		}
 		try {
 			await db.beginTransaction(); // start a unit of work
-			await db.query(`INSERT INTO ${review_table} ${review_columns} VALUES (?)`, [row], (err,val) => {
+			await db.query(`INSERT INTO ${review_table} ${review_columns} VALUES (?)`,
+                [row], (err,val) => {
 				console.log(err);
 			});
 			// if (image) {

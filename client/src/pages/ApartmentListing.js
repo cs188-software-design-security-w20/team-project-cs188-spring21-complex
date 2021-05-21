@@ -92,8 +92,8 @@ function ApartmentListing(props) {
 		.then((response) => response.json())
 		.then((response) => {
 			if (response.success) {
-				setUserUpvotes(response.results.filter(row => row.vote_type == 1).map(row => row.review_id));
-				setUserDownvotes(response.results.filter(row => row.vote_type == 2).map(row => row.review_id));
+				setUserUpvotes(response.results.filter(row => row.vote_type === 1).map(row => row.review_id));
+				setUserDownvotes(response.results.filter(row => row.vote_type === 2).map(row => row.review_id));
 			}
 		})
 		.catch((err) => {
@@ -134,7 +134,7 @@ function ApartmentListing(props) {
 		})
 		.then(response => response.json())
 		.then(response => {
-			let review = reviews.find(r => r.review_num == id);
+			let review = reviews.find(r => r.review_num === id);
 			if (userUpvotes.includes(id)) {
 				review.upvotes--;
 				userUpvotes.splice(userUpvotes.indexOf(id), 1);
@@ -170,7 +170,7 @@ function ApartmentListing(props) {
 		})
 		.then(response => response.json())
 		.then(response => {
-			let review = reviews.find(r => r.review_num == id);
+			let review = reviews.find(r => r.review_num === id);
 			if (userDownvotes.includes(id)) {
 				review.downvotes--;
 				userDownvotes.splice(userDownvotes.indexOf(id), 1);

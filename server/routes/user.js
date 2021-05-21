@@ -36,7 +36,8 @@ router.get("/verifyEmail/:token", (req, res) => {
 			console.log("connection failed", err.message);
 			res.json({ success: false, message: err.message });
 		} else {
-			db.query(`SELECT * FROM ${user_table} WHERE username = '${info["user"]}'`, (err, user) => {
+			db.query(`SELECT * FROM ?? WHERE username = ?`, [user_table, info["user"]],
+                (err, user) => {
 				if (err) {
 					db.release();
 					console.log(err.message);
@@ -50,7 +51,8 @@ router.get("/verifyEmail/:token", (req, res) => {
 					} else {
 						if (user[0].verified == false) {
 							db.query(
-								`UPDATE ${user_table} SET verified = true WHERE username = '${info["user"]}'`,
+								`UPDATE ?? SET verified = true WHERE username = ?`,
+                                [user_table, info["user"]],
 								(error, user) => {
 									db.release();
 									if (error) {
@@ -84,10 +86,12 @@ router.delete("/delete/:id", (req, res) => {
 		}
 
 		// find user based on session user_id & verify 6-digit 2FA with secret key
-		db.query(`SELECT * FROM ${user_table} WHERE user_id = '${req.params.id}'`, (err, user) => {
+		db.query(`SELECT * FROM ?? WHERE user_id = ?`, [user_table, req.params.id],
+            (err, user) => {
 			if (authenticator.verifyTOTP(user[0].secretKey, req.body.totp)) {
 				if (user[0].verified) {
-					db.query(`DELETE FROM ${user_table} WHERE user_id = ${req.params.id}`, (err, result) => {
+					db.query(`DELETE FROM ?? WHERE user_id = ?`, [user_table, req.params.id],
+                        (err, result) => {
 						if (err) {
 							// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
 							let issue = err.message;
@@ -262,7 +266,7 @@ router.post(
 					res.json({ success: false, message: err.message });
 				}
 				// SET ? takes the entire info object created above
-				db.query(`INSERT INTO ${user_table} SET ?`, info, (err, result) => {
+				db.query(`INSERT INTO ?? SET ?`, [user_table, info], (err, result) => {
 					if (err) {
 						// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
 						let issue = err.message;
@@ -304,7 +308,7 @@ router.get('/review/votes', checkAuthentication, function (req, res) {
 		return;
 	}
 	try {
-		db.query(`SELECT * FROM ${vote_table} WHERE user_id = ${req.user.user_id}`,
+		db.query(`SELECT * FROM ?? WHERE user_id = ?`, [vote_table, req.user.user_id],
 			(err, rows) => {
 				if (err) throw err;
 				res.json({ success: true, results: rows });
@@ -331,23 +335,25 @@ router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 			return;
 		}
 		try {
-			db.query(`SELECT * FROM ${vote_table} WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`,
+			db.query(`SELECT * FROM ?? WHERE user_id = ? AND review_id = ?`,
+                [vote_table, req.user.user_id, req.params.id],
 				(err, rows) => {
 					if (err) throw err;
 					console.log(rows);
 					if (rows.length == 0) {
 						// user never voted for this review yet, insert a new row
-						db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUES (?)`, [[
-							req.user.user_id,
+						db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUES (?)`, [
+							[req.user.user_id,
 							req.params.id,
 							vote_type,
-						]], (err, result) => {
+                            ]], (err, result) => {
 							if (err) throw err;
 							res.json({ success: true });
 						});
 					} else {
 						// Update
-						db.query(`UPDATE ${vote_table} SET vote_type = ? WHERE user_id = ${req.user.user_id} AND review_id = ${req.params.id}`, vote_type,
+						db.query(`UPDATE ?? SET vote_type = ? WHERE user_id = ? AND review_id = ?`,
+                            [vote_table, vote_type, req.user.user_id, req.params.id],
 							(err, result) => {
 								if (err) throw err;
 								res.json({ success: true });
