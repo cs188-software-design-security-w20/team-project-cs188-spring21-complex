@@ -326,7 +326,10 @@ router.get('/review/votes', checkAuthentication, function (req, res) {
 router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 	// Logged In
 
-	({ vote_type } = req.body);
+	({ vote_type, csrfToken } = req.body);
+    if (csrfToken !== getCsrfToken(req)) {
+        return res.json({ success: false, message: "Invalid CSRF Token" });
+    }
 
 	dbConn.getConnection((err, db) => {
 		if (err) {

@@ -82,7 +82,6 @@ function ApartmentReview(props) {
 		let file = document.getElementById("image-upload").files[0];
 		let response = await upload_file(file);
 		if (response["success"]) {
-			// TODO: Should be saved into database
 			console.log(response.uuid);
 		} else {
 			alert(response.message);

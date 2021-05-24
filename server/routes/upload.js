@@ -11,7 +11,6 @@ router.post("/user/:id", checkAuthentication, async function (req, res, next) {
 	if (req.body.csrfToken !== getCsrfToken(req)) {
 		return res.json({ success: false, message: "Invalid CSRF Token" });
 	}
-	// TODO: Check session, ensure user is logged in
 	let file = req.files.image;
 	if (file !== undefined && (file.mimetype == "image/png" || file.mimetype == "image/jpeg")) {
 		// extension are stripped, mimetype checking should be sufficient
@@ -64,7 +63,6 @@ router.post("/apt/:id", checkAuthentication, async function (req, res, next) {
 	if (req.body.csrfToken !== getCsrfToken(req)) {
 		return res.json({ success: false, message: "Invalid CSRF Token" });
 	}
-	// TODO: Check session, ensure user is logged in
 	let file = req.files.image;
 	if (file !== undefined && (file.mimetype == "image/png" || file.mimetype == "image/jpeg")) {
 		// extension are stripped, mimetype checking should be sufficient

@@ -10,6 +10,7 @@ import { getUser } from "../context/auth";
 import { domain } from "../routes";
 import { CircularProgress, IconButton, Tooltip } from '@material-ui/core';
 import { ThumbUp, ThumbDown } from '@material-ui/icons'
+import { genCsrfToken } from "../context/auth";
 
 function ApartmentListing(props) {
 	const [reviews, setReviews] = useState([]);
@@ -130,7 +131,7 @@ function ApartmentListing(props) {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
-			body: JSON.stringify({vote_type: newType})
+			body: JSON.stringify({vote_type: newType, csrfToken: genCsrfToken()})
 		})
 		.then(response => response.json())
 		.then(response => {
@@ -166,7 +167,7 @@ function ApartmentListing(props) {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
 			credentials: "include",
-			body: JSON.stringify({vote_type: newType})
+			body: JSON.stringify({vote_type: newType, csrfToken: genCsrfToken()})
 		})
 		.then(response => response.json())
 		.then(response => {

@@ -69,8 +69,6 @@ function UserProfile() {
 		if (file) {
 			let response = await upload_file(file, user.user_id);
 			if (response["success"]) {
-				// TODO: Should be saved into database
-				console.log(response.uuid);
 				alert("Profile picture updated!");
 				window.location.reload();
 			} else {

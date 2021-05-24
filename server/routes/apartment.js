@@ -150,6 +150,9 @@ router.get("/:id/images", function (req, res) {
 
 const review_columns = "(apt_id, user_id, bedbath, review_text, date, cleanliness, location, amenities, landlord)";
 router.post("/:id/review", checkAuthentication, function (req, res) {
+	if (req.body.csrfToken !== getCsrfToken(req)) {
+		return res.json({ success: false, message: "Invalid CSRF Token" });
+	}
 	// Validate review
 	({ bedbath, review_text } = req.body);
 	console.log(req.body);
