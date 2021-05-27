@@ -18,7 +18,7 @@
 
 ## Instructions for Running Locally
 
-First, Node.js must be installed. See: https://nodejs.org/en/
+First, Node.js must be installed. See [here](https://nodejs.org/en/).
 
 Clone this repository, and install the node module dependencies in **_each of the three paths_**:
 
