@@ -203,6 +203,9 @@ router.post("/login", validate_login, (req, res, next) => {
 					res.json({ success: false, message: info.message + " You have 2 attempts remaining." });
 				}
 			} else {
+				// reset tracker upon correct login, in case they only got it wrong 1/2x
+				if (email in tracker) delete tracker[email];
+
 				req.login(user, (err) => {
 					// at this point, req.user and req.session.passport exists
 					if (err) res.json({ success: false, message: err.message });
