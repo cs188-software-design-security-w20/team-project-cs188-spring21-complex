@@ -5,31 +5,20 @@
 ## Technologies
 
 - React
-  - material-ui/core, material-ui/icons, material-ui/lab
-  - react, react-dom, react-icons, react-router, react-router-dom, react-scripts, react-google-recaptcha
-  - web-vitals, crypto, google-map-react
+  - @material-ui/core, @material-ui/icons, @material-ui/lab
+  - react, react-dom, react-google-recaptcha, react-icons, react-router, react-router-dom, react-scripts
+  - web-vitals, crypto, google-map-react, chokidar
 - Node.js
   - express
-    - express-session, express-messages, express-validator, express-fileupload
-  - connect-flash
+    - express-session, express-validator, express-fileupload
   - passport
     - passport-local, passport-2fa-totp, passport-totp
-  - bcryptjs
-  - csurf
-  - mysql
-  - cors
-  - qrcode
-  - speakeasy
-  - aws-sdk
-  - jwt-simple
-  - nodemailer
+  - bcryptjs, mysql, cors, qrcode, speakeasy, aws-sdk, jwt-simple, nodemailer, concurrently, uuid, crypto
 - MySQL
 
-## For the team performing a security analysis, here is the link to our web app.
+## Instructions for Running Locally
 
-[Project Complex](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-
-## Instructions for Cloning and Running Locally
+First, Node.js must be installed. See: https://nodejs.org/en/
 
 Clone this repository, and install the node module dependencies in **_each of the three paths_**:
 
@@ -44,7 +33,7 @@ npm install
 
 ### Before running the server
 
-In `/server`, create a dotenv file `.env` for connecting to the database and session keys. In the `.env` file, assign the following keys (this is while the database is still hosted on AWS):
+In `/server`, create a dotenv file `.env` for connecting to the database and session keys. In the `.env` file, assign the following keys (valid until we stop hosting the db on AWS around 6/11/21):
 
 ```
 DB_HOST='team-complex.c7rp55uyi5yc.us-east-2.rds.amazonaws.com'
@@ -60,14 +49,13 @@ JWT_SECRET='tbHmywHd8XjixeszaTjCbHUlQiLwUJkCslfaKUOyhXJXqczeaaFF7YRaEJgJ7C3HyDUz
 
 ### Before running the client
 
-In `/client`, create a dotenv file `.env` for assigning the frontend port. In the `.env` file, assign the following keys:
+In `/client`, create a dotenv file `.env` for assigning the frontend port. In the `.env` file, assign the following keys (this is because we run server/client concurrently, and it must be on separate ports):
 
 ```
 PORT=4200
 ```
 
-If there are compilation issues from running `npm install`, and you see errors such as `Module not found... @material-ui/icons/Reorder`, then type in the terminal:
-
+If there are compilation issues from running `npm install` in the `/client` directory, and you see errors such as `Module not found... @material-ui/icons/Reorder`, then install them like so:
 ```
 npm install @material-ui/core --save
 npm install @material-ui/icons --save
@@ -76,12 +64,10 @@ npm install @material-ui/icons --save
 
 ### Testing Project Complex
 
-In the terminal for the root directory, type one of the following (see package.json for more details):
+In the root directory, type this command into the terminal (see package.json for more details):
 
 ```
 npm run dev
-npm run server
-npm run client
 ```
 
 ## Current Security Features
@@ -95,6 +81,7 @@ npm run client
     - Email must be registered with UCLA (must end in @g.ucla.edu or @ucla.edu)
     - Password must be 8-15 characters long, contain an uppercase letter, and a number
     - Authentication Code must be 6 characters, all digits
+    - Account is timed out for 60sec after submitting 3 incorrect passwords
 - User must enroll in Google Authenticator (2FA) upon registration
 - User must input 2FA code in order to login and delete account
 - User must check their email to verify their account
@@ -105,47 +92,15 @@ npm run client
   - Cookie can only be read on http
 - All server-client requests contain an anti-CSRF token
 
-## TODO
+## Team Members
 
 `Khang`
-
-- Front-end design things
-- Retrieving individual apartment data from db to dynamically generate page contents when requested
-
 `Chris`
-
-- Google Maps Integration
-- Search bar
-- Scrape for westwood apartment data csv, format, load into csv > populate our db table (apartments.com ?)
-- Captcha for posting reviews
-
 `Jesse`
-
-- CSRF, XSS Prevention
-- Image upload
-- Image validation
-- How to prevent brute force logins
-
 `Ryan`
-
-- Upon registration, send an email to verify user
-- Enforce 2FA setup at registration
-- Hosting db online at AWS
-- Hosting the web app on AWS
-
 `Ethan`
 
-- Sessions & cookies (if i exit window, or if i'm inactive for some time, log me out)
-- Finer detail on user input checking
-- Finalize the db schema
-  - Generate the queries/scripts that'll create each table with the correct apartment data, for everyone
-- Hiding features from users who aren't logged in
-  - Link to their profile, logout, post review, upvote/downvote, upload images
-- Connect get/post requests to the correct route for react pages
-- Preventing consecutive login > login, login > registration
-- Deleting user account
-
-## [OPTIONAL] Local MySQL Setup
+## [OPTIONAL] Local MySQL Setup ... outdated as of 5/14/21
 
 If you want (and you have installed MySQL), you can set up your local MySQL database by copy-pasting this command, modifying the username, and entering it into your command line interface. It generates the 3 tables: users, apartments, and reviews. Then, it populates the apartment table with 5 default Westwood apartment complexes.
 
