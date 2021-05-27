@@ -36,8 +36,7 @@ router.get("/verifyEmail/:token", (req, res) => {
 			console.log("connection failed", err.message);
 			res.json({ success: false, message: err.message });
 		} else {
-			db.query(`SELECT * FROM ?? WHERE username = ?`, [user_table, info["user"]],
-                (err, user) => {
+			db.query(`SELECT * FROM ?? WHERE username = ?`, [user_table, info["user"]], (err, user) => {
 				if (err) {
 					db.release();
 					console.log(err.message);
@@ -52,7 +51,7 @@ router.get("/verifyEmail/:token", (req, res) => {
 						if (user[0].verified == false) {
 							db.query(
 								`UPDATE ?? SET verified = true WHERE username = ?`,
-                                [user_table, info["user"]],
+								[user_table, info["user"]],
 								(error, user) => {
 									db.release();
 									if (error) {
@@ -86,30 +85,32 @@ router.delete("/delete/:id", (req, res) => {
 		}
 
 		// find user based on session user_id & verify 6-digit 2FA with secret key
-		db.query(`SELECT * FROM ?? WHERE user_id = ?`, [user_table, req.params.id],
-            (err, user) => {
+		db.query(`SELECT * FROM ?? WHERE user_id = ?`, [user_table, req.params.id], (err, user) => {
 			if (authenticator.verifyTOTP(user[0].secretKey, req.body.totp)) {
 				if (user[0].verified) {
-					db.query(`DELETE FROM ?? WHERE user_id = ?`, [user_table, req.params.id],
-                        (err, result) => {
-						if (err) {
-							// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
-							let issue = err.message;
-							console.log(issue);
-							res.json({
-								success: false,
-								message: "Delete request cannot be processed at this time.",
-							});
-						} else {
-							console.log("Successfully deleted user id:", req.params.id);
-							killSession(req, res, (res) => {
+					db.query(
+						`DELETE FROM ?? WHERE user_id = ?`,
+						[user_table, req.params.id],
+						(err, result) => {
+							if (err) {
+								// we can only alert one message at a time for "unique" keys, since db insertion errors only alert 1 at a time
+								let issue = err.message;
+								console.log(issue);
 								res.json({
-									success: true,
-									message: "Your account has been erased from existence.",
+									success: false,
+									message: "Delete request cannot be processed at this time.",
 								});
-							});
+							} else {
+								console.log("Successfully deleted user id:", req.params.id);
+								killSession(req, res, (res) => {
+									res.json({
+										success: true,
+										message: "Your account has been erased from existence.",
+									});
+								});
+							}
 						}
-					});
+					);
 				} else res.json({ success: false, message: "User email is not verified, can't login." });
 			} else res.json({ success: false, message: "The time based code is incorrect." });
 		});
@@ -150,17 +151,58 @@ validate_login = [
 	validator.check("totp", "Invalid Google Authenticator Code").isNumeric().trim().escape(),
 ];
 
+// limit # times an account password can be guessed
+tracker = {};
 router.post("/login", validate_login, (req, res, next) => {
 	if (req.body.csrfToken !== getCsrfToken(req)) {
 		return res.json({ success: false, message: "Invalid CSRF Token" });
 	}
 	const errors = validator.validationResult(req);
 	if (errors.isEmpty()) {
+		// check to make sure the input email is not on timeout
+		// console.log("Checking attempts. Current tracker:\n", tracker);
+		let email = req.body.email.split("@", 1)[0];
+		// we should respond, return, and not authenticate IF email is on timeout
+		if (email in tracker && tracker[email][1] != null) {
+			// a timeout was set, so check to see if it is still in effect
+			let timeout = tracker[email][1] - Date.now();
+			if (timeout > 0) {
+				// still timed out
+				res.json({
+					success: false,
+					message: `Your account has been timed out. Please wait ${Math.round(
+						timeout / 1000
+					)} seconds before attempting to login.`,
+				});
+				return;
+			} else delete tracker[email]; // timeout over, proceed with authentication
+		}
+
 		// if authenticated, redirect to main page, and req.user will have the user_id
 		passport.authenticate("local", (err, user, info) => {
 			if (err) res.json({ success: false, message: err.message });
-			else if (!user) res.json({ success: false, message: info.message });
-			else {
+			else if (!user) {
+				// store the email and incorrect password counts
+				// if we reached 5 incorrect attempts, enforce a timeout
+				if (email in tracker) {
+					// at 3 attempts, set a 1 minute timeout, after which we delete this entry
+					// 3 should be the max attempts stored. when already 3 attempts, we shouldn't enter this scope
+					tracker[email][0] += 1;
+					let val = tracker[email];
+					if (val[0] == 3) {
+						tracker[email][1] = Date.now() + 60 * 1000;
+						res.json({
+							success: false,
+							message: info.message + " Your account will be timed out for 60 seconds.",
+						});
+					} else {
+						res.json({ success: false, message: info.message + " You have 1 attempt remaining." });
+					}
+				} else {
+					tracker[email] = [1, null];
+					res.json({ success: false, message: info.message + " You have 2 attempts remaining." });
+				}
+			} else {
 				req.login(user, (err) => {
 					// at this point, req.user and req.session.passport exists
 					if (err) res.json({ success: false, message: err.message });
@@ -300,36 +342,38 @@ router.post(
 
 const vote_table = "user_votes";
 const vote_columns = "(user_id, review_id, vote_type)";
-router.get('/review/votes', checkAuthentication, function (req, res) {
+router.get("/review/votes", checkAuthentication, function (req, res) {
 	dbConn.getConnection((err, db) => {
-	if (err) {
-		console.log("connection failed", err);
-		res.send(err);
-		return;
-	}
-	try {
-		db.query(`SELECT * FROM ?? WHERE user_id = ?`, [vote_table, req.user.user_id],
-			(err, rows) => {
-				if (err) throw err;
-				res.json({ success: true, results: rows });
-			}
-		);
-	} catch (e) {
-		res.send({ success: false, error: e });
-		throw e;
-	} finally {
-		db.release(); // release connection back to pool regardless of outcome
-	}
-});
+		if (err) {
+			console.log("connection failed", err);
+			res.send(err);
+			return;
+		}
+		try {
+			db.query(
+				`SELECT * FROM ?? WHERE user_id = ?`,
+				[vote_table, req.user.user_id],
+				(err, rows) => {
+					if (err) throw err;
+					res.json({ success: true, results: rows });
+				}
+			);
+		} catch (e) {
+			res.send({ success: false, error: e });
+			throw e;
+		} finally {
+			db.release(); // release connection back to pool regardless of outcome
+		}
+	});
 });
 
 router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 	// Logged In
 
 	({ vote_type, csrfToken } = req.body);
-    if (csrfToken !== getCsrfToken(req)) {
-        return res.json({ success: false, message: "Invalid CSRF Token" });
-    }
+	if (csrfToken !== getCsrfToken(req)) {
+		return res.json({ success: false, message: "Invalid CSRF Token" });
+	}
 
 	dbConn.getConnection((err, db) => {
 		if (err) {
@@ -338,29 +382,32 @@ router.patch("/review/:id/vote", checkAuthentication, function (req, res) {
 			return;
 		}
 		try {
-			db.query(`SELECT * FROM ?? WHERE user_id = ? AND review_id = ?`,
-                [vote_table, req.user.user_id, req.params.id],
+			db.query(
+				`SELECT * FROM ?? WHERE user_id = ? AND review_id = ?`,
+				[vote_table, req.user.user_id, req.params.id],
 				(err, rows) => {
 					if (err) throw err;
 					console.log(rows);
 					if (rows.length == 0) {
 						// user never voted for this review yet, insert a new row
-						db.query(`INSERT INTO ${vote_table} ${vote_columns} VALUES (?)`, [
-							[req.user.user_id,
-							req.params.id,
-							vote_type,
-                            ]], (err, result) => {
-							if (err) throw err;
-							res.json({ success: true });
-						});
-					} else {
-						// Update
-						db.query(`UPDATE ?? SET vote_type = ? WHERE user_id = ? AND review_id = ?`,
-                            [vote_table, vote_type, req.user.user_id, req.params.id],
+						db.query(
+							`INSERT INTO ${vote_table} ${vote_columns} VALUES (?)`,
+							[[req.user.user_id, req.params.id, vote_type]],
 							(err, result) => {
 								if (err) throw err;
 								res.json({ success: true });
-						});
+							}
+						);
+					} else {
+						// Update
+						db.query(
+							`UPDATE ?? SET vote_type = ? WHERE user_id = ? AND review_id = ?`,
+							[vote_table, vote_type, req.user.user_id, req.params.id],
+							(err, result) => {
+								if (err) throw err;
+								res.json({ success: true });
+							}
+						);
 					}
 				}
 			);

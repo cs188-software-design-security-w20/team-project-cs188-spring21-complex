@@ -5,7 +5,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import "../css/ApartmentReview.css";
 import { getUser } from "../context/auth";
 import { useHistory } from "react-router-dom";
-import { Slider, Grid} from '@material-ui/core';
+import { Slider, Grid } from "@material-ui/core";
 
 async function upload_file(file) {
 	let formData = new FormData();
@@ -36,30 +36,30 @@ function ApartmentReview(props) {
 	const [ratingAmenities, setRatingAmenities] = useState(0);
 	const [ratingProximity, setRatingProximity] = useState(0);
 	const [ratingManagement, setRatingManagement] = useState(0);
-	const handleRatingChangeCleanliness = (event, newRating) => {	
+	const handleRatingChangeCleanliness = (event, newRating) => {
 		setRatingCleanliness(newRating);
 		setReview({ ...review, cleanliness: newRating });
-	}
-	const handleRatingChangeAmenities = (event, newRating) => {	
+	};
+	const handleRatingChangeAmenities = (event, newRating) => {
 		setRatingAmenities(newRating);
 		setReview({ ...review, amenities: newRating });
-	}
-	const handleRatingChangeProximity = (event, newRating) => {	
+	};
+	const handleRatingChangeProximity = (event, newRating) => {
 		setRatingProximity(newRating);
 		setReview({ ...review, location: newRating });
-	}
-	const handleRatingChangeManagement = (event, newRating) => { 
+	};
+	const handleRatingChangeManagement = (event, newRating) => {
 		setRatingManagement(newRating);
 		setReview({ ...review, landlord: newRating });
-	}
+	};
 
 	const postReview = (e) => {
 		e.preventDefault();
 		if (auth) {
 			review["csrfToken"] = genCsrfToken();
 			console.log(review);
-			console.log(props['apt_data']['apt_id']);
-			fetch(`${domain}/apartment/${props['apt_data']['apt_id']}/review`, {
+			console.log(props["apt_data"]["apt_id"]);
+			fetch(`${domain}/apartment/${props["apt_data"]["apt_id"]}/review`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(review),
@@ -107,7 +107,7 @@ function ApartmentReview(props) {
 				<form className="form-review" onSubmit={postReview}>
 					<h2 className="form-review-heading">Review {props.apt_data.apt_name}</h2>
 					<input
-						type="text"
+						type="hidden"
 						className="form-control"
 						name="user_id"
 						placeholder="User ID will be retrieved through session"
@@ -117,72 +117,84 @@ function ApartmentReview(props) {
 						type="text"
 						className="form-control"
 						name="bedbath"
-						placeholder="#Bed/#Bath"
+						placeholder="#Bed/#Bath: ex. 2B2B"
 						required=""
 						onChange={(e) => setReview({ ...review, bedbath: e.target.value })}
 					/>
 
-					<div className='user-review-ratings'>
-						<div className='form-rating-title'>Cleanliness: {ratingCleanliness}</div> 
-						<div className='form-rating-bar'>
-							<text className='form-rating-bar-left'>Low</text>
-							<Slider className='form-rating-slider'
-								rating={ratingCleanliness} 
+					<div className="user-review-ratings">
+						<div className="form-rating-title">Cleanliness: {ratingCleanliness}</div>
+						<div className="form-rating-bar">
+							<text className="form-rating-bar-left">Low</text>
+							<Slider
+								className="form-rating-slider"
+								rating={ratingCleanliness}
 								onChange={handleRatingChangeCleanliness}
 								step={1}
 								marks
 								min={0}
 								max={5}
 							/>
-							<text className='form-rating-bar-right' style={{paddingLeft: '22px'}}>High</text>
+							<text className="form-rating-bar-right" style={{ paddingLeft: "22px" }}>
+								High
+							</text>
 						</div>
 
-						<div className='form-rating-title'>Amenities: {ratingAmenities}</div> 
-						<div className='form-rating-bar'>
-							<text className='form-rating-bar-left' style={{paddingRight: '21px'}}>Bad</text>
-							<Slider className='form-rating-slider'
-								rating={ratingAmenities} 
+						<div className="form-rating-title">Amenities: {ratingAmenities}</div>
+						<div className="form-rating-bar">
+							<text className="form-rating-bar-left" style={{ paddingRight: "21px" }}>
+								Bad
+							</text>
+							<Slider
+								className="form-rating-slider"
+								rating={ratingAmenities}
 								onChange={handleRatingChangeAmenities}
 								step={1}
 								marks
 								min={0}
 								max={5}
 							/>
-							<text className='form-rating-bar-right'>Good</text>
+							<text className="form-rating-bar-right">Good</text>
 						</div>
 
-						<div className='form-rating-title'>Proximity: {ratingProximity}</div> 
-						<div className='form-rating-bar'>
-							<text className='form-rating-bar-left' style={{paddingRight: '25px'}}>Far</text>
-							<Slider className='form-rating-slider'
-								rating={ratingProximity} 
+						<div className="form-rating-title">Proximity: {ratingProximity}</div>
+						<div className="form-rating-bar">
+							<text className="form-rating-bar-left" style={{ paddingRight: "25px" }}>
+								Far
+							</text>
+							<Slider
+								className="form-rating-slider"
+								rating={ratingProximity}
 								onChange={handleRatingChangeProximity}
 								step={1}
 								marks
 								min={0}
 								max={5}
 							/>
-							<text className='form-rating-bar-right' style={{paddingLeft: '17px'}}>Close</text>
-						</div>							
+							<text className="form-rating-bar-right" style={{ paddingLeft: "17px" }}>
+								Close
+							</text>
+						</div>
 
-						<div className='form-rating-title'>Management: {ratingManagement}</div> 
-						<div className='form-rating-bar'>
-							<text className='form-rating-bar-left' style={{paddingRight: '21px'}}>Bad</text>
-							<Slider className='form-rating-slider'
-								rating={ratingManagement} 
+						<div className="form-rating-title">Management: {ratingManagement}</div>
+						<div className="form-rating-bar">
+							<text className="form-rating-bar-left" style={{ paddingRight: "21px" }}>
+								Bad
+							</text>
+							<Slider
+								className="form-rating-slider"
+								rating={ratingManagement}
 								onChange={handleRatingChangeManagement}
 								step={1}
 								marks
 								min={0}
 								max={5}
 							/>
-							<text className='form-rating-bar-right'>Good</text>
-						</div>										
+							<text className="form-rating-bar-right">Good</text>
+						</div>
 					</div>
-					<br />
 
 					<textarea
-						type="text"
 						type="text"
 						className="form-control-user-review"
 						name="review"
@@ -190,14 +202,15 @@ function ApartmentReview(props) {
 						required=""
 						onChange={(e) => setReview({ ...review, review_text: e.target.value })}
 					/>
-					<br /><br /><br />
+					<br />
+					<br />
 
 					<ReCAPTCHA
 						sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
 						onChange={(e) => setRecaptcha(e)}
 					/>
 					{/* <p style={{width:'200px'}}>Recaptcha value: {recaptcha}</p> */}
-					
+
 					<br />
 
 					<button className="submit" id="submit" type="submit" disabled={!recaptcha}>

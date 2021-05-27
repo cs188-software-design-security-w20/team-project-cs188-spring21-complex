@@ -69,13 +69,13 @@ function UserProfile() {
 		if (file) {
 			let response = await upload_file(file, user.user_id);
 			if (response["success"]) {
-				alert("Profile picture updated!");
+				alert("Profile Picture Updated!");
 				window.location.reload();
 			} else {
 				alert(response.message);
 			}
 		} else {
-			alert("Please insert an image to upload before submittting.");
+			alert("Please upload an image before attempting to submit.");
 		}
 	};
 
@@ -106,28 +106,31 @@ function UserProfile() {
 
 					<img className="pfp" src={pfp} />
 					<div className="upload-image">
-						<div className="upload-image-message">Add/Update Profile Picture:</div>
+						<div className="upload-image-message">
+							To add or update your profile picture, first click "Choose File" and select the
+							desired image. Then, click "Upload Image".{" "}
+						</div>
 						<input id="image-upload" type="file" /> <br></br>
 						<br></br>
-						<button onClick={handler}>Upload image</button>
+						<button onClick={handler}>Upload Image</button>
 					</div>
 
-					<input
-						type="text"
-						className="form-control"
-						name="username"
-						placeholder={user.username}
-						required=""
-						autofocus=""
-					/>
-					<input
-						type="text"
-						className="form-control"
-						name="email"
-						placeholder={user.email + "@g.ucla.edu"}
-						required=""
-						autofocus=""
-					/>
+					<table>
+						<tr>
+							<td>
+								<strong> Username: </strong>
+							</td>
+							<td>{user.username}</td>
+						</tr>
+						<tr>
+							<td>
+								<strong> Email: </strong>
+							</td>
+							<td>{user.email + "@g.ucla.edu"} </td>
+						</tr>
+					</table>
+
+					<br></br>
 					{!clickedDelete && <button onClick={ssd}>Delete Account</button>}
 					{clickedDelete && (
 						<div className="delete-code">
