@@ -7,6 +7,18 @@ const getCsrfToken = require("../csrf").getCsrfToken;
 const { v4: uuidv4 } = require("uuid");
 var table = "apartment_image";
 
+//Prevent Clickjacking
+
+router.use(function applyXFrame(req, res, next) {
+    res.set('X-Frame-Options', 'DENY');
+    next(); 
+});
+
+router.use(function applyCSP(req, res, next) {
+    res.set('Content-Security-Policy', "frame-ancestors 'none';");
+    next(); 
+});
+
 router.post("/user/:id", checkAuthentication, async function (req, res, next) {
 	if (req.body.csrfToken !== getCsrfToken(req)) {
 		return res.json({ success: false, message: "Invalid CSRF Token" });

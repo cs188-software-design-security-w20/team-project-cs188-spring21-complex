@@ -11,6 +11,17 @@ const image_table = "apartment_image";
 
 const { checkAuthentication } = require('./user');
 
+//Prevent Clickjacking
+
+router.use(function applyXFrame(req, res, next) {
+    res.set('X-Frame-Options', 'DENY');
+    next(); 
+});
+
+router.use(function applyCSP(req, res, next) {
+    res.set('Content-Security-Policy', "frame-ancestors 'none';");
+    next(); 
+});
 
 // url/apartment
 router.get("/", function (req, res) {

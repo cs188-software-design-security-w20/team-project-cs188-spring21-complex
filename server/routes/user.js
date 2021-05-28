@@ -17,6 +17,18 @@ const { serverDomain, domain } = require("../routes.js");
 const MINUTES_GOOD = 20;
 // #################################################################################################
 //* GET
+
+//Prevent Clickjacking
+
+router.use(function applyXFrame(req, res, next) {
+    res.set('X-Frame-Options', 'DENY');
+    next(); 
+});
+router.use(function applyCSP(req, res, next) {
+    res.set('Content-Security-Policy', "frame-ancestors 'none';");
+    next(); 
+});
+
 router.get("/QRCode", async (req, res) => {
 	res.json(await authenticator.generateSecretAndQR());
 });
