@@ -28,6 +28,8 @@ async function upload_file(file, user_id) {
 function UserProfile() {
 	let history = useHistory();
 
+	const MAX_FILE_SIZE = 50 * 1024 * 1024; // Currently 50 MB
+
 	// before rendering profile, check user context to see if they're logged in
 	const [auth, setAuth] = useState(false);
 	const [user, setUser] = useState({});
@@ -66,6 +68,11 @@ function UserProfile() {
 	const handler = async (e) => {
 		e.preventDefault();
 		let file = document.getElementById("image-upload").files[0];
+		if (file.size > MAX_FILE_SIZE) {
+			file = null;
+			alert("Maximum file size is 50 MB!")
+		}
+		
 		if (file) {
 			let response = await upload_file(file, user.user_id);
 			if (response["success"]) {

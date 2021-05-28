@@ -51,7 +51,7 @@ app.use(
 app.use(
 	fileupload({
 		limits: {
-			filesize: 50 * 1024 * 1024, // 50MB for now
+			fileSize: 50 * 1024 * 1024, // 50MB for now
 		},
 		useTempFiles: true,
 		tempFileDir: "/tmp",
