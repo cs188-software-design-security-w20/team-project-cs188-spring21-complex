@@ -19,7 +19,7 @@
 
 ## Instructions for Running Locally
 
-First, Node.js must be installed. See [here](https://nodejs.org/en/).
+First, Node.js and `npm` package manager must be installed. See [here](https://nodejs.org/en/).
 
 Clone this repository, and install the node module dependencies in **_each of the three paths_**:
 
@@ -70,6 +70,12 @@ In the root directory, type this command into the terminal (see package.json for
 ```
 npm run dev
 ```
+
+### Running with other IP or port
+
+To run with a custom ip and port, change the PORT set in `.env` under both `/client` and `/server` directories, then
+1. Modify `domain` and `serverDomain` variables in `/server/routes.js` to URL of frontend and backend, respectively.
+2. Modify `domain` variable in `/client/src/routes.js` to the URL of **backend**
 
 ## Current Security Features
 

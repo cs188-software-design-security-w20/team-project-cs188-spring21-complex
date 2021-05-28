@@ -7,7 +7,7 @@ const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
 const fileupload = require("express-fileupload");
-const { domain } = require("./routes.js");
+const { domain, serverDomain } = require("./routes.js");
 
 app.use(
 	require("cors")({
@@ -138,5 +138,5 @@ app.use(function (req, res, next) {
 });
 
 app.listen(port, () => {
-	console.log(`\nComplex app listening at http://localhost:${port}\n`);
+	console.log(`\nComplex app listening at ${serverDomain}\n`);
 });
