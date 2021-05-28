@@ -81,7 +81,15 @@ function Login() {
 						<button className="loginButton" type="submit">
 							Login
 						</button>
-						<a href="/registration">Not Registered? Click Here</a>
+						<div>
+							<a href="/registration">Not Registered? Click Here</a>
+							<div>
+								<a href="/forgotPassword">Forgot Password?</a>
+								<div>
+									<a href="/forgot2FA">Forgot 2FA?</a>
+								</div>
+							</div>
+						</div>
 					</div>
 				</form>
 			</div>
